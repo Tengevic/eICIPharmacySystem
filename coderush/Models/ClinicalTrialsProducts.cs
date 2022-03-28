@@ -1,10 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace coderush.Models
 {
-    public class Product
+    public class ClinicalTrialsProducts
     {
-        public int ProductId { get; set; }
+        public int ClinicalTrialsProductsId { get; set; }
         [Required]
         public string ProductName { get; set; }
         public string ProductCode { get; set; }
@@ -19,6 +23,6 @@ namespace coderush.Models
         public int BranchId { get; set; }
         [Display(Name = "Currency")]
         public int CurrencyId { get; set; }
-        public Stock stock { get; set; }
+        public ClinicalTrialsStock TrialsStock { get; set; } 
     }
 }

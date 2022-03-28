@@ -27,10 +27,10 @@
           </a>
         </li>*@
             <li class="@Html.IsSelected(controller: MainMenu.Notifications.ControllerName)">
-          <a href="@MainMenu.Notifications.Path">
-              <i class="fa fa-pie-chart"></i> <span>@MainMenu.Notifications.PageName</span>
-          </a>
-        </li>
+                <a href="@MainMenu.Notifications.Path">
+                    <i class="fa fa-pie-chart"></i> <span>@MainMenu.Notifications.PageName</span>
+                </a>
+            </li>
             <li class="header">SALES</li>
             @*<li class="@Html.IsSelected(controller: MainMenu.CustomerType.ControllerName)">
         <a href="@MainMenu.CustomerType.Path">
@@ -103,6 +103,27 @@
                     <i class="fa fa-certificate"></i> <span>@MainMenu.PaymentVoucher.PageName</span>
                 </a>
             </li>
+            <li class="header">CLINICAL TRIALS</li>
+            <li class="@Html.IsSelected(controller: MainMenu.ClinicalTrialsProducts.ControllerName)">
+                <a href="@MainMenu.ClinicalTrialsProducts.Path">
+                    <i class="fa fa-tag"></i> <span>@MainMenu.ClinicalTrialsProducts.PageName</span>
+                </a>
+            </li>
+            @*<li class="@Html.IsSelected(controller: MainMenu.ProductType.ControllerName)">
+                <a href="@MainMenu.ProductType.Path">
+                    <i class="fa fa-gear"></i> <span>@MainMenu.ProductType.PageName</span>
+                </a>
+            </li>
+            <li class="@Html.IsSelected(controller: MainMenu.Stock.ControllerName)">
+                <a href="@MainMenu.Stock.Path">
+                    <i class="fa fa-gear"></i> <span>@MainMenu.Stock.PageName</span>
+                </a>
+            </li>
+            <li class="@Html.IsSelected(controller: MainMenu.UnitOfMeasure.ControllerName)">
+                <a href="@MainMenu.UnitOfMeasure.Path">
+                    <i class="fa fa-gear"></i> <span>@MainMenu.UnitOfMeasure.PageName</span>
+                </a>
+            </li>*@
             <li class="header">INVENTORY</li>
             <li class="@Html.IsSelected(controller: MainMenu.Product.ControllerName)">
                 <a href="@MainMenu.Product.Path">

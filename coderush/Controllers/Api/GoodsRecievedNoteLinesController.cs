@@ -130,9 +130,27 @@ namespace coderush.Controllers.Api
         public IActionResult Update([FromBody]CrudViewModel<GoodsRecievedNoteLine> payload)
         {
             GoodsRecievedNoteLine goodsRecievedNoteLine = payload.value;
-            _context.GoodsRecievedNoteLine.Update(goodsRecievedNoteLine);
-            _context.SaveChanges();
-            this.UpdateStock(goodsRecievedNoteLine);
+            DateTime current = DateTime.Now;
+            double totaldays = (goodsRecievedNoteLine.ExpiryDate - current).TotalDays;
+
+            if (totaldays > 360)
+            {
+                _context.GoodsRecievedNoteLine.Update(goodsRecievedNoteLine);
+                _context.SaveChanges();
+                this.UpdateStock(goodsRecievedNoteLine);
+            }
+            else if (totaldays < 360)
+            {
+                Err err = new Err
+                {
+                    message = "Drug will expire less than one year"
+                };
+                string errMsg = JsonConvert.SerializeObject(err);
+
+                return BadRequest(err);
+
+            }
+           
             return Ok(goodsRecievedNoteLine);
         }
 
@@ -162,7 +180,6 @@ namespace coderush.Controllers.Api
     }
     public class Err
     {
-        public string field { get; set; }
         public string message { get; set; }
     }
 }

@@ -134,18 +134,7 @@ namespace coderush.Controllers.Api
             }
 
         }
-        private void StockMessage(SalesOrderLine salesOrderLine)
-        {
-            Stock stock = new Stock();
-            stock = _context.Stock
-                .Where(x => x.ProductId.Equals(salesOrderLine.ProductId))
-                .FirstOrDefault();
-            Console.WriteLine(salesOrderLine);
-            if(stock.InStock < salesOrderLine.Quantity)
-            {
-                ViewData["Message"] = String.Format("Avaibale stock is{0}", stock.InStock);
-            }
-        }
+     
 
         private SalesOrderLine Recalculate(SalesOrderLine salesOrderLine)
         {
@@ -206,7 +195,6 @@ namespace coderush.Controllers.Api
         public IActionResult Insert([FromBody]CrudViewModel<SalesOrderLine> payload)
         {
             SalesOrderLine salesOrderLine = payload.value;
-            this.StockMessage(salesOrderLine);
             salesOrderLine = this.Recalculate(salesOrderLine);
             _context.SalesOrderLine.Add(salesOrderLine);
             _context.SaveChanges();

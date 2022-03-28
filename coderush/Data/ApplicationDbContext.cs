@@ -32,7 +32,19 @@ namespace coderush.Data
         public DbSet<coderush.Models.Branch> Branch { get; set; }
 
         public DbSet<coderush.Models.CashBank> CashBank { get; set; }
-
+        
+        public DbSet<coderush.Models.ClinicalTrialsDonation> ClinicalTrialsDonation { get; set; }
+       
+        public DbSet<coderush.Models.ClinicalTrialsDonationLine> ClinicalTrialsDonationLine { get; set; }
+        
+        public DbSet<ClinicalTrialsProducts> clinicalTrialsProducts { get; set; }
+        
+        public DbSet<coderush.Models.ClinicalTrialsSales> ClinicalTrialsSales { get; set; }
+        
+        public DbSet<coderush.Models.ClinicalTrialsSalesLine> ClinicalTrialsSalesLine { get; set; }
+        
+        public DbSet<coderush.Models.ClinicalTrialsStock> ClinicalTrialsStock { get; set; }
+        
         public DbSet<coderush.Models.Currency> Currency { get; set; }
 
         public DbSet<coderush.Models.Customer> Customer { get; set; }

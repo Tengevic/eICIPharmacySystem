@@ -23,6 +23,14 @@ namespace coderush.Pages
             public const string ControllerName = "Customer";
             public const string ActionName = "Index";
         }
+        public static class ClinicalTrialsProducts
+        {
+            public const string PageName = "ClinicalTrialsProducts";
+            public const string RoleName = "ClinicalTrialsProducts";
+            public const string Path = "/ClinicalTrialsProducts/Index";
+            public const string ControllerName = "ClinicalTrialsProducts";
+            public const string ActionName = "Index";
+        }
 
         public static class Vendor
         {

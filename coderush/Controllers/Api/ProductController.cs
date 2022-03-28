@@ -32,7 +32,22 @@ namespace coderush.Controllers.Api
             int Count = Items.Count();
             return Ok(new { Items, Count });
         }
+        [HttpGet("[action]/{name}")]
+        public async Task<IActionResult> GetByProductName([FromRoute] string name)
+        {
+            var product = from p in _context.Product
+                                    .Include(x => x.stock)
+                          select p;
 
+            if (!String.IsNullOrEmpty(name))
+            {
+                product = product.Where(x => x.ProductName.Contains(name));
+            }
+
+            List <Product> Items = await product.ToListAsync();
+
+            return Ok(new { Items});
+        }
 
 
         [HttpPost("[action]")]

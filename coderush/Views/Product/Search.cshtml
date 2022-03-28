@@ -1,0 +1,50 @@
+﻿@{
+    ViewData["Title"] = "Drug Search";
+}
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="input-group">
+            <div class="form-outline">
+                <input type="search" id="form1" class="form-control" />
+                <label class="form-label" for="form1">Search</label>
+            </div>
+            <button type="button" class="btn btn-primary" id="Search">
+                Search Drug
+            </button>
+
+            <div id="Grid"></div>
+        </div>
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+@section Styles{
+
+}
+
+@section Scripts{
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        // put all your jQuery goodness in here.
+        $("#Search").click(function () {
+            var str = $("#form1").val();
+            $.ajax({
+                url: '/api/Product/GetByProductName/' + str,
+                type: 'GET',
+                success: function (data) {
+                    console.log(data)
+
+                }
+            })
+
+
+        });
+    });
+
+</script>
+}
+
