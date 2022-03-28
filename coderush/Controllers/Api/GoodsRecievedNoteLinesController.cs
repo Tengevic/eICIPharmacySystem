@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using coderush.Data;
 using coderush.Models;
 using coderush.Models.SyncfusionViewModels;
+using Newtonsoft.Json;
 
 namespace coderush.Controllers.Api
 {
@@ -100,11 +101,28 @@ namespace coderush.Controllers.Api
         [HttpPost("[action]")]
         public IActionResult Insert([FromBody]CrudViewModel<GoodsRecievedNoteLine> payload)
         {
-            Console.WriteLine(payload.value);
             GoodsRecievedNoteLine goodsRecievedNoteLine = payload.value;
-            _context.GoodsRecievedNoteLine.Add(goodsRecievedNoteLine);
-            _context.SaveChanges();
-            this.UpdateStock(goodsRecievedNoteLine);
+            DateTime current = DateTime.Now;
+            double totaldays = (goodsRecievedNoteLine.ExpiryDate - current).TotalDays;
+            
+            if (totaldays > 360)
+            {
+                _context.GoodsRecievedNoteLine.Add(goodsRecievedNoteLine);
+                _context.SaveChanges();
+                this.UpdateStock(goodsRecievedNoteLine);
+            } else if (totaldays< 360) 
+            {
+                Err err = new Err
+                {
+
+                    message = "Drug will expire less than one year"
+                };
+                string errMsg = JsonConvert.SerializeObject(err);
+                
+                return  BadRequest(err);
+
+            }
+            
             return Ok(goodsRecievedNoteLine);
         }
         // PUT: api/GoodsRecievedNoteLines
@@ -141,5 +159,10 @@ namespace coderush.Controllers.Api
 
             return Ok(result);
         }
+    }
+    public class Err
+    {
+        public string field { get; set; }
+        public string message { get; set; }
     }
 }

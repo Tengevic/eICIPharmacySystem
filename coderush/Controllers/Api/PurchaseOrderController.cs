@@ -112,7 +112,7 @@ namespace coderush.Controllers.Api
 
 
         [HttpPost("[action]")]
-        public IActionResult Insert([FromBody]CrudViewModel<PurchaseOrder> payload)
+        public IActionResult Insert([FromBody] CrudViewModel<PurchaseOrder> payload)
         {
             PurchaseOrder purchaseOrder = payload.value;
             purchaseOrder.PurchaseOrderName = _numberSequence.GetNumberSequence("PO");
@@ -123,7 +123,7 @@ namespace coderush.Controllers.Api
         }
 
         [HttpPost("[action]")]
-        public IActionResult Update([FromBody]CrudViewModel<PurchaseOrder> payload)
+        public IActionResult Update([FromBody] CrudViewModel<PurchaseOrder> payload)
         {
             PurchaseOrder purchaseOrder = payload.value;
             _context.PurchaseOrder.Update(purchaseOrder);
@@ -133,7 +133,7 @@ namespace coderush.Controllers.Api
         }
 
         [HttpPost("[action]")]
-        public IActionResult Remove([FromBody]CrudViewModel<PurchaseOrder> payload)
+        public IActionResult Remove([FromBody] CrudViewModel<PurchaseOrder> payload)
         {
             PurchaseOrder purchaseOrder = _context.PurchaseOrder
                 .Where(x => x.PurchaseOrderId == (int)payload.key)

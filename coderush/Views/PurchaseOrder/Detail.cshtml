@@ -228,7 +228,8 @@
                 enabled: false,
             });
 
-            dataManager.ready.done(function (e) { 
+            dataManager.ready.done(function (e) {
+
             $("#Grid").ejGrid({
                 dataSource: ej.DataManager({
                     json: e.result,
@@ -266,11 +267,14 @@
                 ],
                 actionComplete: "complete",
             });
+                
             });
-
-
+           
         });
-
+        $('#GridProductId').on('change',function () {
+            alert("Handler for .change() called.");
+        });
+        
         function complete(args) {
 
             if (args.requestType == 'beginedit') {

@@ -2,6 +2,7 @@
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 @inject coderush.Data.ApplicationDbContext Context
+
 @{
 
     ApplicationUser appUser = await UserManager.GetUserAsync(User);
@@ -44,6 +45,7 @@
     <link href="~/content/default-responsive.css" rel="stylesheet" />
     <link href="~/content/ejthemes/responsive-css/ej.responsive.css" rel="stylesheet" />
     <link href="~/content/ejthemes/responsive-css/ejgrid.responsive.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
 
     @RenderSection("Styles", required: false)
 
@@ -72,15 +74,43 @@
     <script src="~/adminlte/dist/js/adminlte.min.js"></script>
     <!-- PACE -->
     <script src="~/adminlte/components/PACE/pace.min.js"></script>
-
     <!--Syncfusion-->
     <script src="~/scripts/jsrender.min.js"></script>
     <script src="~/scripts/ej.web.all.min.js" type="text/javascript"></script>
     <script src="~/scripts/properties.js" type="text/javascript"></script>
     <script src="~/scripts/jquery.validate.min.js"></script>
     <script src="~/scripts/jquery.validate.unobtrusive.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https:////cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+
 
     @RenderSection("Scripts", required: false)
+
+    @if (ViewBag.error != null)
+    {
+<script type="text/javascript">
+      $(document).ready(function () {
+        // show when page load
+                toastr.error("@ViewBag.error");
+    });
+</script>
+    }
+    @if (ViewBag.warning != null )
+    {
+<script type="text/javascript">
+          $(document).ready(function () {
+        // show when page load
+                toastr.warning("@ViewBag.warning");
+    });
+</script>
+    } @if (ViewBag.info != null)
+    {
+<script type="text/javascript">
+                  $(document).ready(function () {
+        // show when page load
+                toastr.info("@ViewBag.info");
+    });
+</script>
+    }
 
 </body>
 </html>

@@ -26,7 +26,7 @@
             </div>
             <!-- /.box-body -->
             <div class="box-footer">
-               
+
             </div>
             <!-- /.box-footer-->
         </div>
@@ -71,7 +71,7 @@
                 adaptor: new ej.WebApiAdaptor()
             });
 
-            dataManager.ready.done(function (e) { 
+            dataManager.ready.done(function (e) {
                 $("#Grid").ejGrid({
                     dataSource: ej.DataManager({
                         json: e.result,
@@ -107,19 +107,19 @@
                         { headerText: 'Detail', template: "<a href='/PurchaseOrder/Detail/{{:PurchaseOrderId}}'>Detail</a>" },
                         { field: "PurchaseOrderId", headerText: 'PO Id', isPrimaryKey: true, isIdentity: true, visible: false },
                         { field: "PurchaseOrderName", headerText: 'PO#', allowEditing: false },
-                        { field: "BranchId", headerText: 'Branch', foreignKeyField: "BranchId", foreignKeyValue: "BranchName", dataSource: dataManagerBranch, validationRules: { required: true }, defaultValue: 1, visible: false},
+                        { field: "BranchId", headerText: 'Branch', foreignKeyField: "BranchId", foreignKeyValue: "BranchName", dataSource: dataManagerBranch, validationRules: { required: true }, defaultValue: 1, visible: false },
                         { field: "VendorId", headerText: 'Vendor', foreignKeyField: "VendorId", foreignKeyValue: "VendorName", dataSource: dataManagerVendor, validationRules: { required: true } },
                         { field: "OrderDate", headerText: 'Order Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
                         { field: "DeliveryDate", headerText: 'Delivery Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
                         { field: "PurchaseTypeId", headerText: 'Purchase Type', foreignKeyField: "PurchaseTypeId", foreignKeyValue: "PurchaseTypeName", dataSource: dataManagerPurchaseType, defaultValue: 1, visible: false },
-                        { field: "CurrencyId", headerText: 'Currency', allowEditing: false, foreignKeyField: "CurrencyId", foreignKeyValue: "CurrencyName", dataSource: dataManagerCurrency, visible: false  },
+                        { field: "CurrencyId", headerText: 'Currency', allowEditing: false, foreignKeyField: "CurrencyId", foreignKeyValue: "CurrencyName", dataSource: dataManagerCurrency, visible: false },
                         { field: "Freight", headerText: 'Freight', defaultValue: 0, editType: "numericedit", format: "{0:n2}", allowEditing: false, visible: false },
                     ],
                     actionComplete: "complete",
                 });
             });
 
-            
+
         });
 
         function complete(args) {

@@ -143,7 +143,7 @@ namespace coderush.Controllers.Api
             Console.WriteLine(salesOrderLine);
             if(stock.InStock < salesOrderLine.Quantity)
             {
-                ViewBag.Message = String.Format("Avaibale stock is{0}", stock.InStock);
+                ViewData["Message"] = String.Format("Avaibale stock is{0}", stock.InStock);
             }
         }
 
@@ -212,7 +212,9 @@ namespace coderush.Controllers.Api
             _context.SaveChanges();
             this.UpdateSalesOrder(salesOrderLine.SalesOrderId);
             this.UpdateStock(salesOrderLine.ProductId);
+            ViewData["Message"] = String.Format("Avaibale stock is");
             return Ok(salesOrderLine);
+
         }
 
         [HttpPost("[action]")]

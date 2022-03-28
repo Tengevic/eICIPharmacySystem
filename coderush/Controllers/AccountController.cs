@@ -48,6 +48,7 @@ namespace coderush.Controllers
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
 
             ViewData["ReturnUrl"] = returnUrl;
+            ViewData["Message"] = String.Format("From controller");
             return View();
         }
 

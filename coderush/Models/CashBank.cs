@@ -12,5 +12,6 @@ namespace coderush.Models
         [Display(Name = "Cash / Bank Name")]
         public string CashBankName { get; set; }
         public string Description { get; set; }
+
     }
 }

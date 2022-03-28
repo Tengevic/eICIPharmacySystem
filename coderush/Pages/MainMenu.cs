@@ -7,6 +7,14 @@ namespace coderush.Pages
 {
     public static class MainMenu
     {
+        public static class Notifications
+        {
+            public const string PageName = "Notifications";
+            public const string RoleName = "Notifications";
+            public const string Path = "/Notifications/Index";
+            public const string ControllerName = "Notifications";
+            public const string ActionName = "Index";
+        }
         public static class Customer
         {
             public const string PageName = "Customer";

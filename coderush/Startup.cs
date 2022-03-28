@@ -12,6 +12,8 @@ using coderush.Data;
 using coderush.Models;
 using coderush.Services;
 using Newtonsoft.Json.Serialization;
+using Microsoft.AspNetCore.Http;
+
 
 namespace coderush
 {
@@ -90,14 +92,14 @@ namespace coderush
             services.AddTransient<IRoles, Roles>();
 
             services.AddTransient<IFunctional, Functional>();
-            
+
             services.AddMvc()
             .AddJsonOptions(options =>
             {
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
                 //pascal case json
                 options.SerializerSettings.ContractResolver = new DefaultContractResolver();
-                
+
             });
 
 

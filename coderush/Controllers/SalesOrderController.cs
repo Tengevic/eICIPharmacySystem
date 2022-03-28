@@ -13,7 +13,7 @@ namespace coderush.Controllers
     public class SalesOrderController : Controller
     {
         private readonly ApplicationDbContext _context;
-
+      
         public SalesOrderController(ApplicationDbContext context)
         {
             _context = context;
@@ -32,7 +32,7 @@ namespace coderush.Controllers
             {
                 return NotFound();
             }
-
+            ViewData["Message"] = String.Format("From controller");
             return View(salesOrder);
         }
     }

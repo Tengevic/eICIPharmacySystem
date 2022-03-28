@@ -102,7 +102,7 @@
                 adaptor: new ej.WebApiAdaptor()
             });
 
-          
+
 
 
             dataManager.ready.done(function (e) {
@@ -126,6 +126,7 @@
 
                 },
                 allowPaging: true,
+                actionFailure: "onFailure",
                 columns: [
                     { field: "GoodsRecievedNoteLineId", headerText: 'Line Id', isPrimaryKey: true, isIdentity: true, visible: false },
                     { field: "GoodsReceivedNoteId", headerText: 'GNR#', defaultValue: @Model.GoodsReceivedNoteId, foreignKeyField: "GoodsReceivedNoteId", foreignKeyValue: "GoodsReceivedNoteName", dataSource: dataManagerGoodsReceivedNote, visible: false },
@@ -135,15 +136,23 @@
                     { field: "Quantity", headerText: 'units/batch', defaultValue: 1, editType: "numericedit"},
                     { field: "ManufareDate", headerText: 'Manufacture Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
                     { field: "ExpiryDate", headerText: 'Expiry Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
-                   
+
                 ],
-                actionComplete: "complete",
+
+                actionFailure: function (args) {
+                    if (args.requestType == "save") {
+                        var s = ej.parseJSON(args.error.responseText)
+                        toastr.info(s.message, "Cannot add drug");
+                    }
+                   
+                   
+                }
             });
             });
 
-
+            
         });
 
-      
+
     </script>
 }
