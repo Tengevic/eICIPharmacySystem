@@ -19,19 +19,21 @@
     <Compile Remove="Migrations\20220315065202__second2.Designer.cs" />
     <Compile Remove="Migrations\20220315092050_goodsrecievednotesline.cs" />
     <Compile Remove="Migrations\20220315092050_goodsrecievednotesline.Designer.cs" />
+    <Compile Remove="Migrations\20220317102225_stockDeficit.cs" />
+    <Compile Remove="Migrations\20220317102225_stockDeficit.Designer.cs" />
     <Compile Remove="Migrations\20220324153839_test.cs" />
     <Compile Remove="Migrations\20220324153839_test.Designer.cs" />
+    <Compile Remove="Migrations\20220328095016_clinicalTrials.cs" />
+    <Compile Remove="Migrations\20220328095016_clinicalTrials.Designer.cs" />
   </ItemGroup>
 
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.9" />
-    <PackageReference Include="Microsoft.AspNetCore.Session" Version="2.2.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.0.3" PrivateAssets="All" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.4" PrivateAssets="All" />
     <PackageReference Include="Sendgrid" Version="9.9.0" />
     <PackageReference Include="toastr" Version="2.1.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Session" Version="2.2.0" />
   </ItemGroup>
 
   <ItemGroup>

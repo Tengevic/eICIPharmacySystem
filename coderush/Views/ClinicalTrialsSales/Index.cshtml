@@ -1,14 +1,15 @@
 ﻿
-@{ ViewData["Title"] = "Clinical Trail Drugs"; }
+@{
+    ViewData["Title"] = "Clinical Trials Sales";
+}
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
-
     <!-- Main content -->
     <section class="content">
         <!-- Default box -->
         <div class="box">
             <div class="box-header with-border">
-                <h3 class="box-title text-primary"><i class="fa fa-tag"></i> @ViewData["Title"]</h3>
+                <h3 class="box-title text-primary"><i class="fa fa-certificate"></i> @ViewData["Title"]</h3>
                 <div class="box-tools pull-right">
                     <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
                             title="Collapse">
@@ -33,28 +34,30 @@
     <!-- /.content -->
 </div>
 <!-- /.content-wrapper -->
-
 @section Styles{
-
 }
-
 @section Scripts{
-
-    <script type="text/javascript">$(function () {
+    <script type="text/javascript">
+        $(function () {
 
             var dataManager = ej.DataManager({
-                url: "/api/ClinicalTrialsProducts",
+                url: "/api/ClinicalTrialsSales",
                 adaptor: new ej.WebApiAdaptor(),
                 offline: true
             });
 
-            var dataManagerUnitOfMeasure = ej.DataManager({
-                url: "/api/UnitOfMeasure",
+            var dataManagerBranch = ej.DataManager({
+                url: "/api/Branch",
                 adaptor: new ej.WebApiAdaptor()
             });
 
-            var dataManagerBranch = ej.DataManager({
-                url: "/api/Branch",
+            var dataManagerCustomer = ej.DataManager({
+                url: "/api/Customer",
+                adaptor: new ej.WebApiAdaptor()
+            });
+
+            var dataManagerSalesType = ej.DataManager({
+                url: "/api/SalesType",
                 adaptor: new ej.WebApiAdaptor()
             });
 
@@ -68,13 +71,13 @@
                     dataSource: ej.DataManager({
                         json: e.result,
                         adaptor: new ej.remoteSaveAdaptor(),
-                        insertUrl: "/api/ClinicalTrialsProducts/Insert",
-                        updateUrl: "/api/ClinicalTrialsProducts/Update",
-                        removeUrl: "/api/ClinicalTrialsProducts/Remove",
+                        insertUrl: "/api/ClinicalTrialsSales/Insert",
+                        updateUrl: "/api/ClinicalTrialsSales/Update",
+                        removeUrl: "/api/ClinicalTrialsSales/Remove",
                     }),
                     toolbarSettings: {
                         showToolbar: true,
-                        toolbarItems: ["add", "edit", "delete", "update", "cancel", "search"]
+                        toolbarItems: ["add", "edit", "delete", "update", "cancel", "search", "printGrid"]
                     },
                     editSettings: {
                         allowEditing: true,
@@ -96,16 +99,17 @@
                     allowPaging: true,
                     pageSettings: { pageSize: 10, printMode: ej.Grid.PrintMode.CurrentPage },
                     columns: [
-                        { field: "ClinicalTrialsProductId", headerText: 'Product Id', isPrimaryKey: true, isIdentity: true, visible: false },
-                        { field: "ProductName", headerText: 'Product Name', validationRules: { required: true } },
-                        { field: "UnitOfMeasureId", headerText: 'UOM', foreignKeyField: "UnitOfMeasureId", foreignKeyValue: "UnitOfMeasureName", dataSource: dataManagerUnitOfMeasure, validationRules: { required: true } },
-                        { field: "Barcode", headerText: 'Barcode', },
-                        { field: "Description", headerText: 'Description', },
-                        { field: "ProductImageUrl", headerText: 'ProductImageUrl', visible: false },
-                        { field: "DefaultBuyingPrice", headerText: 'Buying Price', editType: "numericedit", format: "{0:n2}" },
-                        { field: "DefaultSellingPrice", headerText: 'Selling Price', editType: "numericedit", format: "{0:n2}" },
-                        { field: "BranchId", headerText: 'Branch', foreignKeyField: "BranchId", foreignKeyValue: "BranchName", dataSource: dataManagerBranch, defaultValue: 1 },
-                        { field: "CurrencyId", headerText: 'Currency', allowEditing: false, foreignKeyField: "CurrencyId", foreignKeyValue: "CurrencyCode", dataSource: dataManagerCurrency, defaultValue: 1 },
+                        { headerText: 'Detail', template: "<a href='/ClinicalTrialsSales/Detail/{{:ClinicalTrialsSalesId}}'>Detail</a>" },
+                        { field: "ClinicalTrialsSalesId", headerText: 'CTS Id', isPrimaryKey: true, isIdentity: true, visible: false },
+                        { field: "ClinicalTrialsSalesName", headerText: 'SO#', allowEditing: false },
+                        //{ field: "BranchId", headerText: 'Branch', foreignKeyField: "BranchId", foreignKeyValue: "BranchName", dataSource: dataManagerBranch, validationRules: { required: true } },
+                        { field: "CustomerId", headerText: 'Customer', foreignKeyField: "CustomerId", foreignKeyValue: "CustomerName", dataSource: dataManagerCustomer, validationRules: { required: true } },
+                        { field: "OrderDate", headerText: 'Order Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
+                        { field: "DeliveryDate", headerText: 'Delivery Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
+                        //{ field: "SalesTypeId", headerText: 'Sales Type', foreignKeyField: "SalesTypeId", foreignKeyValue: "SalesTypeName", dataSource: dataManagerSalesType },
+                        //{ field: "CurrencyId", headerText: 'Currency', allowEditing: false, foreignKeyField: "CurrencyId", foreignKeyValue: "CurrencyName", dataSource: dataManagerCurrency }
+                        { field: "PatientRefNumber", headerText: 'Cust. Ref#', validationRules: { required: true } },
+                       
                     ],
                     actionComplete: "complete",
                 });
@@ -135,6 +139,8 @@
                     });
                 }
             })
-        }</script>
-}
+        }
 
+
+    </script>
+}

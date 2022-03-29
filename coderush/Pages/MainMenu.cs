@@ -23,6 +23,14 @@ namespace coderush.Pages
             public const string ControllerName = "Customer";
             public const string ActionName = "Index";
         }
+         public static class ClinicalTrialsDonations
+        {
+            public const string PageName = "ClinicalTrialsDonations";
+            public const string RoleName = "ClinicalTrialsDonations";
+            public const string Path = "/ClinicalTrialsDonations/Index";
+            public const string ControllerName = "ClinicalTrialsDonations";
+            public const string ActionName = "Index";
+        }
         public static class ClinicalTrialsProducts
         {
             public const string PageName = "ClinicalTrialsProducts";
@@ -31,7 +39,22 @@ namespace coderush.Pages
             public const string ControllerName = "ClinicalTrialsProducts";
             public const string ActionName = "Index";
         }
+        public static class ClinicalTrialsSales
+        {
+            public const string PageName = "ClinicalTrialsSales";
+            public const string RoleName = "ClinicalTrialsSales";
+            public const string Path = "/ClinicalTrialsSales/Index";
+            public const string ControllerName = "ClinicalTrialsSales";
 
+        }
+        public static class ClinicalTrialsStock
+        {
+            public const string PageName = "ClinicalTrialsStock";
+            public const string RoleName = "ClinicalTrialsStock";
+            public const string Path = "/ClinicalTrialsStock/Index";
+            public const string ControllerName = "ClinicalTrialsStock";
+
+        }
         public static class Vendor
         {
             public const string PageName = "Vendor";

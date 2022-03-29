@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace coderush.Models
 {
-    public class ClinicalTrialsProducts
+    public class ClinicalTrialsProduct
     {
-        public int ClinicalTrialsProductsId { get; set; }
+        public int ClinicalTrialsProductId { get; set; }
         [Required]
         public string ProductName { get; set; }
         public string ProductCode { get; set; }

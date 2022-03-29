@@ -108,7 +108,7 @@
                         { field: "PurchaseOrderId", headerText: 'PO Id', isPrimaryKey: true, isIdentity: true, visible: false },
                         { field: "PurchaseOrderName", headerText: 'PO#', allowEditing: false },
                         { field: "BranchId", headerText: 'Branch', foreignKeyField: "BranchId", foreignKeyValue: "BranchName", dataSource: dataManagerBranch, validationRules: { required: true }, defaultValue: 1 , visible: false},
-                        { field: "VendorId", headerText: 'Vendor', foreignKeyField: "VendorId", foreignKeyValue: "VendorName", dataSource: dataManagerVendor, validationRules: { required: true }, defaultValue: 1, visible: false },
+                        { field: "VendorId", headerText: 'Vendor', foreignKeyField: "VendorId", foreignKeyValue: "VendorName", dataSource: dataManagerVendor, validationRules: { required: true } },
                         { field: "OrderDate", headerText: 'Order Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
                         { field: "DeliveryDate", headerText: 'Delivery Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
                         { field: "PurchaseTypeId", headerText: 'Purchase Type', foreignKeyField: "PurchaseTypeId", foreignKeyValue: "PurchaseTypeName", dataSource: dataManagerPurchaseType, defaultValue: 1, visible: false},

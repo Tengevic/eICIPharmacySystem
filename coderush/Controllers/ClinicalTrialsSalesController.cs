@@ -4,17 +4,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using coderush.Data;
 using coderush.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace coderush.Controllers
 {
-    [Authorize(Roles = Pages.MainMenu.SalesOrder.RoleName)]
-    public class SalesOrderController : Controller
+    public class ClinicalTrialsSalesController : Controller
     {
         private readonly ApplicationDbContext _context;
-      
-        public SalesOrderController(ApplicationDbContext context)
+
+        public ClinicalTrialsSalesController(ApplicationDbContext context)
         {
             _context = context;
         }
@@ -26,13 +24,13 @@ namespace coderush.Controllers
 
         public IActionResult Detail(int id)
         {
-            SalesOrder salesOrder = _context.SalesOrder.SingleOrDefault(x => x.SalesOrderId.Equals(id));
+            ClinicalTrialsSales clinicalTrialsSales = _context.ClinicalTrialsSales.SingleOrDefault(x => x.ClinicalTrialsSalesId.Equals(id));
 
-            if (salesOrder == null)
+            if (clinicalTrialsSales == null)
             {
                 return NotFound();
             }
-            return View(salesOrder);
+            return View(clinicalTrialsSales);
         }
     }
 }

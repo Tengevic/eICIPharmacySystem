@@ -25,13 +25,13 @@ namespace coderush.Models
         public string PatientRefNumber { get; set; }
         //[Display(Name = "Sales Type")]
         //public int SalesTypeId { get; set; }
-        public string Remarks { get; set; }
-        public double Amount { get; set; }
-        public double SubTotal { get; set; }
-        public double Discount { get; set; }
-        public double Tax { get; set; }
-        public double Freight { get; set; }
-        public double Total { get; set; }
+        //public string Remarks { get; set; }
+        //public double Amount { get; set; }
+        //public double SubTotal { get; set; }
+        //public double Discount { get; set; }
+        //public double Tax { get; set; }
+        //public double Freight { get; set; }
+        //public double Total { get; set; }
         public List<ClinicalTrialsSalesLine> clinicalTrialsSalesLine { get; set; } = new List<ClinicalTrialsSalesLine>();
     }
 }

@@ -9,7 +9,7 @@ namespace coderush.Models
     {
         public int ClinicalTrialsStockId { get; set; }
         public int ClinicalTrialsProductsId { get; set; }
-        public ClinicalTrialsProducts clinicalTrialsProducts { get; set; }
+        public ClinicalTrialsProduct clinicalTrialsProducts { get; set; }
         public double TotalRecieved { get; set; }
         public double TotalSales { get; set; }
         public double InStock { get; set; }

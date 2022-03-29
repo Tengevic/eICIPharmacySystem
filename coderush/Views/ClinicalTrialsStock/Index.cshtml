@@ -1,6 +1,6 @@
 ﻿
 @{
-    ViewData["Title"] = "Stocks";
+    ViewData["Title"] = "Clinical Trials Stocks";
 }
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
@@ -41,12 +41,12 @@
         $(function () {
 
             var dataManager = ej.DataManager({
-                url: "/api/Stocks",
+                url: "/api/ClinicalTrialsStocks",
                 adaptor: new ej.WebApiAdaptor(),
                 offline: true
             });
             var dataManagerProduct = ej.DataManager({
-                url: "/api/Product",
+                url: "/api/ClinicalTrialsProducts",
                 adaptor: new ej.WebApiAdaptor()
             });
 
@@ -56,7 +56,7 @@
                     dataSource: ej.DataManager({
                         json: e.result,
                         adaptor: new ej.remoteSaveAdaptor(),
-                        insertUrl: "/api/Stocks/Insert",
+                        insertUrl: "/api/ClinicalTrialsStocks/Insert",
                         //updateUrl: "/api/Stocks/Update",
                         //removeUrl: "/api/Stocks/Remove",
                     }),
@@ -84,9 +84,9 @@
                     allowPaging: true,
                     pageSettings: { pageSize: 10, printMode: ej.Grid.PrintMode.CurrentPage },
                     columns: [
-                        { headerText: 'Detail', template: "<a href='/Stocks/Detail/{{:ProductId}}'>Detail</a>" },
-                        { field: "StockId", headerText: 'StockId', isPrimaryKey: true, isIdentity: true, visible: false },
-                        { field: "ProductId", headerText: 'Drug', foreignKeyField: "ProductId", foreignKeyValue: "ProductName", dataSource: dataManagerProduct },
+                       // { headerText: 'Detail', template: "<a href='/Stocks/Detail/{{:ProductId}}'>Detail</a>" },
+                        { field: "ClinicalTrialsStockId", headerText: 'StockId', isPrimaryKey: true, isIdentity: true, visible: false },
+                        { field: "ClinicalTrialsProductsId", headerText: 'Drug', foreignKeyField: "ClinicalTrialsProductId", foreignKeyValue: "ProductName", dataSource: dataManagerProduct },
                         { field: "TotalRecieved", headerText: 'total Units Recieved', defaultValue: 0, editType: "numericedit", allowEditing: false },
                         { field: "TotalSales", headerText: 'Total Units sold', defaultValue: 0, editType: "numericedit", allowEditing: false },
                         { field: "InStock", headerText: ' Units in stock', defaultValue: 0, editType: "numericedit", allowEditing: false },

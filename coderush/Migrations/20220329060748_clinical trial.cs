@@ -5,10 +5,16 @@ using System.Collections.Generic;
 
 namespace coderush.Migrations
 {
-    public partial class clinicalTrials : Migration
+    public partial class clinicaltrial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AddColumn<double>(
+                name: "Deficit",
+                table: "Stock",
+                nullable: false,
+                defaultValue: 0.0);
+
             migrationBuilder.CreateTable(
                 name: "ClinicalTrialsDonation",
                 columns: table => new
@@ -30,7 +36,7 @@ namespace coderush.Migrations
                 name: "ClinicalTrialsProducts",
                 columns: table => new
                 {
-                    ClinicalTrialsProductsId = table.Column<int>(nullable: false)
+                    ClinicalTrialsProductId = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Barcode = table.Column<string>(nullable: true),
                     BranchId = table.Column<int>(nullable: false),
@@ -45,31 +51,7 @@ namespace coderush.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ClinicalTrialsProducts", x => x.ClinicalTrialsProductsId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ClinicalTrialsSales",
-                columns: table => new
-                {
-                    ClinicalTrialsSalesId = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Amount = table.Column<double>(nullable: false),
-                    ClinicalTrialsSalesName = table.Column<string>(nullable: true),
-                    CustomerId = table.Column<int>(nullable: false),
-                    DeliveryDate = table.Column<DateTimeOffset>(nullable: false),
-                    Discount = table.Column<double>(nullable: false),
-                    Freight = table.Column<double>(nullable: false),
-                    OrderDate = table.Column<DateTimeOffset>(nullable: false),
-                    PatientRefNumber = table.Column<string>(nullable: true),
-                    Remarks = table.Column<string>(nullable: true),
-                    SubTotal = table.Column<double>(nullable: false),
-                    Tax = table.Column<double>(nullable: false),
-                    Total = table.Column<double>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ClinicalTrialsSales", x => x.ClinicalTrialsSalesId);
+                    table.PrimaryKey("PK_ClinicalTrialsProducts", x => x.ClinicalTrialsProductId);
                 });
 
             migrationBuilder.CreateTable(
@@ -99,7 +81,7 @@ namespace coderush.Migrations
                         name: "FK_ClinicalTrialsDonationLine_ClinicalTrialsProducts_ClinicalTrialsProductsId",
                         column: x => x.ClinicalTrialsProductsId,
                         principalTable: "ClinicalTrialsProducts",
-                        principalColumn: "ClinicalTrialsProductsId",
+                        principalColumn: "ClinicalTrialsProductId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -122,37 +104,7 @@ namespace coderush.Migrations
                         name: "FK_ClinicalTrialsStock_ClinicalTrialsProducts_ClinicalTrialsProductsId",
                         column: x => x.ClinicalTrialsProductsId,
                         principalTable: "ClinicalTrialsProducts",
-                        principalColumn: "ClinicalTrialsProductsId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ClinicalTrialsSalesLine",
-                columns: table => new
-                {
-                    ClinicalTrialsSalesLineId = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Amount = table.Column<double>(nullable: false),
-                    ClinicalTrialsProductsId = table.Column<int>(nullable: false),
-                    ClinicalTrialsSalesId = table.Column<int>(nullable: false),
-                    Description = table.Column<string>(nullable: true),
-                    DiscountAmount = table.Column<double>(nullable: false),
-                    DiscountPercentage = table.Column<double>(nullable: false),
-                    Price = table.Column<double>(nullable: false),
-                    Quantity = table.Column<double>(nullable: false),
-                    SubTotal = table.Column<double>(nullable: false),
-                    TaxAmount = table.Column<double>(nullable: false),
-                    TaxPercentage = table.Column<double>(nullable: false),
-                    Total = table.Column<double>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ClinicalTrialsSalesLine", x => x.ClinicalTrialsSalesLineId);
-                    table.ForeignKey(
-                        name: "FK_ClinicalTrialsSalesLine_ClinicalTrialsSales_ClinicalTrialsSalesId",
-                        column: x => x.ClinicalTrialsSalesId,
-                        principalTable: "ClinicalTrialsSales",
-                        principalColumn: "ClinicalTrialsSalesId",
+                        principalColumn: "ClinicalTrialsProductId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -176,11 +128,6 @@ namespace coderush.Migrations
                 name: "IX_ClinicalTrialsDonationLine_ClinicalTrialsProductsId",
                 table: "ClinicalTrialsDonationLine",
                 column: "ClinicalTrialsProductsId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ClinicalTrialsSalesLine_ClinicalTrialsSalesId",
-                table: "ClinicalTrialsSalesLine",
-                column: "ClinicalTrialsSalesId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ClinicalTrialsStock_ClinicalTrialsProductsId",
@@ -219,16 +166,10 @@ namespace coderush.Migrations
                 name: "ClinicalTrialsDonationLine");
 
             migrationBuilder.DropTable(
-                name: "ClinicalTrialsSalesLine");
-
-            migrationBuilder.DropTable(
                 name: "ClinicalTrialsStock");
 
             migrationBuilder.DropTable(
                 name: "ClinicalTrialsDonation");
-
-            migrationBuilder.DropTable(
-                name: "ClinicalTrialsSales");
 
             migrationBuilder.DropTable(
                 name: "ClinicalTrialsProducts");
@@ -240,6 +181,10 @@ namespace coderush.Migrations
             migrationBuilder.DropIndex(
                 name: "IX_GoodsRecievedNoteLine_ProductId",
                 table: "GoodsRecievedNoteLine");
+
+            migrationBuilder.DropColumn(
+                name: "Deficit",
+                table: "Stock");
         }
     }
 }

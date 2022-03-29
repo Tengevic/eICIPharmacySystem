@@ -11,8 +11,8 @@ using System;
 namespace coderush.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220328095016_clinicalTrials")]
-    partial class clinicalTrials
+    [Migration("20220329060748_clinical trial")]
+    partial class clinicaltrial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -204,9 +204,9 @@ namespace coderush.Migrations
                     b.ToTable("ClinicalTrialsDonationLine");
                 });
 
-            modelBuilder.Entity("coderush.Models.ClinicalTrialsProducts", b =>
+            modelBuilder.Entity("coderush.Models.ClinicalTrialsProduct", b =>
                 {
-                    b.Property<int>("ClinicalTrialsProductsId")
+                    b.Property<int>("ClinicalTrialsProductId")
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("Barcode");
@@ -230,79 +230,9 @@ namespace coderush.Migrations
 
                     b.Property<int>("UnitOfMeasureId");
 
-                    b.HasKey("ClinicalTrialsProductsId");
+                    b.HasKey("ClinicalTrialsProductId");
 
                     b.ToTable("ClinicalTrialsProducts");
-                });
-
-            modelBuilder.Entity("coderush.Models.ClinicalTrialsSales", b =>
-                {
-                    b.Property<int>("ClinicalTrialsSalesId")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<double>("Amount");
-
-                    b.Property<string>("ClinicalTrialsSalesName");
-
-                    b.Property<int>("CustomerId");
-
-                    b.Property<DateTimeOffset>("DeliveryDate");
-
-                    b.Property<double>("Discount");
-
-                    b.Property<double>("Freight");
-
-                    b.Property<DateTimeOffset>("OrderDate");
-
-                    b.Property<string>("PatientRefNumber");
-
-                    b.Property<string>("Remarks");
-
-                    b.Property<double>("SubTotal");
-
-                    b.Property<double>("Tax");
-
-                    b.Property<double>("Total");
-
-                    b.HasKey("ClinicalTrialsSalesId");
-
-                    b.ToTable("ClinicalTrialsSales");
-                });
-
-            modelBuilder.Entity("coderush.Models.ClinicalTrialsSalesLine", b =>
-                {
-                    b.Property<int>("ClinicalTrialsSalesLineId")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<double>("Amount");
-
-                    b.Property<int>("ClinicalTrialsProductsId");
-
-                    b.Property<int>("ClinicalTrialsSalesId");
-
-                    b.Property<string>("Description");
-
-                    b.Property<double>("DiscountAmount");
-
-                    b.Property<double>("DiscountPercentage");
-
-                    b.Property<double>("Price");
-
-                    b.Property<double>("Quantity");
-
-                    b.Property<double>("SubTotal");
-
-                    b.Property<double>("TaxAmount");
-
-                    b.Property<double>("TaxPercentage");
-
-                    b.Property<double>("Total");
-
-                    b.HasKey("ClinicalTrialsSalesLineId");
-
-                    b.HasIndex("ClinicalTrialsSalesId");
-
-                    b.ToTable("ClinicalTrialsSalesLine");
                 });
 
             modelBuilder.Entity("coderush.Models.ClinicalTrialsStock", b =>
@@ -1056,23 +986,15 @@ namespace coderush.Migrations
                         .HasForeignKey("ClinicalTrialsDonationId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("coderush.Models.ClinicalTrialsProducts", "clinicalTrialsProducts")
+                    b.HasOne("coderush.Models.ClinicalTrialsProduct", "clinicalTrialsProducts")
                         .WithMany()
                         .HasForeignKey("ClinicalTrialsProductsId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("coderush.Models.ClinicalTrialsSalesLine", b =>
-                {
-                    b.HasOne("coderush.Models.ClinicalTrialsSales", "clinicalTrialsSales")
-                        .WithMany("clinicalTrialsSalesLine")
-                        .HasForeignKey("ClinicalTrialsSalesId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
             modelBuilder.Entity("coderush.Models.ClinicalTrialsStock", b =>
                 {
-                    b.HasOne("coderush.Models.ClinicalTrialsProducts", "clinicalTrialsProducts")
+                    b.HasOne("coderush.Models.ClinicalTrialsProduct", "clinicalTrialsProducts")
                         .WithOne("TrialsStock")
                         .HasForeignKey("coderush.Models.ClinicalTrialsStock", "ClinicalTrialsProductsId")
                         .OnDelete(DeleteBehavior.Cascade);

@@ -109,21 +109,21 @@
                     <i class="fa fa-tag"></i> <span>@MainMenu.ClinicalTrialsProducts.PageName</span>
                 </a>
             </li>
-            @*<li class="@Html.IsSelected(controller: MainMenu.ProductType.ControllerName)">
-                <a href="@MainMenu.ProductType.Path">
-                    <i class="fa fa-gear"></i> <span>@MainMenu.ProductType.PageName</span>
+            <li class="@Html.IsSelected(controller: MainMenu.ClinicalTrialsDonations.ControllerName)">
+                <a href="@MainMenu.ClinicalTrialsDonations.Path">
+                    <i class="fa fa-gear"></i> <span>@MainMenu.ClinicalTrialsDonations.PageName</span>
                 </a>
             </li>
-            <li class="@Html.IsSelected(controller: MainMenu.Stock.ControllerName)">
-                <a href="@MainMenu.Stock.Path">
-                    <i class="fa fa-gear"></i> <span>@MainMenu.Stock.PageName</span>
+            <li class="@Html.IsSelected(controller: MainMenu.ClinicalTrialsSales.ControllerName)">
+                <a href="@MainMenu.ClinicalTrialsSales.Path">
+                    <i class="fa fa-gear"></i> <span>@MainMenu.ClinicalTrialsSales.PageName</span>
                 </a>
             </li>
-            <li class="@Html.IsSelected(controller: MainMenu.UnitOfMeasure.ControllerName)">
-                <a href="@MainMenu.UnitOfMeasure.Path">
-                    <i class="fa fa-gear"></i> <span>@MainMenu.UnitOfMeasure.PageName</span>
-                </a>
-            </li>*@
+            <li class="@Html.IsSelected(controller: MainMenu.ClinicalTrialsStock.ControllerName)">
+            <a href="@MainMenu.ClinicalTrialsStock.Path">
+                <i class="fa fa-gear"></i> <span>@MainMenu.ClinicalTrialsStock.PageName</span>
+            </a>
+        </li>
             <li class="header">INVENTORY</li>
             <li class="@Html.IsSelected(controller: MainMenu.Product.ControllerName)">
                 <a href="@MainMenu.Product.Path">
@@ -137,7 +137,7 @@
             </li>
             <li class="@Html.IsSelected(controller: MainMenu.Stock.ControllerName)">
                 <a href="@MainMenu.Stock.Path">
-                    <i class="fa fa-gear"></i> <span>@MainMenu.Stock.PageName</span>
+                    <i class="fa fa-database"></i> <span>@MainMenu.Stock.PageName</span>
                 </a>
             </li>
             <li class="@Html.IsSelected(controller: MainMenu.UnitOfMeasure.ControllerName)">

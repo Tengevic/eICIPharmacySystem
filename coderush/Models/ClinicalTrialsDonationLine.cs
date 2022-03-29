@@ -12,7 +12,7 @@ namespace coderush.Models
         public ClinicalTrialsDonation clinicalTrialsDonation { get; set; }
         [Display(Name = "Product Item")]
         public int ClinicalTrialsProductsId { get; set; }
-        public ClinicalTrialsProducts clinicalTrialsProducts { get; set; }
+        public ClinicalTrialsProduct clinicalTrialsProducts { get; set; }
         public string Description { get; set; }
         public double Quantity { get; set; }
         public string BatchID { get; set; }
