@@ -146,6 +146,10 @@
                 url: "/api/Product",
                 adaptor: new ej.WebApiAdaptor()
             });
+            var dataManagerGoodsRecievedNoteLines = ej.DataManager({
+                url: "/api/GoodsRecievedNoteLines",
+                adaptor: new ej.WebApiAdaptor()
+            });
 
             var dataManagerSalesOrder = ej.DataManager({
                 url: "/api/SalesOrder",
@@ -202,6 +206,7 @@
                     allowAdding: true,
                     allowDeleting: true,
                     showDeleteConfirmDialog: true,
+                
 
                 },
                 allowPaging: true,
@@ -209,6 +214,7 @@
                     { field: "SalesOrderLineId", headerText: 'Line Id', isPrimaryKey: true, isIdentity: true, visible: false },
                     { field: "SalesOrderId", headerText: 'SO#', defaultValue: @Model.SalesOrderId, foreignKeyField: "SalesOrderId", foreignKeyValue: "SalesOrderName", dataSource: dataManagerSalesOrder, visible: false },
                     { field: "ProductId", headerText: 'Product', foreignKeyField: "ProductId", foreignKeyValue: "ProductName", dataSource: dataManagerProduct },
+                    { field: "GoodsRecievedNoteLineId", headerText: 'BatchID', foreignKeyField: "GoodsRecievedNoteLineId", foreignKeyValue: "BatchID", dataSource: dataManagerGoodsRecievedNoteLines },
                     { field: "Description", headerText: 'Description' },
                     { field: "Quantity", headerText: 'Qty', defaultValue: 1, editType: "numericedit" },
                     { field: "Price", headerText: 'Cost per unit', defaultValue: 0, editType: "numericedit", format: "{0:n2}" },
@@ -221,6 +227,12 @@
                     { field: "Total", headerText: 'Total', defaultValue: 0, allowEditing: false, editType: "numericedit", format: "{0:n2}" },
                 ],
                 actionComplete: "complete",
+                actionFailure: function (args) {
+                    if (args.requestType == "save") {
+                        var s = ej.parseJSON(args.error.responseText)
+                        toastr.warning(s.message, "Cannot make sale");
+                    }
+                }
             });
             });
 

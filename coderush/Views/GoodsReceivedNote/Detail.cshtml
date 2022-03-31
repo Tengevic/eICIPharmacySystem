@@ -123,7 +123,6 @@
                     allowAdding: true,
                     allowDeleting: true,
                     showDeleteConfirmDialog: true,
-
                 },
                 allowPaging: true,
                 actionFailure: "onFailure",
@@ -136,13 +135,15 @@
                     { field: "Quantity", headerText: 'units/batch', defaultValue: 1, editType: "numericedit"},
                     { field: "ManufareDate", headerText: 'Manufacture Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
                     { field: "ExpiryDate", headerText: 'Expiry Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
-
+                    { field: "Sold", headerText: 'Units sold', defaultValue: 0, editType: "numericedit", allowEditing: false, visible: false  },
+                    { field: "InStock", headerText: ' stock', defaultValue: 0, editType: "numericedit", allowEditing: false, visible: false  },
+                    { field: "Expired", headerText: ' Expired ', defaultValue: 0, editType: "numericedit", allowEditing: false, visible: false  },
                 ],
 
                 actionFailure: function (args) {
                     if (args.requestType == "save") {
                         var s = ej.parseJSON(args.error.responseText)
-                        toastr.info(s.message, "Cannot add drug");
+                        toastr.warning(s.message, "Cannot add drug");
                     }                   
                 }
             });

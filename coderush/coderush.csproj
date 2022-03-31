@@ -25,6 +25,8 @@
     <Compile Remove="Migrations\20220324153839_test.Designer.cs" />
     <Compile Remove="Migrations\20220328095016_clinicalTrials.cs" />
     <Compile Remove="Migrations\20220328095016_clinicalTrials.Designer.cs" />
+    <Compile Remove="Migrations\20220331053110_newStock.cs" />
+    <Compile Remove="Migrations\20220331053110_newStock.Designer.cs" />
   </ItemGroup>
 
 

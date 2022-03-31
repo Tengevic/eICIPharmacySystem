@@ -1,6 +1,6 @@
-﻿@model coderush.Models.Stock
+﻿@model coderush.Models.Product
 @{
-    ViewData["Title"] = "GoodsRecieveDetail";
+    ViewData["Title"] = "Product stock";
 }
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
@@ -25,16 +25,10 @@
                     <div class="row">
                         <dl class="dl-horizontal">
                             <dt>
-                                @Html.DisplayNameFor(model => model.StockId)
+                                @Html.DisplayNameFor(model => model.ProductName)
                             </dt>
                             <dd>
-                                @Html.DisplayFor(model => model.StockId)
-                            </dd>
-                            <dt>
-                                @Html.DisplayNameFor(model => model.ProductId)
-                            </dt>
-                            <dd>
-                                @Html.DisplayFor(model => model.ProductId)
+                                @Html.DisplayFor(model => model.ProductName)
                             </dd>
                             <dt>
                                 @Html.DisplayNameFor(model => model.TotalRecieved)
@@ -48,6 +42,12 @@
                             <dd>
                                 @Html.DisplayFor(model => model.TotalSales)
                             </dd>
+                            <dt>
+                                @Html.DisplayNameFor(model => model.InStock)
+                            </dt>
+                            <dd>
+                                @Html.DisplayFor(model => model.InStock)
+                            </dd>
                         </dl>
                     </div>
 
@@ -60,14 +60,16 @@
             <div class="box-body">
                 <div class="row">
                     <div class="col-lg-12">
-                        <h3> Total Drugs Recieved</h3>
                         <div id="Grid"></div>
-                        <h3> Total Drugs sold</h3>
-                        <div id="Grid2"></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-8">
+                    </div>
+                    <div class="col-lg-4">
 
                     </div>
                 </div>
-
             </div>
         </div>
 
@@ -90,66 +92,52 @@
                 offline: true,
             });
 
-              var dataManagerSales = ej.DataManager({
-                url: "/api/SalesOrderLine",
-                adaptor: new ej.WebApiAdaptor(),
-               headers: [{ "ProductId": @Model.ProductId}],
-                offline: true
-            });
-
             var dataManagerProduct = ej.DataManager({
                 url: "/api/Product",
                 adaptor: new ej.WebApiAdaptor()
             });
 
+            var dataManagerGoodsReceivedNote = ej.DataManager({
+                url: "/api/GoodsReceivedNote",
+                adaptor: new ej.WebApiAdaptor()
+            });
 
             dataManager.ready.done(function (e) {
             $("#Grid").ejGrid({
                 dataSource: ej.DataManager({
                     json: e.result,
                     adaptor: new ej.remoteSaveAdaptor(),
+                  
                 }),
+                toolbarSettings: {
+                    showToolbar: true,
+                    toolbarItems: ["search", "printGrid"]
+                },
+                isResponsive: true,
+                enableResponsiveRow: true,
+                allowSorting: true,
+                allowSearching: true,
+                allowFiltering: true,
+                filterSettings: {
+                    filterType: "excel",
+                    maxFilterChoices: 100,
+                    enableCaseSensitivity: false
+                },
                 allowPaging: true,
                 columns: [
-                  
-                    { field: "ProductId", headerText: 'Drug', foreignKeyField: "ProductId", foreignKeyValue: "ProductName", dataSource: dataManagerProduct },
-                    { field: "Description", headerText: 'Description' },
+                    { field: "GoodsRecievedNoteLineId", headerText: 'Line Id', isPrimaryKey: true, isIdentity: true, visible: false },
+                    { field: "GoodsReceivedNoteId", headerText: 'GNR#', foreignKeyField: "GoodsReceivedNoteId", foreignKeyValue: "GoodsReceivedNoteName", dataSource: dataManagerGoodsReceivedNote, visible: false },
+                    { field: "ProductId", headerText: 'Drug', foreignKeyField: "ProductId", foreignKeyValue: "ProductName", dataSource: dataManagerProduct, visible: false },
                     { field: "BatchID", headerText: 'BatchID' },
-                    { field: "Quantity", headerText: 'units/batch', defaultValue: 1, editType: "numericedit"},
+                    { field: "Description", headerText: 'Description' },
                     { field: "ManufareDate", headerText: 'Manufacture Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
                     { field: "ExpiryDate", headerText: 'Expiry Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
-
+                    { field: "Quantity", headerText: 'units/batch', defaultValue: 1, editType: "numericedit"},
+                    { field: "Sold", headerText: 'Units sold', defaultValue: 0, editType: "numericedit", allowEditing: false },
+                    { field: "InStock", headerText: ' stock', defaultValue: 0, editType: "numericedit", allowEditing: false },
+                    { field: "Expired", headerText: ' Expired ', defaultValue: 0, editType: "numericedit", allowEditing: false },
                 ],
-                actionComplete: "complete",
             });
-            });
-
-
-            dataManagerSales.ready.done(function (e) {
-                $("#Grid2").ejGrid({
-                    dataSource: ej.DataManager({
-                        json: e.result,
-                        adaptor: new ej.remoteSaveAdaptor(),
-                    }),
-                    allowPaging: true,
-                    columns: [
-
-                     
-                    { field: "ProductId", headerText: 'Product', foreignKeyField: "ProductId", foreignKeyValue: "ProductName", dataSource: dataManagerProduct },
-                    { field: "Description", headerText: 'Description' },
-                    { field: "Quantity", headerText: 'Qty', defaultValue: 1, editType: "numericedit" },
-                    { field: "Price", headerText: 'Price', defaultValue: 0, editType: "numericedit", format: "{0:n2}" },
-                    { field: "Amount", headerText: 'Amount', defaultValue: 0, allowEditing: false, editType: "numericedit", format: "{0:n2}" },
-                    { field: "DiscountPercentage", headerText: 'Disc %', defaultValue: 0, editType: "numericedit", format: "{0:n2}" },
-                    { field: "DiscountAmount", headerText: 'Disc Amt', defaultValue: 0, visible: false, editType: "numericedit", format: "{0:n2}" },
-                    { field: "SubTotal", headerText: 'SubTotal', defaultValue: 0, allowEditing: false, editType: "numericedit", format: "{0:n2}" },
-                    { field: "TaxPercentage", headerText: 'Tax %', defaultValue: 0, editType: "numericedit", format: "{0:n2}" },
-                    { field: "TaxAmount", headerText: 'Tax Amt', defaultValue: 0, visible: false, editType: "numericedit", format: "{0:n2}" },
-                    { field: "Total", headerText: 'Total', defaultValue: 0, allowEditing: false, editType: "numericedit", format: "{0:n2}" },
-
-                    ],
-                    actionComplete: "complete",
-                });
             });
 
 

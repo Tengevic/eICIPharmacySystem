@@ -84,8 +84,6 @@ namespace coderush.Data
 
         public DbSet<coderush.Models.GoodsRecievedNoteLine> GoodsRecievedNoteLine { get; set; }
 
-        public DbSet<coderush.Models.Stock> Stock { get; set; }
-
         public DbSet<coderush.Models.ClinicalTrialsProduct> ClinicalTrialsProducts { get; set; }
 
         public DbSet<coderush.Models.ClinicalTrialsDonation> ClinicalTrialsDonation { get; set; }

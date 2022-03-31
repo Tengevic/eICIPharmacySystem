@@ -1,7 +1,5 @@
 ﻿
-@{
-    ViewData["Title"] = "Payment Receive";
-}
+@{ ViewData["Title"] = "Payment Receive"; }
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
 
@@ -24,9 +22,17 @@
             <div class="box-body">
                 <div id="Grid"></div>
             </div>
+            <div id="dialog">
+                <div if ="form">
+                    <label for="Insuarnce"> Insuarnce </label><br />
+                    <input type="text" id="Iname" placeholder="NHIF, etc" />
+                    <input type="file" name="Upload file" id="txtUploadFile" />
+                    <button>Save</button>
+                </div>  
+            </div>
             <!-- /.box-body -->
             <div class="box-footer">
-                
+
             </div>
             <!-- /.box-footer-->
         </div>
@@ -36,14 +42,24 @@
 </div>
 <!-- /.content-wrapper -->
 
+
 @section Styles{
+
+
 
 }
 
 @section Scripts{
 
+
     <script type="text/javascript">
         $(function () {
+            $("button").click(function () {
+                var test = $("#Iname").val();
+                alert(test);
+                $("#dialog").replaceWith("<p>" + "Success" + "<p>" );
+            });
+
 
             var dataManager = ej.DataManager({
                 url: "/api/PaymentReceive",
@@ -61,7 +77,15 @@
                 adaptor: new ej.WebApiAdaptor()
             });
 
-            dataManager.ready.done(function (e) { 
+            dataManager.ready.done(function (e) {
+
+                $('#dialog').ejDialog({
+                    title: "Upload Insuarance files",
+                    showOnInit: false,
+                   
+                });
+
+
                 $("#Grid").ejGrid({
                     dataSource: ej.DataManager({
                         json: e.result,
@@ -107,7 +131,7 @@
             });
 
 
-            
+
         });
 
         function complete(args) {
@@ -134,6 +158,12 @@
                     }
                 });
 
+            }
+            if (args.requestType == 'save') {
+                console.log("test");
+                if (args.data.PaymentTypeId == 2) {
+                    $("#dialog").ejDialog("open");
+                }
             }
         }
 

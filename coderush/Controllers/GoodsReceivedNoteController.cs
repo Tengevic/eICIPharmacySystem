@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace coderush.Controllers
 {
-    [Authorize(Roles = Pages.MainMenu.GoodsReceivedNote.RoleName)]
+    
     public class GoodsReceivedNoteController : Controller
     {
         private readonly ApplicationDbContext _context;

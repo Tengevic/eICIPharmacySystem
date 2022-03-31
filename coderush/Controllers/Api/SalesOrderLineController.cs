@@ -9,6 +9,7 @@ using coderush.Data;
 using coderush.Models;
 using coderush.Models.SyncfusionViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Newtonsoft.Json;
 
 namespace coderush.Controllers.Api
 {
@@ -96,8 +97,8 @@ namespace coderush.Controllers.Api
         {
             try
             {
-                Stock stock = new Stock();
-                stock = _context.Stock
+                Product stock = new Product();
+                stock = _context.Product
                     .Where(x => x.ProductId.Equals(productId))
                     .FirstOrDefault();
 
@@ -190,17 +191,63 @@ namespace coderush.Controllers.Api
                 throw;
             }
         }
+        private void UpdateBatch(int batchId)
+        {
+            try
+            {
+                GoodsRecievedNoteLine batch = _context.GoodsRecievedNoteLine.Find(batchId);
+                if (batch != null)
+                {
+                    List<SalesOrderLine> lines = new List<SalesOrderLine>();
+                    lines = _context.SalesOrderLine.Where(x => x.GoodsRecievedNoteLineId.Equals(batch.GoodsRecievedNoteLineId)).ToList();
+
+                    batch.Sold = lines.Sum(x => x.Quantity);
+                    batch.InStock = batch.Quantity - batch.Sold;
+
+                    _context.Update(batch);
+
+                    _context.SaveChanges();
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
 
         [HttpPost("[action]")]
         public IActionResult Insert([FromBody]CrudViewModel<SalesOrderLine> payload)
         {
             SalesOrderLine salesOrderLine = payload.value;
+            GoodsRecievedNoteLine batch = _context.GoodsRecievedNoteLine.Find(salesOrderLine.GoodsRecievedNoteLineId);
+            
+            if( batch.ProductId != salesOrderLine.ProductId )
+            {
+                Err err = new Err
+                {
+                    message = "Product doesn't have the batchId"
+                };
+                string errMsg = JsonConvert.SerializeObject(err);
+
+                return BadRequest(err);
+            }
+            if (batch.InStock < salesOrderLine.Quantity)
+            {
+                Err err = new Err
+                {
+                    message = $"Stock available for this Batch is {batch.InStock} ",
+                };
+                string errMsg = JsonConvert.SerializeObject(err);
+
+                return BadRequest(err);
+            }
             salesOrderLine = this.Recalculate(salesOrderLine);
             _context.SalesOrderLine.Add(salesOrderLine);
             _context.SaveChanges();
             this.UpdateSalesOrder(salesOrderLine.SalesOrderId);
             this.UpdateStock(salesOrderLine.ProductId);
-            ViewData["Message"] = String.Format("Avaibale stock is");
+            this.UpdateBatch(salesOrderLine.GoodsRecievedNoteLineId);
             return Ok(salesOrderLine);
 
         }
@@ -209,11 +256,34 @@ namespace coderush.Controllers.Api
         public IActionResult Update([FromBody]CrudViewModel<SalesOrderLine> payload)
         {
             SalesOrderLine salesOrderLine = payload.value;
+            GoodsRecievedNoteLine batch = _context.GoodsRecievedNoteLine.Find(salesOrderLine.GoodsRecievedNoteLineId);
+
+            if (batch.ProductId != salesOrderLine.ProductId)
+            {
+                Err err = new Err
+                {
+                    message = "Product doesn't have the batchId"
+                };
+                string errMsg = JsonConvert.SerializeObject(err);
+
+                return BadRequest(err);
+            }
+            if (batch.InStock < salesOrderLine.Quantity)
+            {
+                Err err = new Err
+                {
+                    message = $"Stock available for this Batch is {batch.InStock} ",
+                };
+                string errMsg = JsonConvert.SerializeObject(err);
+
+                return BadRequest(err);
+            }
             salesOrderLine = this.Recalculate(salesOrderLine);
             _context.SalesOrderLine.Update(salesOrderLine);
             _context.SaveChanges();
             this.UpdateSalesOrder(salesOrderLine.SalesOrderId);
             this.UpdateStock(salesOrderLine.ProductId);
+            this.UpdateBatch(salesOrderLine.GoodsRecievedNoteLineId);
             return Ok(salesOrderLine);
         }
 
@@ -227,6 +297,7 @@ namespace coderush.Controllers.Api
             _context.SaveChanges();
             this.UpdateSalesOrder(salesOrderLine.SalesOrderId);
             this.UpdateStock(salesOrderLine.ProductId);
+            this.UpdateBatch(salesOrderLine.GoodsRecievedNoteLineId);
             return Ok(salesOrderLine);
 
         }

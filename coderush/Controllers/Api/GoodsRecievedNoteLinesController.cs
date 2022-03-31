@@ -28,13 +28,33 @@ namespace coderush.Controllers.Api
         public async Task<IActionResult> GetGoodsRecievedNoteLines()
         {
             var headers = Request.Headers["GoodsReceivedNoteId"];
+            var monthsHeaders = Request.Headers["months"];
             var headersProduct = Request.Headers["ProductId"];
             int GoodsReceivedNoteId = Convert.ToInt32(headers);
             int productId = Convert.ToInt32(headersProduct);
+            int months = Convert.ToInt32(monthsHeaders);
 
+            if (months != 0)
+            {
+                DateTime current = DateTime.Now;
+                List<GoodsRecievedNoteLine> drugs = await _context.GoodsRecievedNoteLine
+                                .Where(x => x.InStock > 0)
+                                .ToListAsync();
+                List<GoodsRecievedNoteLine> Items = new List<GoodsRecievedNoteLine>();
 
+                foreach (GoodsRecievedNoteLine drug in drugs)
+                {
+                    Double TotalDays = (drug.ExpiryDate - current).TotalDays;
 
-            if (productId != 0)
+                    if (TotalDays <= 90)
+                    {
+                        Items.Add(drug);
+                    }
+                }
+                int Count = Items.Count();
+                return Ok(new { Items, Count });
+            }
+            else if (productId != 0)
             {
                 List<GoodsRecievedNoteLine> Items = await _context.GoodsRecievedNoteLine
                 .Where(x => x.ProductId.Equals(productId))
@@ -43,7 +63,7 @@ namespace coderush.Controllers.Api
                 int Count = Items.Count();
                 return Ok(new { Items, Count });
             }
-            else
+            else if (GoodsReceivedNoteId != 0)
             {
                 List<GoodsRecievedNoteLine> Items = await _context.GoodsRecievedNoteLine
                 .Where(x => x.GoodsReceivedNoteId.Equals(GoodsReceivedNoteId))
@@ -51,14 +71,20 @@ namespace coderush.Controllers.Api
                 int Count = Items.Count();
                 return Ok(new { Items, Count });
             }
-            
+            else
+            {
+                List<GoodsRecievedNoteLine> Items = await _context.GoodsRecievedNoteLine
+                   .ToListAsync();
+                int Count = Items.Count();
+                return Ok(new { Items, Count });
+            }
         }
         private void UpdateStock(GoodsRecievedNoteLine goodsRecievedNoteLine)
         {
             try
             {
-                Stock stock = new Stock();
-                stock = _context.Stock
+                Product stock = new Product();
+                stock = _context.Product
                     .Where(x => x.ProductId.Equals(goodsRecievedNoteLine.ProductId))
                     .FirstOrDefault();
 
@@ -68,7 +94,8 @@ namespace coderush.Controllers.Api
                     lines = _context.GoodsRecievedNoteLine.Where(x => x.ProductId.Equals(goodsRecievedNoteLine.ProductId)).ToList();
 
                     stock.TotalRecieved = lines.Sum(x => x.Quantity);
-
+                    stock.ExpiredStock = lines.Sum(x => x.Expired);
+                   
                     if (stock.TotalRecieved < stock.TotalSales)
                     {
                         stock.Deficit = stock.TotalSales - stock.TotalRecieved;
@@ -76,7 +103,7 @@ namespace coderush.Controllers.Api
                     }
                     else
                     {
-                        stock.InStock = stock.TotalRecieved - stock.TotalSales;
+                        stock.InStock = stock.TotalRecieved - stock.TotalSales - stock.ExpiredStock;
                         stock.Deficit = 0;
                     }
 
@@ -86,7 +113,7 @@ namespace coderush.Controllers.Api
                     _context.SaveChanges();
 
                 }
-               
+
             }
             catch (Exception)
             {
@@ -95,51 +122,79 @@ namespace coderush.Controllers.Api
             }
 
         }
+        private void UpdateBatch(int batchId)
+        {
+            try
+            {
+                GoodsRecievedNoteLine batch = _context.GoodsRecievedNoteLine.Find(batchId);
+                if (batch != null)
+                {
+                    List<SalesOrderLine> lines = new List<SalesOrderLine>();
+                    lines = _context.SalesOrderLine.Where(x => x.GoodsRecievedNoteLineId.Equals(batch.GoodsRecievedNoteLineId)).ToList();
+
+                    batch.Sold = lines.Sum(x => x.Quantity);
+                    batch.InStock = batch.Quantity - batch.Sold - batch.Expired;
+
+                    _context.Update(batch);
+
+                    _context.SaveChanges();
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
 
 
         // POST: api/GoodsRecievedNoteLines/5
         [HttpPost("[action]")]
-        public IActionResult Insert([FromBody]CrudViewModel<GoodsRecievedNoteLine> payload)
+        public IActionResult Insert([FromBody] CrudViewModel<GoodsRecievedNoteLine> payload)
         {
             GoodsRecievedNoteLine goodsRecievedNoteLine = payload.value;
             DateTime current = DateTime.Now;
             double totaldays = (goodsRecievedNoteLine.ExpiryDate - current).TotalDays;
-            
-            if (totaldays > 360)
-            {
-                _context.GoodsRecievedNoteLine.Add(goodsRecievedNoteLine);
-                _context.SaveChanges();
-                this.UpdateStock(goodsRecievedNoteLine);
-            } else if (totaldays< 360) 
-            {
-                Err err = new Err
-                {
 
-                    message = "Drug will expire less than one year"
-                };
-                string errMsg = JsonConvert.SerializeObject(err);
-                
-                return  BadRequest(err);
+            //if (totaldays < 360)
+            //{
+            //    Err err = new Err
+            //    {
 
-            }
-            
+            //        message = "Drug will expire less than one year"
+            //    };
+            //    string errMsg = JsonConvert.SerializeObject(err);
+
+            //    return BadRequest(err);
+            //}
+
+            goodsRecievedNoteLine.InStock = goodsRecievedNoteLine.Quantity;
+            _context.GoodsRecievedNoteLine.Add(goodsRecievedNoteLine);
+            _context.SaveChanges();
+            this.UpdateStock(goodsRecievedNoteLine);
+
             return Ok(goodsRecievedNoteLine);
         }
         // PUT: api/GoodsRecievedNoteLines
         [HttpPost("[action]")]
-        public IActionResult Update([FromBody]CrudViewModel<GoodsRecievedNoteLine> payload)
+        public IActionResult Update([FromBody] CrudViewModel<GoodsRecievedNoteLine> payload)
         {
             GoodsRecievedNoteLine goodsRecievedNoteLine = payload.value;
+            if (goodsRecievedNoteLine.InStock < goodsRecievedNoteLine.Expired)
+            {
+                Err err = new Err
+                {
+                    message = "Expired Stock cannot be more than stock"
+                };
+                string errMsg = JsonConvert.SerializeObject(err);
+
+                return BadRequest(err);
+            }
+
             DateTime current = DateTime.Now;
             double totaldays = (goodsRecievedNoteLine.ExpiryDate - current).TotalDays;
 
-            if (totaldays > 360)
-            {
-                _context.GoodsRecievedNoteLine.Update(goodsRecievedNoteLine);
-                _context.SaveChanges();
-                this.UpdateStock(goodsRecievedNoteLine);
-            }
-            else if (totaldays < 360)
+            if (totaldays < 360)
             {
                 Err err = new Err
                 {
@@ -148,16 +203,46 @@ namespace coderush.Controllers.Api
                 string errMsg = JsonConvert.SerializeObject(err);
 
                 return BadRequest(err);
-
             }
-           
+          
+            goodsRecievedNoteLine.InStock = goodsRecievedNoteLine.Quantity;
+            _context.GoodsRecievedNoteLine.Update(goodsRecievedNoteLine);
+            _context.SaveChanges();
+            this.UpdateStock(goodsRecievedNoteLine);
+            this.UpdateBatch(goodsRecievedNoteLine.GoodsRecievedNoteLineId);
+
+            return Ok(goodsRecievedNoteLine);
+        }
+        [HttpPost("[action]")]
+        public IActionResult Expired([FromBody] CrudViewModel<GoodsRecievedNoteLine> payload)
+        {
+            GoodsRecievedNoteLine goodsRecievedNoteLine = payload.value;
+
+            GoodsRecievedNoteLine batch = _context.GoodsRecievedNoteLine.Find(goodsRecievedNoteLine.GoodsReceivedNoteId);
+
+            if (goodsRecievedNoteLine.InStock < goodsRecievedNoteLine.Expired)
+            {
+                Err err = new Err
+                {
+                    message = "Expired Stock cannot be more than stock"
+                };
+                string errMsg = JsonConvert.SerializeObject(err);
+
+                return BadRequest(err);
+            }
+            goodsRecievedNoteLine.InStock = goodsRecievedNoteLine.Quantity;
+            _context.GoodsRecievedNoteLine.Update(goodsRecievedNoteLine);
+            _context.SaveChanges();
+            this.UpdateStock(goodsRecievedNoteLine);
+            this.UpdateBatch(goodsRecievedNoteLine.GoodsRecievedNoteLineId);
+
             return Ok(goodsRecievedNoteLine);
         }
 
 
         // DELETE: api/GoodsRecievedNoteLines/5
         [HttpPost("[action]")]
-        public IActionResult Remove([FromBody]CrudViewModel<GoodsRecievedNoteLine> payload)
+        public IActionResult Remove([FromBody] CrudViewModel<GoodsRecievedNoteLine> payload)
         {
             GoodsRecievedNoteLine goodsRecievedNoteLine = _context.GoodsRecievedNoteLine
                 .Where(x => x.GoodsRecievedNoteLineId == (int)payload.key)
@@ -177,7 +262,10 @@ namespace coderush.Controllers.Api
 
             return Ok(result);
         }
+
+
     }
+
     public class Err
     {
         public string message { get; set; }

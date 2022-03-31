@@ -20,7 +20,7 @@
                     </button>
                 </div>
             </div>
-           
+
             <!-- /.box-body -->
         </div>
         <!-- /.box -->
@@ -28,11 +28,8 @@
             <div class="box-body">
                 <div class="row">
                     <div class="col-lg-12">
-                        <h3> Total Drugs Recieved</h3>
+                        <h3> Expiring Drugs</h3>
                         <div id="Grid"></div>
-                        <h3> Total Drugs sold</h3>
-                        <div id="Grid2"></div>
-
                     </div>
                 </div>
 
@@ -44,7 +41,6 @@
 </div>
 <!-- /.content-wrapper -->
 
-
 @section Styles{
 }
 @section Scripts{
@@ -54,15 +50,8 @@
             var dataManager = ej.DataManager({
                 url: "/api/GoodsRecievedNoteLines",
                 adaptor: new ej.WebApiAdaptor(),
-                headers: [{ "ProductId": 1}],
+                headers: [{ "months": 30}],
                 offline: true,
-            });
-
-              var dataManagerSales = ej.DataManager({
-                url: "/api/SalesOrderLine",
-                adaptor: new ej.WebApiAdaptor(),
-               headers: [{ "ProductId": 1],
-                offline: true
             });
 
             var dataManagerProduct = ej.DataManager({
@@ -70,54 +59,60 @@
                 adaptor: new ej.WebApiAdaptor()
             });
 
+            var dataManagerGoodsReceivedNote = ej.DataManager({
+                url: "/api/GoodsReceivedNote",
+                adaptor: new ej.WebApiAdaptor()
+            });
 
             dataManager.ready.done(function (e) {
             $("#Grid").ejGrid({
                 dataSource: ej.DataManager({
                     json: e.result,
                     adaptor: new ej.remoteSaveAdaptor(),
+                    updateUrl: "/api/GoodsRecievedNoteLines/Expired",
+
                 }),
+                toolbarSettings: {
+                    showToolbar: true,
+                    toolbarItems: ["add", "edit", "delete", "update", "cancel"]
+                },
+                editSettings: {
+                    allowEditing: true,
+                    allowAdding: false,
+                    allowDeleting: false,
+                    showDeleteConfirmDialog: true,
+                },
+                isResponsive: true,
+                enableResponsiveRow: true,
+                allowSorting: true,
+                allowSearching: true,
+                allowFiltering: true,
+                filterSettings: {
+                    filterType: "excel",
+                    maxFilterChoices: 100,
+                    enableCaseSensitivity: false
+                },
                 allowPaging: true,
                 columns: [
-
-                    { field: "ProductId", headerText: 'Drug', foreignKeyField: "ProductId", foreignKeyValue: "ProductName", dataSource: dataManagerProduct },
-                    { field: "Description", headerText: 'Description' },
-                    { field: "BatchID", headerText: 'BatchID' },
-                    { field: "Quantity", headerText: 'units/batch', defaultValue: 1, editType: "numericedit"},
-                    { field: "ManufareDate", headerText: 'Manufacture Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
-                    { field: "ExpiryDate", headerText: 'Expiry Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
-
+                    { field: "GoodsRecievedNoteLineId", headerText: 'Line Id', isPrimaryKey: true, isIdentity: true, visible: false },
+                    { field: "GoodsReceivedNoteId", headerText: 'GNR#', foreignKeyField: "GoodsReceivedNoteId", foreignKeyValue: "GoodsReceivedNoteName", dataSource: dataManagerGoodsReceivedNote, visible: false },
+                    { field: "ProductId", headerText: 'Drug', foreignKeyField: "ProductId", foreignKeyValue: "ProductName", dataSource: dataManagerProduct, allowEditing: false },
+                    { field: "BatchID", headerText: 'BatchID', allowEditing: false},
+                    { field: "Description", headerText: 'Description', allowEditing: false },
+                    { field: "ManufareDate", headerText: 'Manufacture Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true }, allowEditing: false },
+                    { field: "ExpiryDate", headerText: 'Expiry Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true }, allowEditing: false },
+                    { field: "Quantity", headerText: 'units/batch', defaultValue: 1, editType: "numericedit", allowEditing: false},
+                    { field: "Sold", headerText: 'Units sold', defaultValue: 0, editType: "numericedit", allowEditing: false },
+                    { field: "InStock", headerText: ' stock', defaultValue: 0, editType: "numericedit", allowEditing: false },
+                    { field: "Expired", headerText: ' Expired ', defaultValue: 0, editType: "numericedit" },
                 ],
-                actionComplete: "complete",
+                actionFailure: function (args) {
+                    if (args.requestType == "save") {
+                        var s = ej.parseJSON(args.error.responseText)
+                        toastr.warning(s.message, "Cannot remove Batch");
+                    }
+                }
             });
-            });
-
-
-            dataManagerSales.ready.done(function (e) {
-                $("#Grid2").ejGrid({
-                    dataSource: ej.DataManager({
-                        json: e.result,
-                        adaptor: new ej.remoteSaveAdaptor(),
-                    }),
-                    allowPaging: true,
-                    columns: [
-
-
-                    { field: "ProductId", headerText: 'Product', foreignKeyField: "ProductId", foreignKeyValue: "ProductName", dataSource: dataManagerProduct },
-                    { field: "Description", headerText: 'Description' },
-                    { field: "Quantity", headerText: 'Qty', defaultValue: 1, editType: "numericedit" },
-                    { field: "Price", headerText: 'Price', defaultValue: 0, editType: "numericedit", format: "{0:n2}" },
-                    { field: "Amount", headerText: 'Amount', defaultValue: 0, allowEditing: false, editType: "numericedit", format: "{0:n2}" },
-                    { field: "DiscountPercentage", headerText: 'Disc %', defaultValue: 0, editType: "numericedit", format: "{0:n2}" },
-                    { field: "DiscountAmount", headerText: 'Disc Amt', defaultValue: 0, visible: false, editType: "numericedit", format: "{0:n2}" },
-                    { field: "SubTotal", headerText: 'SubTotal', defaultValue: 0, allowEditing: false, editType: "numericedit", format: "{0:n2}" },
-                    { field: "TaxPercentage", headerText: 'Tax %', defaultValue: 0, editType: "numericedit", format: "{0:n2}" },
-                    { field: "TaxAmount", headerText: 'Tax Amt', defaultValue: 0, visible: false, editType: "numericedit", format: "{0:n2}" },
-                    { field: "Total", headerText: 'Total', defaultValue: 0, allowEditing: false, editType: "numericedit", format: "{0:n2}" },
-
-                    ],
-                    actionComplete: "complete",
-                });
             });
 
 

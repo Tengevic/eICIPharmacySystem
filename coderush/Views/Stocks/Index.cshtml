@@ -1,15 +1,14 @@
 ﻿
-@{
-    ViewData["Title"] = "Stocks";
-}
+@{ ViewData["Title"] = "Stock"; }
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
+
     <!-- Main content -->
     <section class="content">
         <!-- Default box -->
         <div class="box">
             <div class="box-header with-border">
-                <h3 class="box-title text-primary"><i class="fa fa-database"></i> @ViewData["Title"]</h3>
+                <h3 class="box-title text-primary"><i class="fa fa-tag"></i> @ViewData["Title"]</h3>
                 <div class="box-tools pull-right">
                     <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
                             title="Collapse">
@@ -34,42 +33,47 @@
     <!-- /.content -->
 </div>
 <!-- /.content-wrapper -->
+
 @section Styles{
+
 }
+
 @section Scripts{
+
     <script type="text/javascript">
         $(function () {
 
             var dataManager = ej.DataManager({
-                url: "/api/Stocks",
+                url: "/api/Product",
                 adaptor: new ej.WebApiAdaptor(),
                 offline: true
             });
-            var dataManagerProduct = ej.DataManager({
-                url: "/api/Product",
+
+            var dataManagerUnitOfMeasure = ej.DataManager({
+                url: "/api/UnitOfMeasure",
                 adaptor: new ej.WebApiAdaptor()
             });
 
+            var dataManagerBranch = ej.DataManager({
+                url: "/api/Branch",
+                adaptor: new ej.WebApiAdaptor()
+            });
+
+            var dataManagerCurrency = ej.DataManager({
+                url: "/api/Currency",
+                adaptor: new ej.WebApiAdaptor()
+            });
 
             dataManager.ready.done(function (e) {
                 $("#Grid").ejGrid({
                     dataSource: ej.DataManager({
                         json: e.result,
                         adaptor: new ej.remoteSaveAdaptor(),
-                        insertUrl: "/api/Stocks/Insert",
-                        //updateUrl: "/api/Stocks/Update",
-                        //removeUrl: "/api/Stocks/Remove",
+                      
                     }),
                     toolbarSettings: {
-                        showToolbar: false,
-                        toolbarItems: ["add", "edit", "delete", "update", "cancel", "search", "printGrid"]
-                    },
-                    editSettings: {
-                        allowEditing: false,
-                        allowAdding: true,
-                        allowDeleting: false,
-                        showDeleteConfirmDialog: true,
-                        editMode: "dialog"
+                        showToolbar: true,
+                        toolbarItems: [ "search", "printGrid"]
                     },
                     isResponsive: true,
                     enableResponsiveRow: true,
@@ -85,12 +89,21 @@
                     pageSettings: { pageSize: 10, printMode: ej.Grid.PrintMode.CurrentPage },
                     columns: [
                         { headerText: 'Detail', template: "<a href='/Stocks/Detail/{{:ProductId}}'>Detail</a>" },
-                        { field: "StockId", headerText: 'StockId', isPrimaryKey: true, isIdentity: true, visible: false },
-                        { field: "ProductId", headerText: 'Drug', foreignKeyField: "ProductId", foreignKeyValue: "ProductName", dataSource: dataManagerProduct },
+                        { field: "ProductId", headerText: 'Product Id', isPrimaryKey: true, isIdentity: true, visible: false },
+                        { field: "ProductName", headerText: 'Product Name', validationRules: { required: true } },
+                        { field: "UnitOfMeasureId", headerText: 'UOM', foreignKeyField: "UnitOfMeasureId", foreignKeyValue: "UnitOfMeasureName", dataSource: dataManagerUnitOfMeasure, validationRules: { required: true }, visible: false },
+                        { field: "Barcode", headerText: 'Barcode', visible: false },
+                        { field: "Description", headerText: 'Description', visible: false },
+                        { field: "ProductImageUrl", headerText: 'ProductImageUrl', visible: false },
+                        { field: "DefaultBuyingPrice", headerText: 'Buying Price', editType: "numericedit", format: "{0:n2}", visible: false },
+                        { field: "DefaultSellingPrice", headerText: 'Selling Price', editType: "numericedit", format: "{0:n2}", visible: false },
+                        { field: "BranchId", headerText: 'Branch', foreignKeyField: "BranchId", foreignKeyValue: "BranchName", dataSource: dataManagerBranch, defaultValue: 1, visible: false },
+                        { field: "CurrencyId", headerText: 'Currency', allowEditing: false, foreignKeyField: "CurrencyId", foreignKeyValue: "CurrencyCode", dataSource: dataManagerCurrency, visible: false },
                         { field: "TotalRecieved", headerText: 'total Units Recieved', defaultValue: 0, editType: "numericedit", allowEditing: false },
                         { field: "TotalSales", headerText: 'Total Units sold', defaultValue: 0, editType: "numericedit", allowEditing: false },
                         { field: "InStock", headerText: ' Units in stock', defaultValue: 0, editType: "numericedit", allowEditing: false },
                         { field: "Deficit", headerText: ' Deficit stock', defaultValue: 0, editType: "numericedit", allowEditing: false },
+                        { field: "ExpiredStock", headerText: ' Expired stock', defaultValue: 0, editType: "numericedit", allowEditing: false },
                     ],
                     actionComplete: "complete",
                 });
@@ -99,9 +112,6 @@
 
         });
 
-        function complete(args) {
-            if (args.requestType == 'beginedit') {
-                $("#" + this._id + "_dialogEdit").ejDialog({ title: "Edit Record" });
-            }
-        }</script>
+    </script>
 }
+

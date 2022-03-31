@@ -36,7 +36,6 @@ namespace coderush.Controllers.Api
         public async Task<IActionResult> GetByProductName([FromRoute] string name)
         {
             var product = from p in _context.Product
-                                    .Include(x => x.stock)
                           select p;
 
             if (!String.IsNullOrEmpty(name))
