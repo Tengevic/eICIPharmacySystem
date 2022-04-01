@@ -101,8 +101,8 @@
                 adaptor: new ej.WebApiAdaptor()
             });
 
-            var dataManagerStock = ej.DataManager({
-                url: "/api/Branch",
+            var dataManagerClinicalTrialsDonationLines = ej.DataManager({
+                url: "/api/ClinicalTrialsDonationLines",
                 adaptor: new ej.WebApiAdaptor()
             });
 
@@ -158,6 +158,7 @@
                     { field: "ClinicalTrialsSalesLineId", headerText: 'Line Id', isPrimaryKey: true, isIdentity: true, visible: false },
                     { field: "ClinicalTrialsSalesId", headerText: 'SO#', defaultValue: @Model.ClinicalTrialsSalesId, foreignKeyField: "ClinicalTrialsSalesId", foreignKeyValue: "ClinicalTrialsSalesName", dataSource: dataManagerClinicalTrialsSales, visible: false },
                     { field: "ClinicalTrialsProductsId", headerText: 'Drug', foreignKeyField: "ClinicalTrialsProductId", foreignKeyValue: "ProductName", dataSource: dataManagerProduct },
+                    { field: "ClinicalTrialsDonationLineId", headerText: 'BatchID', foreignKeyField: "ClinicalTrialsDonationLineId", foreignKeyValue: "BatchID", dataSource: dataManagerClinicalTrialsDonationLines },
                     { field: "Quantity", headerText: 'Qty', defaultValue: 1, editType: "numericedit" },
                     { field: "Price", headerText: 'Cost per unit', defaultValue: 0, editType: "numericedit", format: "{0:n2}" },
                     { field: "Amount", headerText: 'Amount', defaultValue: 0, editType: "numericedit", format: "{0:n2}" },
@@ -169,6 +170,12 @@
                     { field: "Total", headerText: 'Total', defaultValue: 0, editType: "numericedit", format: "{0:n2}" },
                 ],
                 actionComplete: "complete",
+                actionFailure: function (args) {
+                    if (args.requestType == "save") {
+                        var s = ej.parseJSON(args.error.responseText)
+                        toastr.warning(s.message, "Cannot make sale");
+                    }
+                }
             });
             });
 

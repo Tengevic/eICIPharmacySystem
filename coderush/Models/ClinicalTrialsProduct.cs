@@ -23,6 +23,10 @@ namespace coderush.Models
         public int BranchId { get; set; }
         [Display(Name = "Currency")]
         public int CurrencyId { get; set; }
-        public ClinicalTrialsStock TrialsStock { get; set; } 
+        public double TotalRecieved { get; set; }
+        public double TotalSales { get; set; }
+        public double InStock { get; set; }
+        public double Deficit { get; set; }
+        public double Expired { get; set; }
     }
 }

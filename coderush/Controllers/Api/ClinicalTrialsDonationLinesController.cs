@@ -28,12 +28,55 @@ namespace coderush.Controllers.Api
         public async Task<IActionResult> GetGoodsRecievedNoteLines()
         {
             var headers = Request.Headers["ClinicalTrialsDonationId"];
+            var productHeader = Request.Headers["product"];
+            var monthsHeader = Request.Headers["months"];
             int ClinicalTrialsDonationId = Convert.ToInt32(headers);
-            List<ClinicalTrialsDonationLine> Items = await _context.ClinicalTrialsDonationLine
-            .Where(x => x.ClinicalTrialsDonationId.Equals(ClinicalTrialsDonationId))
-            .ToListAsync();
-            int Count = Items.Count();
-            return Ok(new { Items, Count });
+            int ClinicalTrialsProductId = Convert.ToInt32(productHeader);
+            int months = Convert.ToInt32(monthsHeader);
+
+            if (months != 0)
+            {
+                DateTime current = DateTime.Now;
+                List<ClinicalTrialsDonationLine> drugs = await _context.ClinicalTrialsDonationLine
+                                .Where(x => x.InStock > 0)
+                                .ToListAsync();
+                List<ClinicalTrialsDonationLine> Items = new List<ClinicalTrialsDonationLine>();
+
+                foreach (ClinicalTrialsDonationLine drug in drugs)
+                {
+                    Double TotalDays = (drug.ExpiryDate - current).TotalDays;
+
+                    if (TotalDays <= 90)
+                    {
+                        Items.Add(drug);
+                    }
+                }
+                int Count = Items.Count();
+                return Ok(new { Items, Count });
+            }
+            else if (ClinicalTrialsProductId != 0)
+            {
+                List<ClinicalTrialsDonationLine> Items = await _context.ClinicalTrialsDonationLine
+                .Where(x => x.ClinicalTrialsProductsId.Equals(ClinicalTrialsProductId))
+                .ToListAsync();
+                int Count = Items.Count();
+                return Ok(new { Items, Count });
+            }
+            else if (ClinicalTrialsDonationId != 0)
+            {
+                List<ClinicalTrialsDonationLine> Items = await _context.ClinicalTrialsDonationLine
+                .Where(x => x.ClinicalTrialsDonationId.Equals(ClinicalTrialsDonationId))
+                .ToListAsync();
+                int Count = Items.Count();
+                return Ok(new { Items, Count });
+            }
+            else
+            {
+                List<ClinicalTrialsDonationLine> Items = await _context.ClinicalTrialsDonationLine
+                .ToListAsync();
+                int Count = Items.Count();
+                return Ok(new { Items, Count });
+            }
         }
 
         // GET: api/ClinicalTrialsDonationLines/5
@@ -46,16 +89,17 @@ namespace coderush.Controllers.Api
             return Ok(result);
         }
         [HttpPost("[action]")]
-        public IActionResult Insert([FromBody]CrudViewModel<ClinicalTrialsDonationLine> payload)
+        public IActionResult Insert([FromBody] CrudViewModel<ClinicalTrialsDonationLine> payload)
         {
             ClinicalTrialsDonationLine clinicalTrialsDonationLine = payload.value;
             DateTime current = DateTime.Now;
             double totaldays = (clinicalTrialsDonationLine.ExpiryDate - current).TotalDays;
 
-           // if (totaldays > 360)
-           // {
-                _context.ClinicalTrialsDonationLine.Add(clinicalTrialsDonationLine);
-                _context.SaveChanges();
+            // if (totaldays > 360)
+            // {
+            clinicalTrialsDonationLine.InStock = clinicalTrialsDonationLine.Quantity;
+            _context.ClinicalTrialsDonationLine.Add(clinicalTrialsDonationLine);
+            _context.SaveChanges();
             this.UpdateStock(clinicalTrialsDonationLine.ClinicalTrialsProductsId);
             //}
             //else if (totaldays < 360)
@@ -75,7 +119,7 @@ namespace coderush.Controllers.Api
 
         // POST: api/ClinicalTrialsDonationLines
         [HttpPost("[action]")]
-        public IActionResult Update([FromBody]CrudViewModel<ClinicalTrialsDonationLine> payload)
+        public IActionResult Update([FromBody] CrudViewModel<ClinicalTrialsDonationLine> payload)
         {
             ClinicalTrialsDonationLine clinicalTrialsDonationLine = payload.value;
             DateTime current = DateTime.Now;
@@ -83,8 +127,13 @@ namespace coderush.Controllers.Api
 
             //if (totaldays > 360)
             //{
-                _context.ClinicalTrialsDonationLine.Update(clinicalTrialsDonationLine);
-                _context.SaveChanges();
+            List<ClinicalTrialsSalesLine> lines = new List<ClinicalTrialsSalesLine>();
+            lines = _context.ClinicalTrialsSalesLine.Where(x => x.ClinicalTrialsDonationLineId.Equals(clinicalTrialsDonationLine.ClinicalTrialsDonationLineId)).ToList();
+
+            clinicalTrialsDonationLine.Sold = lines.Sum(x => x.Quantity);
+            clinicalTrialsDonationLine.InStock = clinicalTrialsDonationLine.Quantity - clinicalTrialsDonationLine.Sold - clinicalTrialsDonationLine.Expired;
+            _context.ClinicalTrialsDonationLine.Update(clinicalTrialsDonationLine);
+            _context.SaveChanges();
             this.UpdateStock(clinicalTrialsDonationLine.ClinicalTrialsProductsId);
             //}
             //else if (totaldays < 360)
@@ -104,14 +153,15 @@ namespace coderush.Controllers.Api
 
         // DELETE: api/ClinicalTrialsDonationLines/5
         [HttpPost("[action]")]
-        public IActionResult Remove([FromBody]CrudViewModel<ClinicalTrialsDonationLine> payload)
+        public IActionResult Remove([FromBody] CrudViewModel<ClinicalTrialsDonationLine> payload)
         {
             ClinicalTrialsDonationLine clinicalTrialsDonationLine = _context.ClinicalTrialsDonationLine
-                .Where(x => x.ClinicalTrialsDonationId == (int)payload.key)
+                .Where(x => x.ClinicalTrialsDonationLineId == (int)payload.key)
                 .FirstOrDefault();
             _context.ClinicalTrialsDonationLine.Remove(clinicalTrialsDonationLine);
             _context.SaveChanges();
-           this.UpdateStock(clinicalTrialsDonationLine.ClinicalTrialsProductsId);
+            this.UpdateStock(clinicalTrialsDonationLine.ClinicalTrialsProductsId);
+            
             return Ok(clinicalTrialsDonationLine);
 
         }
@@ -119,9 +169,9 @@ namespace coderush.Controllers.Api
         {
             try
             {
-                ClinicalTrialsStock stock = new ClinicalTrialsStock();
-                stock = _context.ClinicalTrialsStock
-                    .Where(x => x.ClinicalTrialsProductsId.Equals(productId))
+                ClinicalTrialsProduct stock = new ClinicalTrialsProduct();
+                stock = _context.ClinicalTrialsProducts
+                    .Where(x => x.ClinicalTrialsProductId.Equals(productId))
                     .FirstOrDefault();
 
                 if (stock != null)
@@ -130,6 +180,7 @@ namespace coderush.Controllers.Api
                     line = _context.ClinicalTrialsDonationLine.Where(x => x.ClinicalTrialsProductsId.Equals(productId)).ToList();
 
                     stock.TotalRecieved = line.Sum(x => x.Quantity);
+                    stock.Expired = line.Sum(x => x.Expired);
 
                     List<ClinicalTrialsSalesLine> lines = new List<ClinicalTrialsSalesLine>();
                     lines = _context.ClinicalTrialsSalesLine.Where(x => x.ClinicalTrialsProductsId.Equals(productId)).ToList();
@@ -139,12 +190,12 @@ namespace coderush.Controllers.Api
 
                     if (stock.TotalRecieved < stock.TotalSales)
                     {
-                        stock.Deficit = stock.TotalSales - stock.TotalRecieved;
+                        stock.Deficit = stock.TotalSales - stock.TotalRecieved ;
                         stock.InStock = 0;
                     }
                     else
                     {
-                        stock.InStock = stock.TotalRecieved - stock.TotalSales;
+                        stock.InStock = stock.TotalRecieved - stock.TotalSales - stock.Expired;
                         stock.Deficit = 0;
                     }
 
@@ -163,7 +214,29 @@ namespace coderush.Controllers.Api
             }
 
         }
+        [HttpPost("[action]")]
+        public IActionResult Expired([FromBody] CrudViewModel<ClinicalTrialsDonationLine> payload)
+        {
+            ClinicalTrialsDonationLine clinicalTrialsDonationLine = payload.value;
 
+            if (clinicalTrialsDonationLine.InStock < clinicalTrialsDonationLine.Expired)
+            {
+                Err err = new Err
+                {
+                    message = "Expired Stock cannot be more than stock"
+                };
+                string errMsg = JsonConvert.SerializeObject(err);
+
+                return BadRequest(err);
+            }
+            clinicalTrialsDonationLine.InStock = clinicalTrialsDonationLine.InStock - clinicalTrialsDonationLine.Expired;
+            _context.ClinicalTrialsDonationLine.Update(clinicalTrialsDonationLine);
+            _context.SaveChanges();
+            this.UpdateStock(clinicalTrialsDonationLine.ClinicalTrialsProductsId);
+          
+
+            return Ok(clinicalTrialsDonationLine);
+        }
 
     }
 }

@@ -1,6 +1,6 @@
 ﻿
 @{
-    ViewData["Title"] = "Drug Notifications";
+    ViewData["Title"] = "Clinical trials Drug Notifications";
 }
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
@@ -48,28 +48,29 @@
         $(function () {
 
             var dataManager = ej.DataManager({
-                url: "/api/GoodsRecievedNoteLines",
+                url: "/api/ClinicalTrialsDonationLines",
                 adaptor: new ej.WebApiAdaptor(),
                 headers: [{ "months": 30}],
                 offline: true,
             });
 
             var dataManagerProduct = ej.DataManager({
-                url: "/api/Product",
+                url: "/api/ClinicalTrialsProducts",
                 adaptor: new ej.WebApiAdaptor()
             });
 
-            var dataManagerGoodsReceivedNote = ej.DataManager({
-                url: "/api/GoodsReceivedNote",
+            var dataManagerClinicalTrialsDonations = ej.DataManager({
+                url: "/api/ClinicalTrialsDonations",
                 adaptor: new ej.WebApiAdaptor()
             });
+
 
             dataManager.ready.done(function (e) {
             $("#Grid").ejGrid({
                 dataSource: ej.DataManager({
                     json: e.result,
                     adaptor: new ej.remoteSaveAdaptor(),
-                    updateUrl: "/api/GoodsRecievedNoteLines/Expired",
+                    updateUrl: "/api/ClinicalTrialsDonationLines/Expired",
 
                 }),
                 toolbarSettings: {
@@ -94,14 +95,14 @@
                 },
                 allowPaging: true,
                 columns: [
-                    { field: "GoodsRecievedNoteLineId", headerText: 'Line Id', isPrimaryKey: true, isIdentity: true, visible: false },
-                    { field: "GoodsReceivedNoteId", headerText: 'GNR#', foreignKeyField: "GoodsReceivedNoteId", foreignKeyValue: "GoodsReceivedNoteName", dataSource: dataManagerGoodsReceivedNote, visible: false },
-                    { field: "ProductId", headerText: 'Drug', foreignKeyField: "ProductId", foreignKeyValue: "ProductName", dataSource: dataManagerProduct, allowEditing: false },
-                    { field: "BatchID", headerText: 'BatchID', allowEditing: false},
+                    { field: "ClinicalTrialsDonationLineId", headerText: 'Line Id', isPrimaryKey: true, isIdentity: true, visible: false },
+                    { field: "ClinicalTrialsDonationId", headerText: 'CTD#', foreignKeyField: "ClinicalTrialsDonationId", foreignKeyValue: "dataManagerClinicalTrialsDonations", dataSource: dataManagerClinicalTrialsDonations, visible: false},
+                    { field: "ClinicalTrialsProductsId", headerText: 'Drug', foreignKeyField: "ClinicalTrialsProductId", foreignKeyValue: "ProductName", dataSource: dataManagerProduct, allowEditing: false},
                     { field: "Description", headerText: 'Description', allowEditing: false },
+                    { field: "BatchID", headerText: 'BatchID', allowEditing: false },
+                    { field: "Quantity", headerText: 'units/batch', defaultValue: 1, editType: "numericedit", allowEditing: false},
                     { field: "ManufareDate", headerText: 'Manufacture Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true }, allowEditing: false },
                     { field: "ExpiryDate", headerText: 'Expiry Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true }, allowEditing: false },
-                    { field: "Quantity", headerText: 'units/batch', defaultValue: 1, editType: "numericedit", allowEditing: false},
                     { field: "Sold", headerText: 'Units sold', defaultValue: 0, editType: "numericedit", allowEditing: false },
                     { field: "InStock", headerText: ' stock', defaultValue: 0, editType: "numericedit", allowEditing: false },
                     { field: "Expired", headerText: ' Expired ', defaultValue: 0, editType: "numericedit" },
@@ -116,7 +117,7 @@
                         toastr.warning(s.message, "Cannot remove Batch");
                     }
                 },
-               
+
             });
             });
 

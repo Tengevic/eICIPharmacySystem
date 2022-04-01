@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using coderush.Data;
 using coderush.Models;
 using coderush.Models.SyncfusionViewModels;
+using Newtonsoft.Json;
 
 namespace coderush.Controllers.Api
 {
@@ -24,7 +25,7 @@ namespace coderush.Controllers.Api
 
         // GET: api/ClinicalTrialsSalesLines
         [HttpGet]
-        public async Task<IActionResult> GetSalesOrderLine()
+        public async Task<IActionResult> ClinicalTrialsSalesLines()
         {
             var headers = Request.Headers["ClinicalTrialsSalesId"];
             int ClinicalTrialsSalesId = Convert.ToInt32(headers);
@@ -41,9 +42,32 @@ namespace coderush.Controllers.Api
         public IActionResult Insert([FromBody]CrudViewModel<ClinicalTrialsSalesLine> payload)
         {
             ClinicalTrialsSalesLine clinicalTrialsSalesLine = payload.value;
+            ClinicalTrialsDonationLine batch = _context.ClinicalTrialsDonationLine.Find(clinicalTrialsSalesLine.ClinicalTrialsDonationLineId);
+
+            if (batch.ClinicalTrialsProductsId != clinicalTrialsSalesLine.ClinicalTrialsProductsId)
+            {
+                Err err = new Err
+                {
+                    message = "Product doesn't have the batchId"
+                };
+                string errMsg = JsonConvert.SerializeObject(err);
+
+                return BadRequest(err);
+            }
+            if (batch.InStock < clinicalTrialsSalesLine.Quantity)
+            {
+                Err err = new Err
+                {
+                    message = $"Stock available for this Batch is {batch.InStock} ",
+                };
+                string errMsg = JsonConvert.SerializeObject(err);
+
+                return BadRequest(err);
+            }
             _context.ClinicalTrialsSalesLine.Add(clinicalTrialsSalesLine);
             _context.SaveChanges();
             this.UpdateStock(clinicalTrialsSalesLine.ClinicalTrialsProductsId);
+            this.UpdateBatch(clinicalTrialsSalesLine.ClinicalTrialsProductsId);
             return Ok(clinicalTrialsSalesLine);
 
         }
@@ -52,10 +76,32 @@ namespace coderush.Controllers.Api
         public IActionResult Update([FromBody]CrudViewModel<ClinicalTrialsSalesLine> payload)
         {
             ClinicalTrialsSalesLine clinicalTrialsSalesLine = payload.value;
-           
+            ClinicalTrialsDonationLine batch = _context.ClinicalTrialsDonationLine.Find(clinicalTrialsSalesLine.ClinicalTrialsDonationLineId);
+
+            if (batch.ClinicalTrialsProductsId != clinicalTrialsSalesLine.ClinicalTrialsProductsId)
+            {
+                Err err = new Err
+                {
+                    message = "Product doesn't have the batchId"
+                };
+                string errMsg = JsonConvert.SerializeObject(err);
+
+                return BadRequest(err);
+            }
+            if (batch.InStock < clinicalTrialsSalesLine.Quantity)
+            {
+                Err err = new Err
+                {
+                    message = $"Stock available for this Batch is {batch.InStock} ",
+                };
+                string errMsg = JsonConvert.SerializeObject(err);
+
+                return BadRequest(err);
+            }
             _context.ClinicalTrialsSalesLine.Update(clinicalTrialsSalesLine);
             _context.SaveChanges();
             this.UpdateStock(clinicalTrialsSalesLine.ClinicalTrialsProductsId);
+            this.UpdateBatch(clinicalTrialsSalesLine.ClinicalTrialsProductsId);
             return Ok(clinicalTrialsSalesLine);
         }
 
@@ -75,9 +121,9 @@ namespace coderush.Controllers.Api
         {
             try
             {
-                ClinicalTrialsStock stock = new ClinicalTrialsStock();
-                stock = _context.ClinicalTrialsStock
-                    .Where(x => x.ClinicalTrialsProductsId.Equals(productId))
+                ClinicalTrialsProduct stock = new ClinicalTrialsProduct();
+                stock = _context.ClinicalTrialsProducts
+                    .Where(x => x.ClinicalTrialsProductId.Equals(productId))
                     .FirstOrDefault();
 
                 if (stock != null)
@@ -86,6 +132,7 @@ namespace coderush.Controllers.Api
                     line = _context.ClinicalTrialsDonationLine.Where(x => x.ClinicalTrialsProductsId.Equals(productId)).ToList();
 
                     stock.TotalRecieved = line.Sum(x => x.Quantity);
+                    stock.Expired = line.Sum(x => x.Expired);
 
                     List<ClinicalTrialsSalesLine> lines = new List<ClinicalTrialsSalesLine>();
                     lines = _context.ClinicalTrialsSalesLine.Where(x => x.ClinicalTrialsProductsId.Equals(productId)).ToList();
@@ -96,6 +143,35 @@ namespace coderush.Controllers.Api
                     if (stock.TotalRecieved < stock.TotalSales)
                     {
                         stock.Deficit = stock.TotalSales - stock.TotalRecieved;
+                        stock.InStock = 0;
+                    }
+                    else
+                    {
+                        stock.InStock = stock.TotalRecieved - stock.TotalSales - stock.Expired;
+                        stock.Deficit = 0;
+                    }
+
+
+                    _context.Update(stock);
+
+                    _context.SaveChanges();
+
+                }
+                {
+                    List<ClinicalTrialsDonationLine> line = new List<ClinicalTrialsDonationLine>();
+                    line = _context.ClinicalTrialsDonationLine.Where(x => x.ClinicalTrialsProductsId.Equals(productId)).ToList();
+
+                    stock.TotalRecieved = line.Sum(x => x.Quantity);
+
+                    List<ClinicalTrialsSalesLine> lines = new List<ClinicalTrialsSalesLine>();
+                    lines = _context.ClinicalTrialsSalesLine.Where(x => x.ClinicalTrialsProductsId.Equals(productId)).ToList();
+
+                    stock.TotalSales = lines.Sum(x => x.Quantity);
+                    
+
+                    if (stock.TotalRecieved < stock.TotalSales)
+                    {
+                        stock.Deficit = stock.TotalSales - stock.TotalRecieved - stock.Expired;
                         stock.InStock = 0;
                     }
                     else
@@ -118,6 +194,30 @@ namespace coderush.Controllers.Api
                 throw;
             }
 
+        }
+        private void UpdateBatch(int batchId)
+        {
+            try
+            {
+                ClinicalTrialsDonationLine batch = _context.ClinicalTrialsDonationLine.Find(batchId);
+                if (batch != null)
+                {
+                    List<ClinicalTrialsSalesLine> lines = new List<ClinicalTrialsSalesLine>();
+                    lines = _context.ClinicalTrialsSalesLine.Where(x => x.ClinicalTrialsDonationLineId.Equals(batch.ClinicalTrialsDonationLineId)).ToList();
+
+                    batch.Sold = lines.Sum(x => x.Quantity);
+                    batch.InStock = batch.Quantity - batch.Sold - batch.Expired;
+
+                    _context.Update(batch);
+
+                    _context.SaveChanges();
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
     }
 }

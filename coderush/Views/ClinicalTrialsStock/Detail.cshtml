@@ -1,6 +1,6 @@
-﻿@model coderush.Models.ClinicalTrialsDonation
+﻿@model coderush.Models.ClinicalTrialsProduct
 @{
-    ViewData["Title"] = "Clinical Trials Donation Detail";
+    ViewData["Title"] = "Clinical Trials stock";
 }
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
@@ -25,28 +25,40 @@
                     <div class="row">
                         <dl class="dl-horizontal">
                             <dt>
-                                @Html.DisplayNameFor(model => model.ClinicalTrialsDonationId)
+                                @Html.DisplayNameFor(model => model.ClinicalTrialsProductId)
                             </dt>
                             <dd>
-                                @Html.DisplayFor(model => model.ClinicalTrialsDonationId)
+                                @Html.DisplayFor(model => model.ClinicalTrialsProductId)
                             </dd>
                             <dt>
-                                @Html.DisplayNameFor(model => model.VendorDONumber)
+                                @Html.DisplayNameFor(model => model.TotalRecieved)
                             </dt>
                             <dd>
-                                @Html.DisplayFor(model => model.VendorDONumber)
+                                @Html.DisplayFor(model => model.TotalRecieved)
                             </dd>
                             <dt>
-                                @Html.DisplayNameFor(model => model.CTDDate)
+                                @Html.DisplayNameFor(model => model.TotalSales)
                             </dt>
                             <dd>
-                                @Html.DisplayFor(model => model.CTDDate)
+                                @Html.DisplayFor(model => model.TotalSales)
                             </dd>
                             <dt>
-                                @Html.DisplayNameFor(model => model.VendorInvoiceNumber)
+                                @Html.DisplayNameFor(model => model.InStock)
                             </dt>
                             <dd>
-                                @Html.DisplayFor(model => model.VendorInvoiceNumber)
+                                @Html.DisplayFor(model => model.InStock)
+                            </dd>
+                            <dt>
+                                @Html.DisplayNameFor(model => model.Deficit)
+                            </dt>
+                            <dd>
+                                @Html.DisplayFor(model => model.Deficit)
+                            </dd>
+                            <dt>
+                                @Html.DisplayNameFor(model => model.Expired)
+                            </dt>
+                            <dd>
+                                @Html.DisplayFor(model => model.Expired)
                             </dd>
                         </dl>
                     </div>
@@ -84,11 +96,10 @@
 @section Scripts{
     <script type="text/javascript">
         $(function () {
-
-            var dataManager = ej.DataManager({
+                var dataManager = ej.DataManager({
                 url: "/api/ClinicalTrialsDonationLines",
                 adaptor: new ej.WebApiAdaptor(),
-                headers: [{ "ClinicalTrialsDonationId": @Model.ClinicalTrialsDonationId}],
+                headers: [{ "product": @Model.ClinicalTrialsProductId}],
                 offline: true,
             });
 
@@ -110,28 +121,19 @@
                 dataSource: ej.DataManager({
                     json: e.result,
                     adaptor: new ej.remoteSaveAdaptor(),
-                    insertUrl: "/api/ClinicalTrialsDonationLines/Insert",
-                    updateUrl: "/api/ClinicalTrialsDonationLines/Update",
-                    removeUrl: "/api/ClinicalTrialsDonationLines/Remove",
+                   
                 }),
                 toolbarSettings: {
                     showToolbar: true,
-                    toolbarItems: ["add", "edit", "delete", "update", "cancel"]
+                    toolbarItems: ["search"]
                 },
-                editSettings: {
-                    allowEditing: true,
-                    allowAdding: true,
-                    allowDeleting: true,
-                    showDeleteConfirmDialog: true,
-
-                },
+                
                 allowPaging: true,
                 columns: [
                     { field: "ClinicalTrialsDonationLineId", headerText: 'Line Id', isPrimaryKey: true, isIdentity: true, visible: false },
-                    { field: "ClinicalTrialsDonationId", headerText: 'CTD#', defaultValue: @Model.ClinicalTrialsDonationId, foreignKeyField: "ClinicalTrialsDonationId", foreignKeyValue: "dataManagerClinicalTrialsDonations", dataSource: dataManagerClinicalTrialsDonations, visible: false},
-                    { field: "ClinicalTrialsProductsId", headerText: 'Drug', foreignKeyField: "ClinicalTrialsProductId", foreignKeyValue: "ProductName", dataSource: dataManagerProduct },
-                    { field: "Description", headerText: 'Description' },
+                    { field: "ClinicalTrialsDonationId", headerText: 'CTD#', foreignKeyField: "ClinicalTrialsDonationId", foreignKeyValue: "dataManagerClinicalTrialsDonations", dataSource: dataManagerClinicalTrialsDonations, visible: false },
                     { field: "BatchID", headerText: 'BatchID' },
+                    { field: "Description", headerText: 'Description' },
                     { field: "Quantity", headerText: 'units/batch', defaultValue: 1, editType: "numericedit"},
                     { field: "ManufareDate", headerText: 'Manufacture Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
                     { field: "ExpiryDate", headerText: 'Expiry Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
@@ -145,7 +147,6 @@
                         var s = ej.parseJSON(args.error.responseText)
                         toastr.info(s.message, "Cannot add drug");
                     }
-
                 }
             });
             });

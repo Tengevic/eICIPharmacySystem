@@ -106,6 +106,11 @@
                         { field: "DefaultSellingPrice", headerText: 'Selling Price', editType: "numericedit", format: "{0:n2}" },
                         { field: "BranchId", headerText: 'Branch', foreignKeyField: "BranchId", foreignKeyValue: "BranchName", dataSource: dataManagerBranch, defaultValue: 1 },
                         { field: "CurrencyId", headerText: 'Currency', allowEditing: false, foreignKeyField: "CurrencyId", foreignKeyValue: "CurrencyCode", dataSource: dataManagerCurrency, defaultValue: 1 },
+                        { field: "TotalRecieved", headerText: 'total Units Recieved', defaultValue: 0, editType: "numericedit", allowEditing: false, visible: false },
+                        { field: "TotalSales", headerText: 'Total Units sold', defaultValue: 0, editType: "numericedit", allowEditing: false, visible: false },
+                        { field: "InStock", headerText: ' Units in stock', defaultValue: 0, editType: "numericedit", allowEditing: false, visible: false },
+                        { field: "Deficit", headerText: ' Deficit stock', defaultValue: 0, editType: "numericedit", allowEditing: false, visible: false },
+                        { field: "ExpiredStock", headerText: ' Expired stock', defaultValue: 0, editType: "numericedit", allowEditing: false, visible: false },
                     ],
                     actionComplete: "complete",
                 });

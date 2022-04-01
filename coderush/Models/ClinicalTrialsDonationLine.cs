@@ -18,6 +18,9 @@ namespace coderush.Models
         public string BatchID { get; set; }
         public DateTime ManufareDate { get; set; }
         public DateTime ExpiryDate { get; set; }
-        //public bool isFullySold { get; set; }
+        public double Sold { get; set; }
+        public double InStock { get; set; }
+        public double Expired { get; set; }
+     
     }
 }

@@ -36,7 +36,6 @@ namespace coderush.Controllers.Api
         public async Task<IActionResult> GetByClinicalTrialProductName([FromRoute] string name)
         {
             var product = from p in _context.ClinicalTrialsProducts
-                                    .Include(x => x.TrialsStock)
                           select p;
 
             if (!String.IsNullOrEmpty(name))
