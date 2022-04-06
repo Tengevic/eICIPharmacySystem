@@ -71,6 +71,7 @@ namespace coderush.Services
                     new PaymentType { PaymentTypeName = "Insurance" },
                     new PaymentType { PaymentTypeName = "Mpesa" },
                     new PaymentType { PaymentTypeName = "Cheque" },
+                    new PaymentType { PaymentTypeName = "waiver" },
 
                 };
 

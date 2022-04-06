@@ -1,6 +1,6 @@
 ﻿@model coderush.Models.PaymentReceive
 @{
-    ViewData["Title"] = "Clinical Trials Donation Detail";
+    ViewData["Title"] = "Payment Uploads";
 }
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
@@ -43,10 +43,10 @@
                                 @Html.DisplayFor(model => model.PaymentDate)
                             </dd>
                             <dt>
-                                @Html.DisplayNameFor(model => model.PaymentTypeId)
+                                @Html.DisplayNameFor(model => model.PaymentType.PaymentTypeName)
                             </dt>
                             <dd>
-                                @Html.DisplayFor(model => model.PaymentTypeId)
+                                @Html.DisplayFor(model => model.PaymentType.PaymentTypeName)
                             </dd>
                             <dt>
                                 @Html.DisplayNameFor(model => model.PaymentAmount)
@@ -62,7 +62,7 @@
                             </dd>
                         </dl>
                     </div>
-
+                    <div id="UploadDefault"></div>
                 </div>
             </div>
             <!-- /.box-body -->
@@ -96,17 +96,21 @@
 @section Scripts{
     <script type="text/javascript">
         $(function () {
+            $("#UploadDefault").ejUploadbox({
+                saveUrl: "/api/UploadFiles",
+                allowDraggable: true,
+                multipleFilesSelection: false,
+                success: "uploadSuccess",
+                beforeSend: function (args) {
+                    args.xhr.setRequestHeader("test", @Model.PaymentReceiveId);
+                }
+            });
 
             var dataManager = ej.DataManager({
-                url: "/api/UploadFiles/Upload",
+                url: "/api/UploadFiles",
                 adaptor: new ej.WebApiAdaptor(),
                 headers: [{ "PaymentReceiveId": @Model.PaymentReceiveId}],
                 offline: true,
-            });
-            var dataManagerPayment = ej.DataManager({
-                url: "api/PaymentReceive",
-                adaptor: new ej.WebApiAdaptor(),
-
             });
 
 
@@ -115,13 +119,22 @@
                 dataSource: ej.DataManager({
                     json: e.result,
                     adaptor: new ej.remoteSaveAdaptor(),
+                    removeUrl: "/api/UploadFiles/Remove",
                 }),
-  
+                toolbarSettings: {
+                    showToolbar: true,
+                    toolbarItems: [ "delete", "cancel"]
+                },
+                editSettings: {
+                    allowDeleting: true,
+                    showDeleteConfirmDialog: true,
+                },
                 allowPaging: true,
                 columns: [
                     { field: "Id", headerText: 'Line Id', isPrimaryKey: true, isIdentity: true, visible: false },
-                    { field: "PaymentReceiveId", headerText: 'CTD#', defaultValue: @Model.PaymentReceiveId, foreignKeyField: "ClinicalTrialsDonationId", foreignKeyValue: "dataManagerClinicalTrialsDonations", dataSource: dataManagerPayment, visible: false},
-                    { field: "Content", headerText: 'Content' },
+                    { field: "PaymentReceiveId", headerText: 'CTD#', visible: false},
+                    { field: "filename", headerText: 'file name' },
+                    { headerText: 'Download', template: "<a href='/api/UploadFiles/Download/{{:Id}}'>Download</a>" }
                 ],
 
                 actionFailure: function (args) {

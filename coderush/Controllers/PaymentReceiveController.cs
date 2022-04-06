@@ -6,6 +6,7 @@ using coderush.Data;
 using coderush.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace coderush.Controllers
 {
@@ -24,7 +25,7 @@ namespace coderush.Controllers
         }
         public IActionResult Detail(int id)
         {
-            PaymentReceive paymentReceive = _context.PaymentReceive.SingleOrDefault(x => x.PaymentReceiveId.Equals(id));
+            PaymentReceive paymentReceive = _context.PaymentReceive.Include(x => x.PaymentType).SingleOrDefault(x => x.PaymentReceiveId.Equals(id));
 
             if (paymentReceive == null)
             {

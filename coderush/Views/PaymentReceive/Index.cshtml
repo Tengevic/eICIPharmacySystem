@@ -110,7 +110,6 @@
                     allowPaging: true,
                     pageSettings: { pageSize: 10, printMode: ej.Grid.PrintMode.CurrentPage },
                     columns: [
-                        { headerText: 'Detail', template: "<a href='/PaymentReceive/Detail/{{:PaymentReceiveId}}'>Detail</a>" },
                         { field: "PaymentReceiveId", headerText: 'Payment Receive', isPrimaryKey: true, isIdentity: true, visible: false },
                         { field: "PaymentReceiveName", headerText: 'Payment Receive#', allowEditing: false },
                         { field: "IsFullPayment", headerText: 'Full Payment', allowEditing: false, type: "boolean", editType: "booleanedit", defaultValue: true },
@@ -118,6 +117,7 @@
                         { field: "PaymentDate", headerText: 'Payment Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
                         { field: "PaymentTypeId", headerText: 'Payment Type', foreignKeyField: "PaymentTypeId", foreignKeyValue: "PaymentTypeName", dataSource: dataManagerPaymentType },
                         { field: "PaymentAmount", headerText: 'Payment Amount', editType: "numericedit", format: "{0:n2}", validationRules: { required: true } },
+                        { headerText: 'Uploads', template: "<a href='/PaymentReceive/Detail/{{:PaymentReceiveId}}'>Uploads</a>" },
                     ],
                     actionComplete: "complete",
                 });

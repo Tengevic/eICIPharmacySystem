@@ -4,10 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using coderush.Data;
 using coderush.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace coderush.Controllers
 {
+    [Authorize(Roles = Pages.MainMenu.ClinicalTrialsStock.RoleName)]
     public class ClinicalTrialsStockController : Controller
     {
         private readonly ApplicationDbContext _context;

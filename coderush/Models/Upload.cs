@@ -12,6 +12,7 @@ namespace coderush.Models
     {
         public int Id { get; set; }
         public string filename { get; set; }
+        public string contentType { get; set; }
         public int PaymentReceiveId { get; set; }
         public byte[] Content { get; set; }
     }
