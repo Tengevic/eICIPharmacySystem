@@ -67,5 +67,11 @@ namespace coderush.Controllers.Api
             return Ok(paymentReceive);
 
         }
+        [HttpPost("[action]")]
+        public IActionResult Upload([FromBody]CrudViewModel<IFormFile> payload)
+        {
+
+            return Ok();
+       }
     }
 }

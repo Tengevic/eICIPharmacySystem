@@ -40,13 +40,13 @@ namespace coderush.Services
             _superAdminDefaultOptions = superAdminDefaultOptions.Value;
         }
 
-      
+
 
         public async Task InitAppData()
         {
             try
             {
-               
+
                 await _context.BillType.AddAsync(new BillType { BillTypeName = "Default" });
                 await _context.SaveChangesAsync();
 
@@ -65,7 +65,16 @@ namespace coderush.Services
                 await _context.InvoiceType.AddAsync(new InvoiceType { InvoiceTypeName = "Default" });
                 await _context.SaveChangesAsync();
 
-                await _context.PaymentType.AddAsync(new PaymentType { PaymentTypeName = "Default" });
+                List<PaymentType> paymentTypes = new List<PaymentType>()
+                {
+                    new PaymentType { PaymentTypeName = "Cash" },
+                    new PaymentType { PaymentTypeName = "Insurance" },
+                    new PaymentType { PaymentTypeName = "Mpesa" },
+                    new PaymentType { PaymentTypeName = "Cheque" },
+
+                };
+
+                await _context.PaymentType.AddRangeAsync(paymentTypes);
                 await _context.SaveChangesAsync();
 
                 await _context.PurchaseType.AddAsync(new PurchaseType { PurchaseTypeName = "Default" });
@@ -107,6 +116,24 @@ namespace coderush.Services
 
                 };
                 await _context.Product.AddRangeAsync(products);
+                await _context.SaveChangesAsync();
+
+                List<ClinicalTrialsProduct> clinicalTrialsProducts = new List<ClinicalTrialsProduct>()
+                {
+                    new ClinicalTrialsProduct{ProductName = "Chai"},
+                    new ClinicalTrialsProduct{ProductName = "Chang"},
+                    new ClinicalTrialsProduct{ProductName = "Aniseed Syrup"},
+                    new ClinicalTrialsProduct{ProductName = "Chef Anton's Cajun Seasoning"},
+                    new ClinicalTrialsProduct{ProductName = "Chef Anton's Gumbo Mix"},
+                    new ClinicalTrialsProduct{ProductName = "Grandma's Boysenberry Spread"},
+                    new ClinicalTrialsProduct{ProductName = "Uncle Bob's Organic Dried Pears"},
+                    new ClinicalTrialsProduct{ProductName = "Northwoods Cranberry Sauce"},
+                    new ClinicalTrialsProduct{ProductName = "Mishi Kobe Niku"},
+                    new ClinicalTrialsProduct{ProductName = "Ikura"},
+                   
+                };
+
+                await _context.ClinicalTrialsProducts.AddRangeAsync(clinicalTrialsProducts);
                 await _context.SaveChangesAsync();
 
                 await _context.CustomerType.AddAsync(new CustomerType { CustomerTypeName = "Default" });

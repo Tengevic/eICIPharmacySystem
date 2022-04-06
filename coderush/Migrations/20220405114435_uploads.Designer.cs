@@ -11,9 +11,10 @@ using System;
 namespace coderush.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220405114435_uploads")]
+    partial class uploads
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -829,7 +830,7 @@ namespace coderush.Migrations
                     b.ToTable("UnitOfMeasure");
                 });
 
-            modelBuilder.Entity("coderush.Models.Upload", b =>
+            modelBuilder.Entity("coderush.Models.Uploads", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -837,8 +838,6 @@ namespace coderush.Migrations
                     b.Property<byte[]>("Content");
 
                     b.Property<int>("PaymentReceiveId");
-
-                    b.Property<string>("filename");
 
                     b.HasKey("Id");
 

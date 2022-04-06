@@ -12,7 +12,6 @@ namespace coderush.Controllers
     {
         public IActionResult Index()
         {
-            ViewData["Message"] = String.Format("From controller");
             return RedirectToAction("UserProfile", "UserRole");
         }
 

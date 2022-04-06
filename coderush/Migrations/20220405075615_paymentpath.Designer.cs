@@ -11,9 +11,10 @@ using System;
 namespace coderush.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220405075615_paymentpath")]
+    partial class paymentpath
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -501,6 +502,8 @@ namespace coderush.Migrations
 
                     b.Property<int>("PaymentTypeId");
 
+                    b.Property<string>("UploadPath");
+
                     b.HasKey("PaymentReceiveId");
 
                     b.ToTable("PaymentReceive");
@@ -827,22 +830,6 @@ namespace coderush.Migrations
                     b.HasKey("UnitOfMeasureId");
 
                     b.ToTable("UnitOfMeasure");
-                });
-
-            modelBuilder.Entity("coderush.Models.Upload", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<byte[]>("Content");
-
-                    b.Property<int>("PaymentReceiveId");
-
-                    b.Property<string>("filename");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Uploads");
                 });
 
             modelBuilder.Entity("coderush.Models.UserProfile", b =>

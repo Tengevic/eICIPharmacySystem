@@ -23,12 +23,7 @@
                 <div id="Grid"></div>
             </div>
             <div id="dialog">
-                <div if ="form">
-                    <label for="Insuarnce"> Insuarnce </label><br />
-                    <input type="text" id="Iname" placeholder="NHIF, etc" />
-                    <input type="file" name="Upload file" id="txtUploadFile" />
-                    <button>Save</button>
-                </div>  
+                <div id="UploadDefault"></div>
             </div>
             <!-- /.box-body -->
             <div class="box-footer">
@@ -54,12 +49,8 @@
 
     <script type="text/javascript">
         $(function () {
-            $("button").click(function () {
-                var test = $("#Iname").val();
-                alert(test);
-                $("#dialog").replaceWith("<p>" + "Success" + "<p>" );
-            });
-
+    
+           
 
             var dataManager = ej.DataManager({
                 url: "/api/PaymentReceive",
@@ -82,9 +73,10 @@
                 $('#dialog').ejDialog({
                     title: "Upload Insuarance files",
                     showOnInit: false,
+                    height: 400,
+                    width: 600 
                    
                 });
-
 
                 $("#Grid").ejGrid({
                     dataSource: ej.DataManager({
@@ -118,6 +110,7 @@
                     allowPaging: true,
                     pageSettings: { pageSize: 10, printMode: ej.Grid.PrintMode.CurrentPage },
                     columns: [
+                        { headerText: 'Detail', template: "<a href='/PaymentReceive/Detail/{{:PaymentReceiveId}}'>Detail</a>" },
                         { field: "PaymentReceiveId", headerText: 'Payment Receive', isPrimaryKey: true, isIdentity: true, visible: false },
                         { field: "PaymentReceiveName", headerText: 'Payment Receive#', allowEditing: false },
                         { field: "IsFullPayment", headerText: 'Full Payment', allowEditing: false, type: "boolean", editType: "booleanedit", defaultValue: true },
@@ -160,9 +153,20 @@
 
             }
             if (args.requestType == 'save') {
-                console.log("test");
+                pay = args.data.PaymentReceiveId;
                 if (args.data.PaymentTypeId == 2) {
                     $("#dialog").ejDialog("open");
+
+                    $("#UploadDefault").ejUploadbox({
+                        saveUrl: "/api/UploadFiles",
+                        allowDraggable: true,
+                        multipleFilesSelection: false,
+                        success: "uploadSuccess",
+                        beforeSend: function (args) {
+                            args.xhr.setRequestHeader("test", pay);
+                        }
+                    });
+
                 }
             }
         }

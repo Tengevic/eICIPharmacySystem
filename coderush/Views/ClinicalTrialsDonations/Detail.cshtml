@@ -128,7 +128,7 @@
                 allowPaging: true,
                 columns: [
                     { field: "ClinicalTrialsDonationLineId", headerText: 'Line Id', isPrimaryKey: true, isIdentity: true, visible: false },
-                    { field: "ClinicalTrialsDonationId", headerText: 'CTD#', defaultValue: @Model.ClinicalTrialsDonationId, foreignKeyField: "ClinicalTrialsDonationId", foreignKeyValue: "dataManagerClinicalTrialsDonations", dataSource: dataManagerClinicalTrialsDonations, visible: false},
+                    { field: "ClinicalTrialsDonationId", headerText: 'CTD#', defaultValue: @Model.ClinicalTrialsDonationId, foreignKeyField: "ClinicalTrialsDonationId", foreignKeyValue: "ClinicalTrialsDonationName", dataSource: dataManagerClinicalTrialsDonations, visible: false},
                     { field: "ClinicalTrialsProductsId", headerText: 'Drug', foreignKeyField: "ClinicalTrialsProductId", foreignKeyValue: "ProductName", dataSource: dataManagerProduct },
                     { field: "Description", headerText: 'Description' },
                     { field: "BatchID", headerText: 'BatchID' },
