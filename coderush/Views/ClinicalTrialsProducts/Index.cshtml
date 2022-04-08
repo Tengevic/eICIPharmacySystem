@@ -40,12 +40,17 @@
 
 @section Scripts{
 
-    <script type="text/javascript">$(function () {
+    <script type="text/javascript">
+    $(function () {
 
             var dataManager = ej.DataManager({
                 url: "/api/ClinicalTrialsProducts",
                 adaptor: new ej.WebApiAdaptor(),
                 offline: true
+            });
+            var dataManagerProductType = ej.DataManager({
+                url: "/api/ProductType",
+                adaptor: new ej.WebApiAdaptor()
             });
 
             var dataManagerUnitOfMeasure = ej.DataManager({
@@ -98,14 +103,15 @@
                     columns: [
                         { field: "ClinicalTrialsProductId", headerText: 'Product Id', isPrimaryKey: true, isIdentity: true, visible: false },
                         { field: "ProductName", headerText: 'Product Name', validationRules: { required: true } },
+                        { field: "ProductTypeId", headerText: 'Generic type', foreignKeyField: "ProductTypeId", foreignKeyValue: "ProductTypeName", dataSource: dataManagerProductType, validationRules: { required: true } },
                         { field: "UnitOfMeasureId", headerText: 'UOM', foreignKeyField: "UnitOfMeasureId", foreignKeyValue: "UnitOfMeasureName", dataSource: dataManagerUnitOfMeasure, validationRules: { required: true } },
                         { field: "Barcode", headerText: 'Barcode', },
                         { field: "Description", headerText: 'Description', },
                         { field: "ProductImageUrl", headerText: 'ProductImageUrl', visible: false },
                         { field: "DefaultBuyingPrice", headerText: 'Buying Price', editType: "numericedit", format: "{0:n2}" },
                         { field: "DefaultSellingPrice", headerText: 'Selling Price', editType: "numericedit", format: "{0:n2}" },
-                        { field: "BranchId", headerText: 'Branch', foreignKeyField: "BranchId", foreignKeyValue: "BranchName", dataSource: dataManagerBranch, defaultValue: 1 },
-                        { field: "CurrencyId", headerText: 'Currency', allowEditing: false, foreignKeyField: "CurrencyId", foreignKeyValue: "CurrencyCode", dataSource: dataManagerCurrency, defaultValue: 1 },
+                        { field: "BranchId", headerText: 'Branch', foreignKeyField: "BranchId", foreignKeyValue: "BranchName", dataSource: dataManagerBranch, defaultValue: 1, visible: false},
+                        { field: "CurrencyId", headerText: 'Currency', allowEditing: false, foreignKeyField: "CurrencyId", foreignKeyValue: "CurrencyCode", dataSource: dataManagerCurrency, defaultValue: 1, visible: false },
                         { field: "TotalRecieved", headerText: 'total Units Recieved', defaultValue: 0, editType: "numericedit", allowEditing: false, visible: false },
                         { field: "TotalSales", headerText: 'Total Units sold', defaultValue: 0, editType: "numericedit", allowEditing: false, visible: false },
                         { field: "InStock", headerText: ' Units in stock', defaultValue: 0, editType: "numericedit", allowEditing: false, visible: false },

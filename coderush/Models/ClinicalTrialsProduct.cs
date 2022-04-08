@@ -11,6 +11,7 @@ namespace coderush.Models
         public int ClinicalTrialsProductId { get; set; }
         [Required]
         public string ProductName { get; set; }
+        public int ProductTypeId { get; set; }
         public string ProductCode { get; set; }
         public string Barcode { get; set; }
         public string Description { get; set; }

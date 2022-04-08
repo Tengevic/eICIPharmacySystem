@@ -51,6 +51,11 @@
                 offline: true
             });
 
+            var dataManagerProductType = ej.DataManager({
+                url: "/api/ProductType",
+                adaptor: new ej.WebApiAdaptor()
+            });
+
             var dataManagerUnitOfMeasure = ej.DataManager({
                 url: "/api/UnitOfMeasure",
                 adaptor: new ej.WebApiAdaptor()
@@ -101,6 +106,7 @@
                     columns: [
                         { field: "ProductId", headerText: 'Product Id', isPrimaryKey: true, isIdentity: true, visible: false },
                         { field: "ProductName", headerText: 'Product Name', validationRules: { required: true } },
+                        { field: "ProductTypeId", headerText: 'GenericType', foreignKeyField: "ProductTypeId", foreignKeyValue: "ProductTypeName", dataSource: dataManagerProductType, validationRules: { required: true } },
                         { field: "UnitOfMeasureId", headerText: 'UOM', foreignKeyField: "UnitOfMeasureId", foreignKeyValue: "UnitOfMeasureName", dataSource: dataManagerUnitOfMeasure, validationRules: { required: true } },
                         { field: "Barcode", headerText: 'Barcode', },
                         { field: "Description", headerText: 'Description', },
