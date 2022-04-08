@@ -24,6 +24,7 @@ namespace coderush.Models
         public string BatchID { get; set; }
         public DateTime ManufareDate { get; set; }
         public DateTime ExpiryDate { get; set; }
-        
+        public Boolean Dispose { get; set; } = false;
+
     }
 }

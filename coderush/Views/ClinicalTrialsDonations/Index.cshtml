@@ -61,6 +61,11 @@
                 adaptor: new ej.WebApiAdaptor()
             });
 
+            var dataManagerVendor = ej.DataManager({
+                url: "/api/Vendor",
+                adaptor: new ej.WebApiAdaptor()
+            });
+
             dataManager.ready.done(function (e) {
                 $("#Grid").ejGrid({
                     dataSource: ej.DataManager({
@@ -97,10 +102,10 @@
                         { headerText: 'Detail', template: "<a href='/ClinicalTrialsDonations/Detail/{{:ClinicalTrialsDonationId}}'>Detail</a>" },
                         { field: "ClinicalTrialsDonationId", headerText: 'CTD', isPrimaryKey: true, isIdentity: true, visible: false },
                         { field: "ClinicalTrialsDonationName", headerText: 'CTD#', allowEditing: false },
-                        { field: "IsFullReceive", headerText: 'Full Receive', allowEditing: false, type: "boolean", editType: "booleanedit", defaultValue: true },
+                        { field: "VendorId", headerText: 'Vendor', foreignKeyField: "VendorId", foreignKeyValue: "VendorName", dataSource: dataManagerVendor, validationRules: { required: true } },
+                        { field: "IsFullReceive", headerText: 'Full Receive', type: "boolean", editType: "booleanedit", defaultValue: true },
                         { field: "CTDDate", headerText: 'Receiving Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
                         { field: "VendorDONumber", headerText: 'Vendor DO#', validationRules: { required: true } },
-                        { field: "VendorInvoiceNumber", headerText: 'Vendor Invoice#', },
                         { field: "WarehouseId", headerText: 'Warehouse', foreignKeyField: "WarehouseId", foreignKeyValue: "WarehouseName", dataSource: dataManagerWarehouse, validationRules: { required: true } },
                     ],
                     actionComplete: "complete",

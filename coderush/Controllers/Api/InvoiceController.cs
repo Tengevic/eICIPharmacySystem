@@ -44,7 +44,9 @@ namespace coderush.Controllers.Api
             try
             {
                 List<PaymentReceive> receives = new List<PaymentReceive>();
-                receives = await _context.PaymentReceive.ToListAsync();
+                receives = await _context.PaymentReceive
+                        .Where(x => x.IsFullPayment == false)    
+                        .ToListAsync();
                 List<int> ids = new List<int>();
 
                 foreach (var item in receives)

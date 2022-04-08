@@ -6,6 +6,7 @@ using coderush.Data;
 using coderush.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace coderush.Controllers
 {
@@ -23,7 +24,9 @@ namespace coderush.Controllers
         }
         public IActionResult Detail(int id)
         {
-            ClinicalTrialsDonation clinicalTrialsDonation = _context.ClinicalTrialsDonation.SingleOrDefault(x => x.ClinicalTrialsDonationId.Equals(id));
+            ClinicalTrialsDonation clinicalTrialsDonation = _context.ClinicalTrialsDonation
+                .Include(x =>x.Vendor)
+                .SingleOrDefault(x => x.ClinicalTrialsDonationId.Equals(id));
 
             if (clinicalTrialsDonation == null)
             {

@@ -240,7 +240,7 @@
 
 
         });
-
+        
         function complete(args) {
 
             if (args.requestType == 'beginedit') {
@@ -248,7 +248,26 @@
             }
             if (args.requestType == 'save' || args.requestType == 'delete') {
                 RewriteTotal(args.data.SalesOrderId);
-                console.log(args.data.Quantity);
+            }
+            if (args.requestType == 'beginedit' || args.requestType == 'add') {
+                var selected = $('#GridGoodsRecievedNoteLineId').data('ejDropDownList');
+                var selectedValue = parseInt(selected.option('value'));
+                var selectedText = selected.option('text');
+                $.ajax({
+                    type: 'GET',
+                    url: '/api/GoodsRecievedNoteLines/GetInstock',
+                    success: function (data) {
+                        if (args.requestType == 'beginedit') {
+                            data.push({ 'GoodsRecievedNoteLineId': selectedValue, 'BatchID': selectedText });
+                        }
+
+                        $("#GridGoodsRecievedNoteLineId").ejDropDownList({
+                            dataSource: data,
+                            fields: { id: 'GoodsRecievedNoteLineId', text: 'BatchID', value: 'GoodsRecievedNoteLineId' },
+                            value: selectedValue
+                        });
+                    }
+                });
             }
         }
 

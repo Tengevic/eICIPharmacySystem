@@ -129,6 +129,7 @@
                 columns: [
                     { field: "GoodsRecievedNoteLineId", headerText: 'Line Id', isPrimaryKey: true, isIdentity: true, visible: false },
                     { field: "GoodsReceivedNoteId", headerText: 'GNR#', defaultValue: @Model.GoodsReceivedNoteId, foreignKeyField: "GoodsReceivedNoteId", foreignKeyValue: "GoodsReceivedNoteName", dataSource: dataManagerGoodsReceivedNote, visible: false },
+                    { field: "Dispose", headerText: 'Dispose', allowEditing: false, type: "boolean", editType: "booleanedit", defaultValue: false, visible: false },
                     { field: "ProductId", headerText: 'Drug', foreignKeyField: "ProductId", foreignKeyValue: "ProductName", dataSource: dataManagerProduct },
                     { field: "Description", headerText: 'Description' },
                     { field: "BatchID", headerText: 'BatchID' },

@@ -189,8 +189,25 @@
             if (args.requestType == 'beginedit') {
                 $("#" + this._id + "_dialogEdit").ejDialog({ title: "Edit Record" });
             }
-            if (args.requestType == 'save' || args.requestType == 'delete') {
-                console.log(args.data.Quantity);
+            if (args.requestType == 'beginedit' || args.requestType == 'add') {
+                var selected = $('#GridClinicalTrialsDonationLineId').data('ejDropDownList');
+                var selectedValue = parseInt(selected.option('value'));
+                var selectedText = selected.option('text');
+                $.ajax({
+                    type: 'GET',
+                    url: '/api/ClinicalTrialsDonationLines/GetInstock',
+                    success: function (data) {
+                        if (args.requestType == 'beginedit') {
+                            data.push({ 'ClinicalTrialsDonationLineId': selectedValue, 'BatchID': selectedText });
+                        }
+
+                        $("#GridClinicalTrialsDonationLineId").ejDropDownList({
+                            dataSource: data,
+                            fields: { id: 'ClinicalTrialsDonationLineId', text: 'BatchID', value: 'ClinicalTrialsDonationLineId' },
+                            value: selectedValue
+                        });
+                    }
+                });
             }
         }
 

@@ -43,10 +43,10 @@
                                 @Html.DisplayFor(model => model.CTDDate)
                             </dd>
                             <dt>
-                                @Html.DisplayNameFor(model => model.VendorInvoiceNumber)
+                                @Html.DisplayNameFor(model => model.Vendor.VendorName)
                             </dt>
                             <dd>
-                                @Html.DisplayFor(model => model.VendorInvoiceNumber)
+                                @Html.DisplayFor(model => model.Vendor.VendorName)
                             </dd>
                         </dl>
                     </div>
@@ -130,14 +130,15 @@
                     { field: "ClinicalTrialsDonationLineId", headerText: 'Line Id', isPrimaryKey: true, isIdentity: true, visible: false },
                     { field: "ClinicalTrialsDonationId", headerText: 'CTD#', defaultValue: @Model.ClinicalTrialsDonationId, foreignKeyField: "ClinicalTrialsDonationId", foreignKeyValue: "ClinicalTrialsDonationName", dataSource: dataManagerClinicalTrialsDonations, visible: false},
                     { field: "ClinicalTrialsProductsId", headerText: 'Drug', foreignKeyField: "ClinicalTrialsProductId", foreignKeyValue: "ProductName", dataSource: dataManagerProduct },
+                    { field: "Dispose", headerText: 'Dispose', allowEditing: false, type: "boolean", editType: "booleanedit", defaultValue: false, visible: false },
                     { field: "Description", headerText: 'Description' },
                     { field: "BatchID", headerText: 'BatchID' },
                     { field: "Quantity", headerText: 'units/batch', defaultValue: 1, editType: "numericedit"},
                     { field: "ManufareDate", headerText: 'Manufacture Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
                     { field: "ExpiryDate", headerText: 'Expiry Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
-                    { field: "Sold", headerText: 'Units sold', defaultValue: 0, editType: "numericedit", allowEditing: false },
-                    { field: "InStock", headerText: ' stock', defaultValue: 0, editType: "numericedit", allowEditing: false },
-                    { field: "Expired", headerText: ' Expired ', defaultValue: 0, editType: "numericedit", allowEditing: false },
+                    { field: "Sold", headerText: 'Units sold', defaultValue: 0, editType: "numericedit", allowEditing: false, visible: false },
+                    { field: "InStock", headerText: ' stock', defaultValue: 0, editType: "numericedit", allowEditing: false, visible: false },
+                    { field: "Expired", headerText: ' Expired ', defaultValue: 0, editType: "numericedit", allowEditing: false, visible: false },
                 ],
 
                 actionFailure: function (args) {

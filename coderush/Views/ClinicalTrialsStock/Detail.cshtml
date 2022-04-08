@@ -25,10 +25,10 @@
                     <div class="row">
                         <dl class="dl-horizontal">
                             <dt>
-                                @Html.DisplayNameFor(model => model.ClinicalTrialsProductId)
+                                @Html.DisplayNameFor(model => model.ProductName)
                             </dt>
                             <dd>
-                                @Html.DisplayFor(model => model.ClinicalTrialsProductId)
+                                @Html.DisplayFor(model => model.ProductName)
                             </dd>
                             <dt>
                                 @Html.DisplayNameFor(model => model.TotalRecieved)
@@ -132,6 +132,7 @@
                 columns: [
                     { field: "ClinicalTrialsDonationLineId", headerText: 'Line Id', isPrimaryKey: true, isIdentity: true, visible: false },
                     { field: "ClinicalTrialsDonationId", headerText: 'CTD#', foreignKeyField: "ClinicalTrialsDonationId", foreignKeyValue: "dataManagerClinicalTrialsDonations", dataSource: dataManagerClinicalTrialsDonations, visible: false },
+                    { field: "Dispose", headerText: 'Dispose', allowEditing: false, type: "boolean", editType: "booleanedit", defaultValue: false, visible: false },
                     { field: "BatchID", headerText: 'BatchID' },
                     { field: "Description", headerText: 'Description' },
                     { field: "Quantity", headerText: 'units/batch', defaultValue: 1, editType: "numericedit"},

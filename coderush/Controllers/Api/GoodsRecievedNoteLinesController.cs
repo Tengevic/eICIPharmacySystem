@@ -218,7 +218,7 @@ namespace coderush.Controllers.Api
         {
             GoodsRecievedNoteLine goodsRecievedNoteLine = payload.value;
 
-            GoodsRecievedNoteLine batch = _context.GoodsRecievedNoteLine.Find(goodsRecievedNoteLine.GoodsReceivedNoteId);
+          
 
             if (goodsRecievedNoteLine.InStock < goodsRecievedNoteLine.Expired)
             {
@@ -230,7 +230,12 @@ namespace coderush.Controllers.Api
 
                 return BadRequest(err);
             }
-            goodsRecievedNoteLine.InStock = goodsRecievedNoteLine.Quantity;
+            if (goodsRecievedNoteLine.Dispose)
+            {
+                goodsRecievedNoteLine.Expired = goodsRecievedNoteLine.InStock;
+                goodsRecievedNoteLine.InStock = 0;
+            }
+        
             _context.GoodsRecievedNoteLine.Update(goodsRecievedNoteLine);
             _context.SaveChanges();
             this.UpdateStock(goodsRecievedNoteLine);
@@ -262,7 +267,15 @@ namespace coderush.Controllers.Api
 
             return Ok(result);
         }
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetInstock()
+        {
+            List<GoodsRecievedNoteLine> result = await _context.GoodsRecievedNoteLine
+                .Where(x => x.InStock != 0)
+                .ToListAsync();
 
+            return Ok(result);
+        }
 
     }
 

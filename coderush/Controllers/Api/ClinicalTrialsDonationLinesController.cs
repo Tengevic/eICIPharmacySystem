@@ -88,6 +88,16 @@ namespace coderush.Controllers.Api
 
             return Ok(result);
         }
+        // /api/ClinicalTrialsDonationLines/GetInstock
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetInstock()
+        {
+            List<ClinicalTrialsDonationLine> result = await _context.ClinicalTrialsDonationLine
+                .Where(x => x.InStock != 0)
+                .ToListAsync();
+
+            return Ok(result);
+        }
         [HttpPost("[action]")]
         public IActionResult Insert([FromBody] CrudViewModel<ClinicalTrialsDonationLine> payload)
         {
@@ -229,7 +239,12 @@ namespace coderush.Controllers.Api
 
                 return BadRequest(err);
             }
-            clinicalTrialsDonationLine.InStock = clinicalTrialsDonationLine.InStock - clinicalTrialsDonationLine.Expired;
+            if (clinicalTrialsDonationLine.Dispose)
+            {
+                clinicalTrialsDonationLine.Expired = clinicalTrialsDonationLine.InStock;
+                clinicalTrialsDonationLine.InStock = 0;
+            }
+           
             _context.ClinicalTrialsDonationLine.Update(clinicalTrialsDonationLine);
             _context.SaveChanges();
             this.UpdateStock(clinicalTrialsDonationLine.ClinicalTrialsProductsId);

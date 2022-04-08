@@ -67,7 +67,7 @@ namespace coderush.Controllers.Api
             _context.ClinicalTrialsSalesLine.Add(clinicalTrialsSalesLine);
             _context.SaveChanges();
             this.UpdateStock(clinicalTrialsSalesLine.ClinicalTrialsProductsId);
-            this.UpdateBatch(clinicalTrialsSalesLine.ClinicalTrialsProductsId);
+            this.UpdateBatch(clinicalTrialsSalesLine.ClinicalTrialsDonationLineId);
             return Ok(clinicalTrialsSalesLine);
 
         }
@@ -101,7 +101,7 @@ namespace coderush.Controllers.Api
             _context.ClinicalTrialsSalesLine.Update(clinicalTrialsSalesLine);
             _context.SaveChanges();
             this.UpdateStock(clinicalTrialsSalesLine.ClinicalTrialsProductsId);
-            this.UpdateBatch(clinicalTrialsSalesLine.ClinicalTrialsProductsId);
+            this.UpdateBatch(clinicalTrialsSalesLine.ClinicalTrialsDonationLineId);
             return Ok(clinicalTrialsSalesLine);
         }
 
@@ -114,6 +114,7 @@ namespace coderush.Controllers.Api
             _context.ClinicalTrialsSalesLine.Remove(clinicalTrialsSalesLine);
             _context.SaveChanges();
            this.UpdateStock(clinicalTrialsSalesLine.ClinicalTrialsProductsId);
+            this.UpdateBatch(clinicalTrialsSalesLine.ClinicalTrialsDonationLineId);
             return Ok(clinicalTrialsSalesLine);
 
         }
@@ -157,35 +158,7 @@ namespace coderush.Controllers.Api
                     _context.SaveChanges();
 
                 }
-                {
-                    List<ClinicalTrialsDonationLine> line = new List<ClinicalTrialsDonationLine>();
-                    line = _context.ClinicalTrialsDonationLine.Where(x => x.ClinicalTrialsProductsId.Equals(productId)).ToList();
-
-                    stock.TotalRecieved = line.Sum(x => x.Quantity);
-
-                    List<ClinicalTrialsSalesLine> lines = new List<ClinicalTrialsSalesLine>();
-                    lines = _context.ClinicalTrialsSalesLine.Where(x => x.ClinicalTrialsProductsId.Equals(productId)).ToList();
-
-                    stock.TotalSales = lines.Sum(x => x.Quantity);
-                    
-
-                    if (stock.TotalRecieved < stock.TotalSales)
-                    {
-                        stock.Deficit = stock.TotalSales - stock.TotalRecieved - stock.Expired;
-                        stock.InStock = 0;
-                    }
-                    else
-                    {
-                        stock.InStock = stock.TotalRecieved - stock.TotalSales;
-                        stock.Deficit = 0;
-                    }
-
-
-                    _context.Update(stock);
-
-                    _context.SaveChanges();
-
-                }
+              
 
             }
             catch (Exception)
@@ -199,7 +172,8 @@ namespace coderush.Controllers.Api
         {
             try
             {
-                ClinicalTrialsDonationLine batch = _context.ClinicalTrialsDonationLine.Find(batchId);
+                ClinicalTrialsDonationLine batch = _context.ClinicalTrialsDonationLine.Where(x => x.ClinicalTrialsDonationLineId.Equals(batchId))
+                    .FirstOrDefault();
                 if (batch != null)
                 {
                     List<ClinicalTrialsSalesLine> lines = new List<ClinicalTrialsSalesLine>();

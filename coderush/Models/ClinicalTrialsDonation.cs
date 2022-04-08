@@ -15,9 +15,10 @@ namespace coderush.Models
         public DateTimeOffset CTDDate { get; set; }
         [Display(Name = "Vendor Delivery Order #")]
         public string VendorDONumber { get; set; }
-        [Display(Name = "Vendor Bill / Invoice #")]
-        public string VendorInvoiceNumber { get; set; }
+        [Display(Name = "Vendor")]
+        public int VendorId { get; set; }
         [Display(Name = "Warehouse")]
+        public Vendor Vendor { get; set; }
         public int WarehouseId { get; set; }
    
         public List<ClinicalTrialsDonationLine> clinicalTrialsDonationLine { get; set; } = new List<ClinicalTrialsDonationLine>();

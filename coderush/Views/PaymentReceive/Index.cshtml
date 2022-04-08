@@ -112,8 +112,8 @@
                     columns: [
                         { field: "PaymentReceiveId", headerText: 'Payment Receive', isPrimaryKey: true, isIdentity: true, visible: false },
                         { field: "PaymentReceiveName", headerText: 'Payment Receive#', allowEditing: false },
-                        { field: "IsFullPayment", headerText: 'Full Payment', allowEditing: false, type: "boolean", editType: "booleanedit", defaultValue: true },
                         { field: "InvoiceId", headerText: 'Invoice#', foreignKeyField: "InvoiceId", foreignKeyValue: "InvoiceName", dataSource: dataManagerInvoice, validationRules: { required: true } },
+                        { field: "IsFullPayment", headerText: 'Full Payment', type: "boolean", editType: "booleanedit", defaultValue: true },
                         { field: "PaymentDate", headerText: 'Payment Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
                         { field: "PaymentTypeId", headerText: 'Payment Type', foreignKeyField: "PaymentTypeId", foreignKeyValue: "PaymentTypeName", dataSource: dataManagerPaymentType },
                         { field: "PaymentAmount", headerText: 'Payment Amount', editType: "numericedit", format: "{0:n2}", validationRules: { required: true } },
@@ -154,12 +154,13 @@
             }
             if (args.requestType == 'save') {
                 pay = args.data.PaymentReceiveId;
-                if (args.data.PaymentTypeId == 2) {
+                if (args.data.PaymentTypeId != 1 && args.data.PaymentTypeId != 3) {
                     $("#dialog").ejDialog("open");
 
                     $("#UploadDefault").ejUploadbox({
                         saveUrl: "/api/UploadFiles",
                         allowDraggable: true,
+                        allowDragAndDrop: true,
                         multipleFilesSelection: false,
                         success: "uploadSuccess",
                         beforeSend: function (args) {
