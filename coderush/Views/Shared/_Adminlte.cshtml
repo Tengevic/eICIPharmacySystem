@@ -85,32 +85,6 @@
 
     @RenderSection("Scripts", required: false)
 
-    @if (ViewBag.error != null)
-    {
-<script type="text/javascript">
-      $(document).ready(function () {
-        // show when page load
-                toastr.error("@ViewBag.error");
-    });
-</script>
-    }
-    @if (ViewBag.warning != null )
-    {
-<script type="text/javascript">
-          $(document).ready(function () {
-        // show when page load
-                toastr.warning("@ViewBag.warning");
-    });
-</script>
-    } @if (ViewBag.info != null)
-    {
-<script type="text/javascript">
-                  $(document).ready(function () {
-        // show when page load
-                toastr.info("@ViewBag.info");
-    });
-</script>
-    }
 
 </body>
 </html>

@@ -196,6 +196,39 @@
 
     <script type="text/javascript">
         $(function () {
+            $.ajax({
+                type: 'GET',
+                url: '/api/Product/GetLow',
+                success: function (data) {
+    
+                    if (data != 0) {
+                        var str = data + " drugs are in low stock";
+                        toastr.error(str, "Low Stock")
+                    }
+                   
+                }
+            });
+            $.ajax({
+                type: 'GET',
+                url: '/api/GoodsRecievedNoteLines/GetExpired',
+                success: function (data) {
+                    if (data.one != 0)
+                    {
+                        var str = data.one + " drug batch(s) will expire in one month";
+                         toastr.error(str,"Expiring drugs")
+                    }
+                    if (data.two != 0) {
+                        var str = data.two + " drug batch(s) will expire in one month";
+                        toastr.warning(str, "Expiring drugs")
+                    }
+                    if (data.three != 0) {
+                        var str = data.three + " drug batch(s) will expire in one month";
+                        toastr.info(str, "Expiring drugs")
+                    }
+                }
+            });
+
+
 
             $("#UploadDefault").ejUploadbox({
                 saveUrl: "/api/UploadProfilePicture",

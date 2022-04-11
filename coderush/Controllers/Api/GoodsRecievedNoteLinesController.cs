@@ -276,11 +276,53 @@ namespace coderush.Controllers.Api
 
             return Ok(result);
         }
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetExpired()
+        {
+            List<GoodsRecievedNoteLine> goodsRecievedNoteLine = await _context.GoodsRecievedNoteLine
+                                                            .Where(x => x.InStock > 0)
+                                                            .ToListAsync();
+            DateTime current = DateTime.Now;
+            ExpiredDrugs expiredDrugs = new ExpiredDrugs()
+            {
+                one = 0,
+                two = 0,
+                three = 0
+            };
 
+            foreach (GoodsRecievedNoteLine drug in goodsRecievedNoteLine)
+            {
+                Double months = (drug.ExpiryDate - current).TotalDays;
+
+                if (months < 30)
+                {
+                    expiredDrugs.one = expiredDrugs.one + 1;
+                }
+                else if (months < 60 )
+                {
+                    expiredDrugs.two = expiredDrugs.two + 1;
+                }
+                else if(months < 90 )
+                {
+                    expiredDrugs.three = expiredDrugs.three + 1;
+
+                }
+            }
+
+            return Ok(expiredDrugs);
+        }
     }
+
 
     public class Err
     {
         public string message { get; set; }
     }
+    public class ExpiredDrugs
+    {
+        public int one { get; set; }
+        public int two { get; set; }
+        public int three { get; set; }
+    }
+
 }

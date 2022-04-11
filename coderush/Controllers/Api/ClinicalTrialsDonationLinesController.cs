@@ -252,6 +252,40 @@ namespace coderush.Controllers.Api
 
             return Ok(clinicalTrialsDonationLine);
         }
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetExpired()
+        {
+            List<ClinicalTrialsDonationLine> clinicalTrialsDonationLine = await _context.ClinicalTrialsDonationLine
+                                                            .Where(x => x.InStock > 0)
+                                                            .ToListAsync();
+            DateTime current = DateTime.Now;
+            ExpiredDrugs expiredDrugs = new ExpiredDrugs()
+            {
+                one = 0,
+                two = 0,
+                three = 0
+            };
 
+            foreach (ClinicalTrialsDonationLine drug in clinicalTrialsDonationLine)
+            {
+                Double months = (drug.ExpiryDate - current).TotalDays;
+
+                if (months < 30)
+                {
+                    expiredDrugs.one = expiredDrugs.one + 1;
+                }
+                else if (months < 60 )
+                {
+                    expiredDrugs.two = expiredDrugs.two + 1;
+                }
+                else if (months < 90)
+                {
+                    expiredDrugs.three = expiredDrugs.three + 1;
+
+                }
+            }
+
+            return Ok(expiredDrugs);
+        }
     }
 }

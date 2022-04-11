@@ -78,5 +78,20 @@ namespace coderush.Controllers.Api
             return Ok(product);
 
         }
+        // api/ClinicalTrialsProducts/GetLow
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetLow()
+        {
+            var product = from p in _context.ClinicalTrialsProducts
+                          select p;
+
+            product = product.Where(x => x.InStock < 20);
+           
+
+            List<ClinicalTrialsProduct> Items = await product.ToListAsync();
+            int count = Items.Count();
+
+            return Ok(count);
+        }
     }
 }
