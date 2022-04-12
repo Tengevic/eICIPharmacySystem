@@ -115,6 +115,7 @@
                         { field: "CurrencyId", headerText: 'Currency', allowEditing: false, foreignKeyField: "CurrencyId", foreignKeyValue: "CurrencyName", dataSource: dataManagerCurrency, visible: false, defaultValue: 1 },
                         { field: "CustomerRefNumber", headerText: 'Patient. Ref#', validationRules: { required: true } },
                         { field: "Freight", headerText: 'Freight', defaultValue: 0, editType: "numericedit", format: "{0:n2}", visible: false },
+                        { field: "Total", headerText: 'Total', defaultValue: 0, allowEditing: false, editType: "numericedit", format: "{0:n2}" },
                     ],
                     actionComplete: "complete",
                 });

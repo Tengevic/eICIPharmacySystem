@@ -114,6 +114,7 @@
                         { field: "PurchaseTypeId", headerText: 'Purchase Type', foreignKeyField: "PurchaseTypeId", foreignKeyValue: "PurchaseTypeName", dataSource: dataManagerPurchaseType, defaultValue: 1, visible: false},
                         { field: "CurrencyId", headerText: 'Currency', allowEditing: false, foreignKeyField: "CurrencyId", foreignKeyValue: "CurrencyName", dataSource: dataManagerCurrency, defaultValue: 1, visible: false},
                         { field: "Freight", headerText: 'Freight', defaultValue: 0, editType: "numericedit", format: "{0:n2}", visible: false},
+                        { field: "Total", headerText: 'Total', defaultValue: 0, allowEditing: false, editType: "numericedit", format: "{0:n2}" },
                     ],
                     actionComplete: "complete",
                 });
