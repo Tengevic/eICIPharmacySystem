@@ -71,28 +71,28 @@ namespace coderush.Controllers.Api
             return Ok(new { Items, Count });
         }
 
-        [HttpGet("[action]")]
-        public async Task<IActionResult> GetSalesOrderLineByInvoiceId()
-        {
-            var headers = Request.Headers["InvoiceId"];
-            int invoiceId = Convert.ToInt32(headers);
-            Invoice invoice = await _context.Invoice.SingleOrDefaultAsync(x => x.InvoiceId.Equals(invoiceId));
-            List<SalesOrderLine> Items = new List<SalesOrderLine>();
-            if (invoice != null)
-            {
-                int shipmentId = invoice.ShipmentId;
-                Shipment shipment = await _context.Shipment.SingleOrDefaultAsync(x => x.ShipmentId.Equals(shipmentId));
-                if (shipment != null)
-                {
-                    int salesOrderId = shipment.SalesOrderId;
-                    Items = await _context.SalesOrderLine
-                        .Where(x => x.SalesOrderId.Equals(salesOrderId))
-                        .ToListAsync();
-                }
-            }
-            int Count = Items.Count();
-            return Ok(new { Items, Count });
-        }
+        //[HttpGet("[action]")]
+        //public async Task<IActionResult> GetSalesOrderLineByInvoiceId()
+        //{
+        //    var headers = Request.Headers["InvoiceId"];
+        //    int invoiceId = Convert.ToInt32(headers);
+        //    Invoice invoice = await _context.Invoice.SingleOrDefaultAsync(x => x.InvoiceId.Equals(invoiceId));
+        //    List<SalesOrderLine> Items = new List<SalesOrderLine>();
+        //    if (invoice != null)
+        //    {
+        //        int shipmentId = invoice.ShipmentId;
+        //        Shipment shipment = await _context.Shipment.SingleOrDefaultAsync(x => x.ShipmentId.Equals(shipmentId));
+        //        if (shipment != null)
+        //        {
+        //            int salesOrderId = shipment.SalesOrderId;
+        //            Items = await _context.SalesOrderLine
+        //                .Where(x => x.SalesOrderId.Equals(salesOrderId))
+        //                .ToListAsync();
+        //        }
+        //    }
+        //    int Count = Items.Count();
+        //    return Ok(new { Items, Count });
+        //}
         private void UpdateStock(int productId)
         {
             try

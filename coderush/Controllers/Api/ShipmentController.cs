@@ -37,32 +37,32 @@ namespace coderush.Controllers.Api
             return Ok(new { Items, Count });
         }
 
-        [HttpGet("[action]")]
-        public async Task<IActionResult> GetNotInvoicedYet()
-        {
-            List<Shipment> shipments = new List<Shipment>();
-            try
-            {
-                List<Invoice> invoices = new List<Invoice>();
-                invoices = await _context.Invoice.ToListAsync();
-                List<int> ids = new List<int>();
+        //[HttpGet("[action]")]
+        //public async Task<IActionResult> GetNotInvoicedYet()
+        //{
+        //    List<Shipment> shipments = new List<Shipment>();
+        //    try
+        //    {
+        //        List<Invoice> invoices = new List<Invoice>();
+        //        invoices = await _context.Invoice.ToListAsync();
+        //        List<int> ids = new List<int>();
 
-                foreach (var item in invoices)
-                {
-                    ids.Add(item.ShipmentId);
-                }
+        //        foreach (var item in invoices)
+        //        {
+        //            ids.Add(item.ShipmentId);
+        //        }
 
-                shipments = await _context.Shipment
-                    .Where(x => !ids.Contains(x.ShipmentId))
-                    .ToListAsync();
-            }
-            catch (Exception)
-            {
+        //        shipments = await _context.Shipment
+        //            .Where(x => !ids.Contains(x.ShipmentId))
+        //            .ToListAsync();
+        //    }
+        //    catch (Exception)
+        //    {
 
-                throw;
-            }
-            return Ok(shipments);
-        }
+        //        throw;
+        //    }
+        //    return Ok(shipments);
+        //}
 
         [HttpPost("[action]")]
         public IActionResult Insert([FromBody]CrudViewModel<Shipment> payload)

@@ -51,8 +51,12 @@
                 offline: true
             });
 
-            var dataManagerShipment = ej.DataManager({
-                url: "/api/Shipment",
+            //var dataManagerShipment = ej.DataManager({
+            //    url: "/api/Shipment",
+            //    adaptor: new ej.WebApiAdaptor()
+            //});
+            var dataManagerSalesOrder = ej.DataManager({
+                url: "/api/SalesOrder",
                 adaptor: new ej.WebApiAdaptor()
             });
 
@@ -96,7 +100,7 @@
                     columns: [
                         { field: "InvoiceId", headerText: 'Invoice', isPrimaryKey: true, isIdentity: true, visible: false },
                         { field: "InvoiceName", headerText: 'Invoice#', allowEditing: false },
-                        { field: "ShipmentId", headerText: 'Shipment / DO', foreignKeyField: "ShipmentId", foreignKeyValue: "ShipmentName", dataSource: dataManagerShipment, validationRules: { required: true } },
+                        { field: "SalesOrderId", headerText: 'SO#', foreignKeyField: "SalesOrderId", foreignKeyValue: "SalesOrderName", dataSource: dataManagerSalesOrder, validationRules: { required: true } },
                         { field: "InvoiceDate", headerText: 'Invoice Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
                         { field: "InvoiceDueDate", headerText: 'Invoice Due Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
                         { field: "InvoiceTypeId", headerText: 'Invoice Type', foreignKeyField: "InvoiceTypeId", foreignKeyValue: "InvoiceTypeName", dataSource: dataManagerInvoiceType, defaultValue: 1, visible: false },
@@ -113,20 +117,20 @@
                 $("#" + this._id + "_dialogEdit").ejDialog({ title: "Edit Record" });
             }
             if (args.requestType == 'beginedit' || args.requestType == 'add') {
-                var selected = $('#GridShipmentId').data('ejDropDownList');
+                var selected = $('#GridSalesOrderId').data('ejDropDownList');
                 var selectedValue = parseInt(selected.option('value'));
                 var selectedText = selected.option('text');
                 $.ajax({
                     type: 'GET',
-                    url: '/api/Shipment/GetNotInvoicedYet',
+                    url: '/api/SalesOrder/GetNotInvoicedYet',
                     success: function (data) {
                         if (args.requestType == 'beginedit') {
-                            data.push({ 'ShipmentId': selectedValue, 'ShipmentName': selectedText });
+                            data.push({ 'SalesOrderId': selectedValue, 'SalesOrderName': selectedText });
                         }
 
-                        $("#GridShipmentId").ejDropDownList({
+                        $("#GridSalesOrderId").ejDropDownList({
                             dataSource: data,
-                            fields: { id: 'ShipmentId', text: 'ShipmentName', value: 'ShipmentId' },
+                            fields: { id: 'SalesOrderId', text: 'SalesOrderName', value: 'SalesOrderId' },
                             value: selectedValue
                         });
                     }
