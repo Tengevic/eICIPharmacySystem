@@ -44,7 +44,7 @@ namespace coderush.Controllers.Api
             try
             {
                 List<GoodsReceivedNote> grns = new List<GoodsReceivedNote>();
-                grns = await _context.GoodsReceivedNote.Where(x => x.IsFullReceive == false).ToListAsync();
+                grns = await _context.GoodsReceivedNote.Where(x => x.IsFullReceive == true).ToListAsync();
                 List<int> ids = new List<int>();
 
                 foreach (var item in grns)

@@ -195,17 +195,21 @@ namespace coderush.Controllers.Api
                     List<ClinicalTrialsSalesLine> lines = new List<ClinicalTrialsSalesLine>();
                     lines = _context.ClinicalTrialsSalesLine.Where(x => x.ClinicalTrialsProductsId.Equals(productId)).ToList();
 
+                    List<ClinicalTrialsReturnedLine> returnedLines = new List<ClinicalTrialsReturnedLine>();
+                    returnedLines = _context.ClinicalTrialsReturnedLine.Where(x => x.ClinicalTrialsProductsId.Equals(productId)).ToList();
+                    stock.Returned = returnedLines.Sum(x => x.Quantity);
+
                     stock.TotalSales = lines.Sum(x => x.Quantity);
 
 
                     if (stock.TotalRecieved < stock.TotalSales)
                     {
-                        stock.Deficit = stock.TotalSales - stock.TotalRecieved ;
+                        stock.Deficit = stock.TotalSales - stock.TotalRecieved - stock.Returned;
                         stock.InStock = 0;
                     }
                     else
                     {
-                        stock.InStock = stock.TotalRecieved - stock.TotalSales - stock.Expired;
+                        stock.InStock =  stock.TotalRecieved - stock.TotalSales - stock.Expired - stock.Returned;
                         stock.Deficit = 0;
                     }
 

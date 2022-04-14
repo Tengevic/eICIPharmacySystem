@@ -107,7 +107,7 @@
                 ],
                 actionComplete: function (args) {
                     if (args.requestType == "save")
-                        toastr.success("Success");
+                        location.reload();
                 },
                 actionFailure: function (args) {
                     if (args.requestType == "save") {

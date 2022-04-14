@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace coderush.Models
 {
-    public class ProductType
+    public class ProductType //Generic type
     {
         public int ProductTypeId { get; set; }
         [Required]

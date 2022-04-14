@@ -32,7 +32,15 @@ namespace coderush.Controllers.Api
             int Count = Items.Count();
             return Ok(new { Items, Count });
         }
+        [HttpGet("[action]/{id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            PaymentType result = await _context.PaymentType
+                .Where(x => x.PaymentTypeId.Equals(id))
+                    .FirstOrDefaultAsync();
 
+            return Ok(result);
+        }
 
         [HttpPost("[action]")]
         public IActionResult Insert([FromBody]CrudViewModel<PaymentType> payload)

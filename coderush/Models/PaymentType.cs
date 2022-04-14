@@ -12,5 +12,6 @@ namespace coderush.Models
         [Required]
         public string PaymentTypeName { get; set; }
         public string Description { get; set; }
+        public bool RequireUpload { get; set; } = false;
     }
 }

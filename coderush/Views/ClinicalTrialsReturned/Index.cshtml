@@ -1,10 +1,9 @@
 ﻿
 @{
-    ViewData["Title"] = "Payment Voucher";
+    ViewData["Title"] = "Return";
 }
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
-
     <!-- Main content -->
     <section class="content">
         <!-- Default box -->
@@ -26,7 +25,7 @@
             </div>
             <!-- /.box-body -->
             <div class="box-footer">
-               
+
             </div>
             <!-- /.box-footer-->
         </div>
@@ -35,45 +34,30 @@
     <!-- /.content -->
 </div>
 <!-- /.content-wrapper -->
-
 @section Styles{
-
 }
-
 @section Scripts{
-
     <script type="text/javascript">
         $(function () {
 
             var dataManager = ej.DataManager({
-                url: "/api/PaymentVoucher",
+                url: "/api/ClinicalTrialsReturneds",
                 adaptor: new ej.WebApiAdaptor(),
                 offline: true
             });
-
-            var dataManagerBill = ej.DataManager({
-                url: "/api/Bill",
+            var dataManagerVendor = ej.DataManager({
+                url: "/api/Vendor",
                 adaptor: new ej.WebApiAdaptor()
             });
-
-            var dataManagerPaymentType = ej.DataManager({
-                url: "/api/PaymentType",
-                adaptor: new ej.WebApiAdaptor()
-            });
-
-            var dataManagerCashBank = ej.DataManager({
-                url: "/api/CashBank",
-                adaptor: new ej.WebApiAdaptor()
-            });
-
-            dataManager.ready.done(function (e) { 
+           
+            dataManager.ready.done(function (e) {
                 $("#Grid").ejGrid({
                     dataSource: ej.DataManager({
                         json: e.result,
                         adaptor: new ej.remoteSaveAdaptor(),
-                        insertUrl: "/api/PaymentVoucher/Insert",
-                        updateUrl: "/api/PaymentVoucher/Update",
-                        removeUrl: "/api/PaymentVoucher/Remove",
+                        insertUrl: "/api/ClinicalTrialsReturneds/Insert",
+                        updateUrl: "/api/ClinicalTrialsReturneds/Update",
+                        removeUrl: "/api/ClinicalTrialsReturneds/Remove",
                     }),
                     toolbarSettings: {
                         showToolbar: true,
@@ -99,50 +83,29 @@
                     allowPaging: true,
                     pageSettings: { pageSize: 10, printMode: ej.Grid.PrintMode.CurrentPage },
                     columns: [
-                        { field: "PaymentvoucherId", headerText: 'Payment Voucher', isPrimaryKey: true, isIdentity: true, visible: false },
-                        { field: "PaymentVoucherName", headerText: 'Payment Voucher#', allowEditing: false },
-                        { field: "IsFullPayment", headerText: 'Full Payment', type: "boolean", editType: "booleanedit", defaultValue: true },
-                        { field: "BillId", headerText: 'Bill#', foreignKeyField: "BillId", foreignKeyValue: "BillName", dataSource: dataManagerBill, validationRules: { required: true } },
-                        { field: "PaymentDate", headerText: 'Payment Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
-                        { field: "PaymentTypeId", headerText: 'Payment Type', foreignKeyField: "PaymentTypeId", foreignKeyValue: "PaymentTypeName", dataSource: dataManagerPaymentType },
-                        { field: "CashBankId", headerText: 'Payment Source', foreignKeyField: "CashBankId", foreignKeyValue: "CashBankName", dataSource: dataManagerCashBank },
-                        { field: "PaymentAmount", headerText: 'Payment Amount', editType: "numericedit", format: "{0:n2}", validationRules: { required: true } },
+                        { headerText: 'Detail', template: "<a href='/ClinicalTrialsReturned/Detail/{{:ClinicalTrialsReturnedId}}'>Detail</a>" },
+                        { field: "ClinicalTrialsReturnedId", headerText: 'CTR Id', isPrimaryKey: true, isIdentity: true, visible: false },
+                        { field: "ClinicalTrialsReturnedName", headerText: 'SO#', allowEditing: false },            
+                        { field: "VendorId", headerText: 'Vendor', foreignKeyField: "VendorId", foreignKeyValue: "VendorName", dataSource: dataManagerVendor, validationRules: { required: true } },
+                        { field: "ReturnedDate", headerText: 'Return Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
                     ],
                     actionComplete: "complete",
                 });
             });
 
-            
+
         });
 
         function complete(args) {
             if (args.requestType == 'beginedit') {
                 $("#" + this._id + "_dialogEdit").ejDialog({ title: "Edit Record" });
             }
-            if (args.requestType == 'beginedit' || args.requestType == 'add') {
-                var selected = $('#GridBillId').data('ejDropDownList');
-                var selectedValue = parseInt(selected.option('value'));
-                var selectedText = selected.option('text');
-                $.ajax({
-                    type: 'GET',
-                    url: '/api/Bill/GetNotPaidYet',
-                    success: function (data) {
-                        if (args.requestType == 'beginedit') {
-                            data.push({ 'BillId': selectedValue, 'BillName': selectedText });
-                        }
-
-                        $("#GridBillId").ejDropDownList({
-                            dataSource: data,
-                            fields: { id: 'BillId', text: 'BillName', value: 'BillId' },
-                            value: selectedValue
-                        });
-                    }
-                });
-
-            }
+           
         }
+
+       
+     
 
 
     </script>
 }
-

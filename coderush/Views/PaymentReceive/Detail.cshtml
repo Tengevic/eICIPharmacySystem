@@ -90,17 +90,29 @@
 @section Scripts{
     <script type="text/javascript">
         $(function () {
-            
-            $("#UploadDefault").ejUploadbox({
-                saveUrl: "/api/UploadFiles",
-                allowDraggable: true,
-                multipleFilesSelection: false,
-                success: "uploadSuccess",
-                beforeSend: function (args) {
-                    args.xhr.setRequestHeader("test", @Model.PaymentReceiveId);
-                }
-            });
+            $.ajax({
+                url: '/api/PaymentType/GetById/' + @Model.PaymentTypeId,
+                type: 'GET',
+                success: function (data) {
 
+                    if (data.RequireUpload) {
+                    $("#UploadDefault").ejUploadbox({
+                        saveUrl: "/api/UploadFiles",
+                        allowDraggable: true,
+                        multipleFilesSelection: false,
+                        success: function (args) {
+                            location.reload();
+                        },
+                        beforeSend: function (args) {
+                            args.xhr.setRequestHeader("test", @Model.PaymentReceiveId);
+                        }
+                    });
+                    }
+
+                }
+            })
+            
+            
             var dataManager = ej.DataManager({
                 url: "/api/UploadFiles",
                 adaptor: new ej.WebApiAdaptor(),

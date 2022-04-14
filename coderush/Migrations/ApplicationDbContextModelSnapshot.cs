@@ -202,6 +202,8 @@ namespace coderush.Migrations
 
                     b.Property<double>("Quantity");
 
+                    b.Property<double>("Returned");
+
                     b.Property<double>("Sold");
 
                     b.HasKey("ClinicalTrialsDonationLineId");
@@ -245,6 +247,8 @@ namespace coderush.Migrations
 
                     b.Property<int>("ProductTypeId");
 
+                    b.Property<double>("Returned");
+
                     b.Property<double>("TotalRecieved");
 
                     b.Property<double>("TotalSales");
@@ -256,6 +260,44 @@ namespace coderush.Migrations
                     b.ToTable("ClinicalTrialsProducts");
                 });
 
+            modelBuilder.Entity("coderush.Models.ClinicalTrialsReturned", b =>
+                {
+                    b.Property<int>("ClinicalTrialsReturnedId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("ClinicalTrialsReturnedName");
+
+                    b.Property<DateTimeOffset>("ReturnedDate");
+
+                    b.Property<int>("VendorId");
+
+                    b.HasKey("ClinicalTrialsReturnedId");
+
+                    b.ToTable("ClinicalTrialsReturned");
+                });
+
+            modelBuilder.Entity("coderush.Models.ClinicalTrialsReturnedLine", b =>
+                {
+                    b.Property<int>("ClinicalTrialsReturnedLineId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("ClinicalTrialsDonationLineId");
+
+                    b.Property<int>("ClinicalTrialsProductsId");
+
+                    b.Property<int>("ClinicalTrialsReturnedId");
+
+                    b.Property<string>("Description");
+
+                    b.Property<double>("Quantity");
+
+                    b.HasKey("ClinicalTrialsReturnedLineId");
+
+                    b.HasIndex("ClinicalTrialsReturnedId");
+
+                    b.ToTable("ClinicalTrialsReturnedLine");
+                });
+
             modelBuilder.Entity("coderush.Models.ClinicalTrialsSales", b =>
                 {
                     b.Property<int>("ClinicalTrialsSalesId")
@@ -265,11 +307,9 @@ namespace coderush.Migrations
 
                     b.Property<int>("CustomerId");
 
-                    b.Property<DateTimeOffset>("DeliveryDate");
-
-                    b.Property<DateTimeOffset>("OrderDate");
-
                     b.Property<string>("PatientRefNumber");
+
+                    b.Property<DateTimeOffset>("UseDate");
 
                     b.HasKey("ClinicalTrialsSalesId");
 
@@ -526,6 +566,8 @@ namespace coderush.Migrations
                     b.Property<string>("PaymentTypeName")
                         .IsRequired();
 
+                    b.Property<bool>("RequireUpload");
+
                     b.HasKey("PaymentTypeId");
 
                     b.ToTable("PaymentType");
@@ -715,17 +757,15 @@ namespace coderush.Migrations
 
                     b.Property<int>("CustomerId");
 
-                    b.Property<string>("CustomerRefNumber");
-
-                    b.Property<DateTimeOffset>("DeliveryDate");
-
                     b.Property<double>("Discount");
 
                     b.Property<double>("Freight");
 
-                    b.Property<DateTimeOffset>("OrderDate");
+                    b.Property<string>("PatientRefNumber");
 
                     b.Property<string>("Remarks");
+
+                    b.Property<DateTimeOffset>("SaleDate");
 
                     b.Property<string>("SalesOrderName");
 
@@ -1078,6 +1118,14 @@ namespace coderush.Migrations
                     b.HasOne("coderush.Models.ClinicalTrialsProduct", "clinicalTrialsProducts")
                         .WithMany()
                         .HasForeignKey("ClinicalTrialsProductsId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("coderush.Models.ClinicalTrialsReturnedLine", b =>
+                {
+                    b.HasOne("coderush.Models.ClinicalTrialsReturned", "clinicalTrialsReturned")
+                        .WithMany("ClinicalTrialsReturnedLines")
+                        .HasForeignKey("ClinicalTrialsReturnedId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

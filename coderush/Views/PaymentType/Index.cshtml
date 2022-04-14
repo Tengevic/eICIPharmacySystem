@@ -86,6 +86,7 @@
                     columns: [
                         { field: "PaymentTypeId", headerText: 'Payment Type Id', isPrimaryKey: true, isIdentity: true, visible: false },
                         { field: "PaymentTypeName", headerText: 'Payment Type Name', validationRules: { required: true } },
+                        { field: "RequireUpload", headerText: 'RequireUpload', type: "boolean", editType: "booleanedit", defaultValue: false },
                         { field: "Description", headerText: 'Description', },
                     ],
                     actionComplete: "complete",

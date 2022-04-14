@@ -44,7 +44,7 @@ namespace coderush.Controllers.Api
             try
             {
                 List<PaymentVoucher> vouchers = new List<PaymentVoucher>();
-                vouchers = await _context.PaymentVoucher.Where(x => x.IsFullPayment == false).ToListAsync();
+                vouchers = await _context.PaymentVoucher.Where(x => x.IsFullPayment == true).ToListAsync();
                 List<int> ids = new List<int>();
 
                 foreach (var item in vouchers)

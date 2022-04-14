@@ -218,11 +218,11 @@
                          toastr.error(str,"Expiring drugs")
                     }
                     if (data.two != 0) {
-                        var str = data.two + " drug batch(s) will expire in one month";
+                        var str = data.two + " drug batch(s) will expire in two months";
                         toastr.warning(str, "Expiring drugs")
                     }
                     if (data.three != 0) {
-                        var str = data.three + " drug batch(s) will expire in one month";
+                        var str = data.three + " drug batch(s) will expire in three months";
                         toastr.info(str, "Expiring drugs")
                     }
                 }
@@ -291,6 +291,12 @@
                     { field: "LastName", headerText: 'Last Name', validationRules: { required: false } },
                 ],
                 actionComplete: "complete",
+                actionFailure: function (args) {
+                    if (args.requestType == "save") {
+                        var s = ej.parseJSON(args.error.responseText)
+                        toastr.info(s.message);
+                    }
+                }
             });
         }
 
@@ -332,6 +338,12 @@
                     { field: "LastName", headerText: 'Last Name', validationRules: { required: false } },
                 ],
                 actionComplete: "completeGridPassword",
+                actionFailure: function (args) {
+                    if (args.requestType == "save") {
+                        var s = ej.parseJSON(args.error.responseText)
+                        toastr.info(s.message);
+                    }
+                },
             });
         }
 

@@ -32,10 +32,10 @@
                 </a>
             </li>
             <li class="header">SALES</li>
-            @*<li class="@Html.IsSelected(controller: MainMenu.CustomerType.ControllerName)">
+            <li class="@Html.IsSelected(controller: MainMenu.CustomerType.ControllerName)">
         <a href="@MainMenu.CustomerType.Path">
             <i class="fa fa-gear"></i> <span>@MainMenu.CustomerType.PageName</span>
-        </a>*@
+        </a>
             </li>
             <li class="@Html.IsSelected(controller: MainMenu.Customer.ControllerName)">
                 <a href="@MainMenu.Customer.Path">
@@ -146,6 +146,11 @@
                     <i class="fa fa-gear"></i> <span>@MainMenu.ClinicalTrialsSales.PageName</span>
                 </a>
             </li>
+            <li class="@Html.IsSelected(controller: MainMenu.ClinicalTrialsReturned.ControllerName)">
+                <a href="@MainMenu.ClinicalTrialsReturned.Path">
+                    <i class="fa fa-gear"></i> <span>@MainMenu.ClinicalTrialsReturned.PageName</span>
+                </a>
+            </li>
             <li class="@Html.IsSelected(controller: MainMenu.ClinicalTrialsStock.ControllerName)">
                 <a href="@MainMenu.ClinicalTrialsStock.Path">
                     <i class="fa fa-gear"></i> <span>@MainMenu.ClinicalTrialsStock.PageName</span>
@@ -169,10 +174,10 @@
                 </a>
             </li>
             @*<li class="@Html.IsSelected(controller: MainMenu.CashBank.ControllerName)">
-                <a href="@MainMenu.CashBank.Path">
-                    <i class="fa fa-money"></i> <span>@MainMenu.CashBank.PageName</span>
-                </a>
-            </li>*@
+            <a href="@MainMenu.CashBank.Path">
+                <i class="fa fa-money"></i> <span>@MainMenu.CashBank.PageName</span>
+            </a>
+        </li>*@
             <li class="@Html.IsSelected(controller: MainMenu.PaymentType.ControllerName)">
                 <a href="@MainMenu.PaymentType.Path">
                     <i class="fa fa-gear"></i> <span>@MainMenu.PaymentType.PageName</span>

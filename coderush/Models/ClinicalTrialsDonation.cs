@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace coderush.Models
 {
-    public class ClinicalTrialsDonation
+    public class ClinicalTrialsDonation //clinical trials recieve
     {
         public int ClinicalTrialsDonationId { get; set; }
         [Display(Name = "CTD Number")]

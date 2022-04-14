@@ -45,7 +45,7 @@ namespace coderush.Controllers.Api
             {
                 List<PaymentReceive> receives = new List<PaymentReceive>();
                 receives = await _context.PaymentReceive
-                        .Where(x => x.IsFullPayment == false)    
+                        .Where(x => x.IsFullPayment == true)    
                         .ToListAsync();
                 List<int> ids = new List<int>();
 

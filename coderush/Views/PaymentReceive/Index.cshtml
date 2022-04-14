@@ -112,7 +112,7 @@
                     columns: [
                         { field: "PaymentReceiveId", headerText: 'Payment Receive', isPrimaryKey: true, isIdentity: true, visible: false },
                         { field: "PaymentReceiveName", headerText: 'Payment Receive#', allowEditing: false },
-                        { field: "InvoiceId", headerText: 'Invoice#', foreignKeyField: "InvoiceId", foreignKeyValue: "InvoiceName", dataSource: dataManagerInvoice, validationRules: { required: true } },
+                        { field: "InvoiceId", headerText: 'ICI Invoice number', foreignKeyField: "InvoiceId", foreignKeyValue: "InvoiceName", dataSource: dataManagerInvoice, validationRules: { required: true } },
                         { field: "IsFullPayment", headerText: 'Full Payment', type: "boolean", editType: "booleanedit", defaultValue: true },
                         { field: "PaymentDate", headerText: 'Payment Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
                         { field: "PaymentTypeId", headerText: 'Payment Type', foreignKeyField: "PaymentTypeId", foreignKeyValue: "PaymentTypeName", dataSource: dataManagerPaymentType },
@@ -154,21 +154,31 @@
             }
             if (args.requestType == 'save') {
                 pay = args.data.PaymentReceiveId;
-                if (args.data.PaymentTypeId != 1 && args.data.PaymentTypeId != 3) {
-                    $("#dialog").ejDialog("open");
+            
+                $.ajax({
+                    url: '/api/PaymentType/GetById/' + args.data.PaymentTypeId,
+                    type: 'GET',
+                    success: function (data) {
 
-                    $("#UploadDefault").ejUploadbox({
-                        saveUrl: "/api/UploadFiles",
-                        allowDraggable: true,
-                        allowDragAndDrop: true,
-                        multipleFilesSelection: false,
-                        success: "uploadSuccess",
-                        beforeSend: function (args) {
-                            args.xhr.setRequestHeader("test", pay);
+                        upload = data.RequireUpload;
+                        if (data.RequireUpload == true) {
+                            $("#dialog").ejDialog("open");
+
+                            $("#UploadDefault").ejUploadbox({
+                                saveUrl: "/api/UploadFiles",
+                                allowDraggable: true,
+                                multipleFilesSelection: false,
+                                success: "uploadSuccess",
+                                beforeSend: function (args) {
+                                    args.xhr.setRequestHeader("test", pay);
+                                }
+                            });
+
                         }
-                    });
-
-                }
+                       
+                    }
+                })
+                  
             }
         }
 

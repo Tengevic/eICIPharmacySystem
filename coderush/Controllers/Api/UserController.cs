@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Newtonsoft.Json;
 
 namespace coderush.Controllers.Api
 {
@@ -71,7 +72,18 @@ namespace coderush.Controllers.Api
                     await _context.SaveChangesAsync();
                 }
                 
+            } 
+            else
+            {
+                Err err = new Err
+                {
+                    message = "Confirm Password and password should be equal"
+                };
+                string errMsg = JsonConvert.SerializeObject(err);
+
+                return BadRequest(err);
             }
+
             return Ok(register);
         }
 
@@ -92,6 +104,16 @@ namespace coderush.Controllers.Api
             {
                 var user = await _userManager.FindByIdAsync(profile.ApplicationUserId);
                 var result = await _userManager.ChangePasswordAsync(user, profile.OldPassword, profile.Password);
+            }
+            else
+            {
+                Err err = new Err
+                {
+                    message = "Confirm Password and password should be equal"
+                };
+                string errMsg = JsonConvert.SerializeObject(err);
+
+                return BadRequest(err);
             }
             profile = _context.UserProfile.SingleOrDefault(x => x.ApplicationUserId.Equals(profile.ApplicationUserId));
             return Ok(profile);

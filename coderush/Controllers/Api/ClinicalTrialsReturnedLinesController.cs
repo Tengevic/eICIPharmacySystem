@@ -13,24 +13,24 @@ using Newtonsoft.Json;
 namespace coderush.Controllers.Api
 {
     [Produces("application/json")]
-    [Route("api/ClinicalTrialsSalesLines")]
-    public class ClinicalTrialsSalesLinesController : Controller
+    [Route("api/ClinicalTrialsReturnedLines")]
+    public class ClinicalTrialsReturnedLinesController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public ClinicalTrialsSalesLinesController(ApplicationDbContext context)
+        public ClinicalTrialsReturnedLinesController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: api/ClinicalTrialsSalesLines
+        // GET: api/ClinicalTrialsReturnedLines
         [HttpGet]
         public async Task<IActionResult> ClinicalTrialsSalesLines()
         {
-            var headers = Request.Headers["ClinicalTrialsSalesId"];
-            int ClinicalTrialsSalesId = Convert.ToInt32(headers);
-            List<ClinicalTrialsSalesLine> Items = await _context.ClinicalTrialsSalesLine
-            .Where(x => x.ClinicalTrialsSalesId.Equals(ClinicalTrialsSalesId))
+            var headers = Request.Headers["ClinicalTrialsReturnedId"];
+            int ClinicalTrialsReturnedId = Convert.ToInt32(headers);
+            List<ClinicalTrialsReturnedLine> Items = await _context.ClinicalTrialsReturnedLine
+            .Where(x => x.ClinicalTrialsReturnedId.Equals(ClinicalTrialsReturnedId))
             .ToListAsync();
             int Count = Items.Count();
             return Ok(new { Items, Count });
@@ -39,12 +39,12 @@ namespace coderush.Controllers.Api
         }
 
         [HttpPost("[action]")]
-        public IActionResult Insert([FromBody]CrudViewModel<ClinicalTrialsSalesLine> payload)
+        public IActionResult Insert([FromBody]CrudViewModel<ClinicalTrialsReturnedLine> payload)
         {
-            ClinicalTrialsSalesLine clinicalTrialsSalesLine = payload.value;
-            ClinicalTrialsDonationLine batch = _context.ClinicalTrialsDonationLine.Find(clinicalTrialsSalesLine.ClinicalTrialsDonationLineId);
+            ClinicalTrialsReturnedLine clinicalTrialsReturnedLine = payload.value;
+            ClinicalTrialsDonationLine batch = _context.ClinicalTrialsDonationLine.Find(clinicalTrialsReturnedLine.ClinicalTrialsDonationLineId);
 
-            if (batch.ClinicalTrialsProductsId != clinicalTrialsSalesLine.ClinicalTrialsProductsId)
+            if (batch.ClinicalTrialsProductsId != clinicalTrialsReturnedLine.ClinicalTrialsProductsId)
             {
                 Err err = new Err
                 {
@@ -54,7 +54,7 @@ namespace coderush.Controllers.Api
 
                 return BadRequest(err);
             }
-            if (batch.InStock < clinicalTrialsSalesLine.Quantity)
+            if (batch.InStock < clinicalTrialsReturnedLine.Quantity)
             {
                 Err err = new Err
                 {
@@ -64,21 +64,21 @@ namespace coderush.Controllers.Api
 
                 return BadRequest(err);
             }
-            _context.ClinicalTrialsSalesLine.Add(clinicalTrialsSalesLine);
+            _context.ClinicalTrialsReturnedLine.Add(clinicalTrialsReturnedLine);
             _context.SaveChanges();
-            this.UpdateStock(clinicalTrialsSalesLine.ClinicalTrialsProductsId);
-            this.UpdateBatch(clinicalTrialsSalesLine.ClinicalTrialsDonationLineId);
-            return Ok(clinicalTrialsSalesLine);
+            this.UpdateStock(clinicalTrialsReturnedLine.ClinicalTrialsProductsId);
+            this.UpdateBatch(clinicalTrialsReturnedLine.ClinicalTrialsDonationLineId);
+            return Ok(clinicalTrialsReturnedLine);
 
         }
 
         [HttpPost("[action]")]
-        public IActionResult Update([FromBody]CrudViewModel<ClinicalTrialsSalesLine> payload)
+        public IActionResult Update([FromBody]CrudViewModel<ClinicalTrialsReturnedLine> payload)
         {
-            ClinicalTrialsSalesLine clinicalTrialsSalesLine = payload.value;
-            ClinicalTrialsDonationLine batch = _context.ClinicalTrialsDonationLine.Find(clinicalTrialsSalesLine.ClinicalTrialsDonationLineId);
+            ClinicalTrialsReturnedLine clinicalTrialsReturnedLine = payload.value;
+            ClinicalTrialsDonationLine batch = _context.ClinicalTrialsDonationLine.Find(clinicalTrialsReturnedLine.ClinicalTrialsDonationLineId);
 
-            if (batch.ClinicalTrialsProductsId != clinicalTrialsSalesLine.ClinicalTrialsProductsId)
+            if (batch.ClinicalTrialsProductsId != clinicalTrialsReturnedLine.ClinicalTrialsProductsId)
             {
                 Err err = new Err
                 {
@@ -88,7 +88,7 @@ namespace coderush.Controllers.Api
 
                 return BadRequest(err);
             }
-            if (batch.InStock < clinicalTrialsSalesLine.Quantity)
+            if (batch.InStock < clinicalTrialsReturnedLine.Quantity)
             {
                 Err err = new Err
                 {
@@ -98,24 +98,24 @@ namespace coderush.Controllers.Api
 
                 return BadRequest(err);
             }
-            _context.ClinicalTrialsSalesLine.Update(clinicalTrialsSalesLine);
+            _context.ClinicalTrialsReturnedLine.Update(clinicalTrialsReturnedLine);
             _context.SaveChanges();
-            this.UpdateStock(clinicalTrialsSalesLine.ClinicalTrialsProductsId);
-            this.UpdateBatch(clinicalTrialsSalesLine.ClinicalTrialsDonationLineId);
-            return Ok(clinicalTrialsSalesLine);
+            this.UpdateStock(clinicalTrialsReturnedLine.ClinicalTrialsProductsId);
+            this.UpdateBatch(clinicalTrialsReturnedLine.ClinicalTrialsDonationLineId);
+            return Ok(clinicalTrialsReturnedLine);
         }
 
         [HttpPost("[action]")]
-        public IActionResult Remove([FromBody]CrudViewModel<ClinicalTrialsSalesLine> payload)
+        public IActionResult Remove([FromBody]CrudViewModel<ClinicalTrialsReturnedLine> payload)
         {
-            ClinicalTrialsSalesLine clinicalTrialsSalesLine = _context.ClinicalTrialsSalesLine
-                .Where(x => x.ClinicalTrialsSalesLineId == (int)payload.key)
+            ClinicalTrialsReturnedLine clinicalTrialsReturnedLine = _context.ClinicalTrialsReturnedLine
+                .Where(x => x.ClinicalTrialsReturnedId == (int)payload.key)
                 .FirstOrDefault();
-            _context.ClinicalTrialsSalesLine.Remove(clinicalTrialsSalesLine);
+            _context.ClinicalTrialsReturnedLine.Remove(clinicalTrialsReturnedLine);
             _context.SaveChanges();
-           this.UpdateStock(clinicalTrialsSalesLine.ClinicalTrialsProductsId);
-            this.UpdateBatch(clinicalTrialsSalesLine.ClinicalTrialsDonationLineId);
-            return Ok(clinicalTrialsSalesLine);
+            this.UpdateStock(clinicalTrialsReturnedLine.ClinicalTrialsProductsId);
+            this.UpdateBatch(clinicalTrialsReturnedLine.ClinicalTrialsDonationLineId);
+            return Ok(clinicalTrialsReturnedLine);
 
         }
         private void UpdateStock(int productId)
@@ -162,7 +162,7 @@ namespace coderush.Controllers.Api
                     _context.SaveChanges();
 
                 }
-              
+
 
             }
             catch (Exception)

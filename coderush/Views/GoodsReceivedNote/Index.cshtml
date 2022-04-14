@@ -1,6 +1,6 @@
 ﻿
 @{
-    ViewData["Title"] = "Goods Received Note";
+    ViewData["Title"] = "Drug Recieve";
 }
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
@@ -96,13 +96,13 @@
                     columns: [
                         { headerText: 'Detail', template: "<a href='/GoodsReceivedNote/Detail/{{:PurchaseOrderId}}'>Detail</a>" },
                         { field: "GoodsReceivedNoteId", headerText: 'GRN', isPrimaryKey: true, isIdentity: true, visible: false },
-                        { field: "GoodsReceivedNoteName", headerText: 'GRN#', allowEditing: false },
-                        { field: "IsFullReceive", headerText: 'Full Receive', allowEditing: false, type: "boolean", editType: "booleanedit", defaultValue: true },
-                        { field: "PurchaseOrderId", headerText: 'PO#', foreignKeyField: "PurchaseOrderId", foreignKeyValue: "PurchaseOrderName", dataSource: dataManagerPurchaseOrder, validationRules: { required: true } },
+                        { field: "GoodsReceivedNoteName", headerText: 'Drug Recieve#', allowEditing: false },
+                        { field: "PurchaseOrderId", headerText: 'Purchase Order', foreignKeyField: "PurchaseOrderId", foreignKeyValue: "PurchaseOrderName", dataSource: dataManagerPurchaseOrder, validationRules: { required: true } },
+                        { field: "IsFullReceive", headerText: 'Full Receive', type: "boolean", editType: "booleanedit", defaultValue: true },
                         { field: "GRNDate", headerText: 'Receiving Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
                         { field: "VendorDONumber", headerText: 'Vendor DO#', validationRules: { required: true } },
                         { field: "VendorInvoiceNumber", headerText: 'Vendor Invoice#', },
-                        { field: "WarehouseId", headerText: 'Warehouse', foreignKeyField: "WarehouseId", foreignKeyValue: "WarehouseName", dataSource: dataManagerWarehouse, validationRules: { required: true } },
+                        { field: "WarehouseId", headerText: 'Warehouse', foreignKeyField: "WarehouseId", foreignKeyValue: "WarehouseName", dataSource: dataManagerWarehouse, validationRules: { required: true }, defaultValue: 0, visible: false },
                     ],
                     actionComplete: "complete",
                 });

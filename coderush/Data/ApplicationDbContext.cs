@@ -96,5 +96,9 @@ namespace coderush.Data
 
         public DbSet<coderush.Models.Upload> Uploads { get; set; }
 
+        public DbSet<coderush.Models.ClinicalTrialsReturned> ClinicalTrialsReturned { get; set; }
+
+        public DbSet<coderush.Models.ClinicalTrialsReturnedLine> ClinicalTrialsReturnedLine { get; set; }
+
     }
 }

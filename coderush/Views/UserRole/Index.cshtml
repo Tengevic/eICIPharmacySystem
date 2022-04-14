@@ -163,6 +163,12 @@
                     ],
                     actionComplete: "complete",
                     actionBegin: "begin",
+                    actionFailure: function (args) {
+                        if (args.requestType == "save") {
+                            var s = ej.parseJSON(args.error.responseText)
+                            toastr.info(s.message, "Wrong input");
+                        }
+                    },
                 });
             });
 

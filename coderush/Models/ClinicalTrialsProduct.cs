@@ -28,6 +28,7 @@ namespace coderush.Models
         public double TotalSales { get; set; }
         public double InStock { get; set; }
         public double Deficit { get; set; }
+        public double Returned { get; set; }
         public double Expired { get; set; }
     }
 }

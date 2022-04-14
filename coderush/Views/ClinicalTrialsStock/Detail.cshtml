@@ -138,9 +138,10 @@
                     { field: "Quantity", headerText: 'units/batch', defaultValue: 1, editType: "numericedit"},
                     { field: "ManufareDate", headerText: 'Manufacture Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
                     { field: "ExpiryDate", headerText: 'Expiry Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
-                    { field: "Sold", headerText: 'Units sold', defaultValue: 0, editType: "numericedit", allowEditing: false },
-                    { field: "InStock", headerText: ' stock', defaultValue: 0, editType: "numericedit", allowEditing: false },
-                    { field: "Expired", headerText: ' Expired ', defaultValue: 0, editType: "numericedit", allowEditing: false },
+                    { field: "Sold", headerText: 'Units Used', defaultValue: 0, editType: "numericedit", allowEditing: false },
+                    { field: "InStock", headerText: 'Units stock', defaultValue: 0, editType: "numericedit", allowEditing: false },
+                    { field: "Returned", headerText: 'Units Returned ', defaultValue: 0, editType: "numericedit", allowEditing: false},
+                    { field: "Expired", headerText: 'Units Expired ', defaultValue: 0, editType: "numericedit", allowEditing: false },
                 ],
 
                 actionFailure: function (args) {

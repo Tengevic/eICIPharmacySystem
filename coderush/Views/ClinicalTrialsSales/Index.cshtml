@@ -1,6 +1,6 @@
 ﻿
 @{
-    ViewData["Title"] = "Clinical Trials Sales";
+    ViewData["Title"] = "Use Drugs";
 }
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
@@ -101,16 +101,11 @@
                     columns: [
                         { headerText: 'Detail', template: "<a href='/ClinicalTrialsSales/Detail/{{:ClinicalTrialsSalesId}}'>Detail</a>" },
                         { field: "ClinicalTrialsSalesId", headerText: 'CTS Id', isPrimaryKey: true, isIdentity: true, visible: false },
-                        { field: "ClinicalTrialsSalesName", headerText: 'SO#', allowEditing: false },
-                        //{ field: "BranchId", headerText: 'Branch', foreignKeyField: "BranchId", foreignKeyValue: "BranchName", dataSource: dataManagerBranch, validationRules: { required: true } },
-                        { field: "CustomerId", headerText: 'Customer', foreignKeyField: "CustomerId", foreignKeyValue: "CustomerName", dataSource: dataManagerCustomer, validationRules: { required: true } },
-                        { field: "OrderDate", headerText: 'Order Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
-                        { field: "DeliveryDate", headerText: 'Delivery Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
-                        //{ field: "SalesTypeId", headerText: 'Sales Type', foreignKeyField: "SalesTypeId", foreignKeyValue: "SalesTypeName", dataSource: dataManagerSalesType },
-                        //{ field: "CurrencyId", headerText: 'Currency', allowEditing: false, foreignKeyField: "CurrencyId", foreignKeyValue: "CurrencyName", dataSource: dataManagerCurrency }
-                        { field: "PatientRefNumber", headerText: 'Cust. Ref#', validationRules: { required: true } },
-                       
-                    ],
+                        { field: "ClinicalTrialsSalesName", headerText: 'Use Number', allowEditing: false },
+                        { field: "CustomerId", headerText: 'Patient', foreignKeyField: "CustomerId", foreignKeyValue: "CustomerName", dataSource: dataManagerCustomer, validationRules: { required: true } },
+                        { field: "PatientRefNumber", headerText: 'ICI patient Number', defaultValue: "Default" },
+                        { field: "UseDate", headerText: 'Use Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
+                                          ],
                     actionComplete: "complete",
                 });
             });

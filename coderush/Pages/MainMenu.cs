@@ -25,31 +25,39 @@ namespace coderush.Pages
         }
          public static class ClinicalTrialsDonations
         {
-            public const string PageName = "Clinical Trials Donations";
-            public const string RoleName = "ClinicalTrialsDonations";
+            public const string PageName = "Recieved";
+            public const string RoleName = "Clinical Trial Recieved";
             public const string Path = "/ClinicalTrialsDonations/Index";
             public const string ControllerName = "ClinicalTrialsDonations";
             public const string ActionName = "Index";
         }
         public static class ClinicalTrialsProducts
         {
-            public const string PageName = "Clinical Trials Products";
-            public const string RoleName = "ClinicalTrialsProducts";
+            public const string PageName = "Drugs";
+            public const string RoleName = "Clinical Trial Drug";
             public const string Path = "/ClinicalTrialsProducts/Index";
             public const string ControllerName = "ClinicalTrialsProducts";
             public const string ActionName = "Index";
         }
         public static class ClinicalTrialsSales
         {
-            public const string PageName = "Clinical Trials Sales";
-            public const string RoleName = "ClinicalTrialsSales";
+            public const string PageName = "Used";
+            public const string RoleName = "Clinical Trial Used";
             public const string Path = "/ClinicalTrialsSales/Index";
             public const string ControllerName = "ClinicalTrialsSales";
 
         }
+        public static class ClinicalTrialsReturned
+        {
+            public const string PageName = "Return";
+            public const string RoleName = "Clinical Trial Returned";
+            public const string Path = "/ClinicalTrialsReturned/Index";
+            public const string ControllerName = "ClinicalTrialsReturned";
+
+        }
         public static class ClinicalTrialsStock
         {
-            public const string PageName = "Clinical Trials Stock";
+            public const string PageName = "Stock";
             public const string RoleName = "ClinicalTrialsStock";
             public const string Path = "/ClinicalTrialsStock/Index";
             public const string ControllerName = "ClinicalTrialsStock";
@@ -57,7 +65,7 @@ namespace coderush.Pages
         }
         public static class ClinicalTrialsNotifications
         {
-            public const string PageName = "Clinical Trials Notifications";
+            public const string PageName = "Notifications";
             public const string RoleName = "ClinicalTrialsNotifications";
             public const string Path = "/ClinicalTrialsNotifications/Index";
             public const string ControllerName = "ClinicalTrialsNotifications";
@@ -74,8 +82,8 @@ namespace coderush.Pages
 
         public static class Product
         {
-            public const string PageName = "Product";
-            public const string RoleName = "Product";
+            public const string PageName = "Drugs";
+            public const string RoleName = "Drugs";
             public const string Path = "/Product/Index";
             public const string ControllerName = "Product";
             public const string ActionName = "Index";
@@ -92,8 +100,8 @@ namespace coderush.Pages
 
         public static class GoodsReceivedNote
         {
-            public const string PageName = "Goods Received Note";
-            public const string RoleName = "Goods Received Note";
+            public const string PageName = "Drug Recieve";
+            public const string RoleName = "Drug Revieve";
             public const string Path = "/GoodsReceivedNote/Index";
             public const string ControllerName = "GoodsReceivedNote";
             public const string ActionName = "Index";
@@ -119,8 +127,8 @@ namespace coderush.Pages
 
         public static class SalesOrder
         {
-            public const string PageName = "Sales Order";
-            public const string RoleName = "Sales Order";
+            public const string PageName = "Drug Sell";
+            public const string RoleName = "Drug Sell";
             public const string Path = "/SalesOrder/Index";
             public const string ControllerName = "SalesOrder";
             public const string ActionName = "Index";
@@ -137,8 +145,8 @@ namespace coderush.Pages
 
         public static class Invoice
         {
-            public const string PageName = "Invoice";
-            public const string RoleName = "Invoice";
+            public const string PageName = "ICI Invoice";
+            public const string RoleName = "ICIInvoice";
             public const string Path = "/Invoice/Index";
             public const string ControllerName = "Invoice";
             public const string ActionName = "Index";
@@ -218,8 +226,8 @@ namespace coderush.Pages
 
         public static class ProductType
         {
-            public const string PageName = "Product Type";
-            public const string RoleName = "Product Type";
+            public const string PageName = "Generic Type";
+            public const string RoleName = "Generic Type";
             public const string Path = "/ProductType/Index";
             public const string ControllerName = "ProductType";
             public const string ActionName = "Index";

@@ -21,6 +21,7 @@ namespace coderush.Models
         public double Sold { get; set; }
         public double InStock { get; set; }
         public double Expired { get; set; }
+        public double Returned { get; set; }
         public Boolean Dispose { get; set; } = false;
 
     }
