@@ -49,7 +49,7 @@
         </li>*@
             <li class="@Html.IsSelected(controller: MainMenu.SalesOrder.ControllerName)">
                 <a href="@MainMenu.SalesOrder.Path">
-                    <i class="fa fa-certificate"></i> <span>@MainMenu.SalesOrder.PageName</span>
+                    <i class="fa fa-ambulance"></i> <span>@MainMenu.SalesOrder.PageName</span>
                 </a>
             </li>
             @*<li class="@Html.IsSelected(controller: MainMenu.Shipment.ControllerName)">
@@ -85,7 +85,7 @@
         </li>*@
             <li class="@Html.IsSelected(controller: MainMenu.PurchaseOrder.ControllerName)">
                 <a href="@MainMenu.PurchaseOrder.Path">
-                    <i class="fa fa-certificate"></i> <span>@MainMenu.PurchaseOrder.PageName</span>
+                    <i class="fa fa-bookmark"></i> <span>@MainMenu.PurchaseOrder.PageName</span>
                 </a>
             </li>
             <li class="@Html.IsSelected(controller: MainMenu.GoodsReceivedNote.ControllerName)">
@@ -106,7 +106,7 @@
             <li class="header">INVENTORY</li>
             <li class="@Html.IsSelected(controller: MainMenu.Product.ControllerName)">
                 <a href="@MainMenu.Product.Path">
-                    <i class="fa fa-tag"></i> <span>@MainMenu.Product.PageName</span>
+                    <i class="fa fa-apple"></i> <span>@MainMenu.Product.PageName</span>
                 </a>
             </li>
             <li class="@Html.IsSelected(controller: MainMenu.ProductType.ControllerName)">
@@ -133,27 +133,27 @@
             </li>
             <li class="@Html.IsSelected(controller: MainMenu.ClinicalTrialsProducts.ControllerName)">
                 <a href="@MainMenu.ClinicalTrialsProducts.Path">
-                    <i class="fa fa-tag"></i> <span>@MainMenu.ClinicalTrialsProducts.PageName</span>
+                    <i class="fa fa-apple"></i> <span>@MainMenu.ClinicalTrialsProducts.PageName</span>
                 </a>
             </li>
             <li class="@Html.IsSelected(controller: MainMenu.ClinicalTrialsDonations.ControllerName)">
                 <a href="@MainMenu.ClinicalTrialsDonations.Path">
-                    <i class="fa fa-gear"></i> <span>@MainMenu.ClinicalTrialsDonations.PageName</span>
+                    <i class="fa fa-briefcase"></i> <span>@MainMenu.ClinicalTrialsDonations.PageName</span>
                 </a>
             </li>
             <li class="@Html.IsSelected(controller: MainMenu.ClinicalTrialsSales.ControllerName)">
                 <a href="@MainMenu.ClinicalTrialsSales.Path">
-                    <i class="fa fa-gear"></i> <span>@MainMenu.ClinicalTrialsSales.PageName</span>
+                    <i class="fa fa-copy"></i> <span>@MainMenu.ClinicalTrialsSales.PageName</span>
                 </a>
             </li>
             <li class="@Html.IsSelected(controller: MainMenu.ClinicalTrialsReturned.ControllerName)">
                 <a href="@MainMenu.ClinicalTrialsReturned.Path">
-                    <i class="fa fa-gear"></i> <span>@MainMenu.ClinicalTrialsReturned.PageName</span>
+                    <i class="fa fa-amazon"></i> <span>@MainMenu.ClinicalTrialsReturned.PageName</span>
                 </a>
             </li>
             <li class="@Html.IsSelected(controller: MainMenu.ClinicalTrialsStock.ControllerName)">
                 <a href="@MainMenu.ClinicalTrialsStock.Path">
-                    <i class="fa fa-gear"></i> <span>@MainMenu.ClinicalTrialsStock.PageName</span>
+                    <i class="fa fa-database"></i> <span>@MainMenu.ClinicalTrialsStock.PageName</span>
                 </a>
             </li>
 
@@ -168,11 +168,11 @@
                 <i class="fa fa-building"></i> <span>@MainMenu.Branch.PageName</span>
             </a>
         </li>*@
-            <li class="@Html.IsSelected(controller: MainMenu.Warehouse.ControllerName)">
+            @*<li class="@Html.IsSelected(controller: MainMenu.Warehouse.ControllerName)">
                 <a href="@MainMenu.Warehouse.Path">
                     <i class="fa fa-cubes"></i> <span>@MainMenu.Warehouse.PageName</span>
                 </a>
-            </li>
+            </li>*@
             @*<li class="@Html.IsSelected(controller: MainMenu.CashBank.ControllerName)">
             <a href="@MainMenu.CashBank.Path">
                 <i class="fa fa-money"></i> <span>@MainMenu.CashBank.PageName</span>
@@ -180,14 +180,14 @@
         </li>*@
             <li class="@Html.IsSelected(controller: MainMenu.PaymentType.ControllerName)">
                 <a href="@MainMenu.PaymentType.Path">
-                    <i class="fa fa-gear"></i> <span>@MainMenu.PaymentType.PageName</span>
+                    <i class="fa fa-bitcoin"></i> <span>@MainMenu.PaymentType.PageName</span>
                 </a>
             </li>
-            <li class="@Html.IsSelected(controller: MainMenu.ShipmentType.ControllerName)">
+            @*<li class="@Html.IsSelected(controller: MainMenu.ShipmentType.ControllerName)">
                 <a href="@MainMenu.ShipmentType.Path">
                     <i class="fa fa-gear"></i> <span>@MainMenu.ShipmentType.PageName</span>
                 </a>
-            </li>
+            </li>*@
             @*<li class="@Html.IsSelected(controller: MainMenu.InvoiceType.ControllerName)">
             <a href="@MainMenu.InvoiceType.Path">
                 <i class="fa fa-gear"></i> <span>@MainMenu.InvoiceType.PageName</span>
@@ -195,7 +195,7 @@
         </li>*@
             <li class="@Html.IsSelected(controller: MainMenu.BillType.ControllerName)">
                 <a href="@MainMenu.BillType.Path">
-                    <i class="fa fa-gear"></i> <span>@MainMenu.BillType.PageName</span>
+                    <i class="fa fa-calculator"></i> <span>@MainMenu.BillType.PageName</span>
                 </a>
             </li>
             <li class="header">USER & ROLE</li>
@@ -211,12 +211,12 @@
             </li>
             <li class="@Html.IsSelected(controller: MainMenu.Role.ControllerName, action: MainMenu.Role.ActionName)">
                 <a href="@MainMenu.Role.Path">
-                    <i class="fa fa-gear"></i> <span>@MainMenu.Role.PageName</span>
+                    <i class="fa fa-user-secret"></i> <span>@MainMenu.Role.PageName</span>
                 </a>
             </li>
             <li class="@Html.IsSelected(controller: MainMenu.ChangeRole.ControllerName, action: MainMenu.ChangeRole.ActionName)">
                 <a href="@MainMenu.ChangeRole.Path">
-                    <i class="fa fa-gear"></i> <span>@MainMenu.ChangeRole.PageName</span>
+                    <i class="fa fa-user"></i> <span>@MainMenu.ChangeRole.PageName</span>
                 </a>
             </li>
         </ul>

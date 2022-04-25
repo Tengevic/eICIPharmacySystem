@@ -105,25 +105,25 @@ namespace coderush.Controllers.Api
             DateTime current = DateTime.Now;
             double totaldays = (clinicalTrialsDonationLine.ExpiryDate - current).TotalDays;
 
-            // if (totaldays > 360)
-            // {
-            clinicalTrialsDonationLine.InStock = clinicalTrialsDonationLine.Quantity;
-            _context.ClinicalTrialsDonationLine.Add(clinicalTrialsDonationLine);
-            _context.SaveChanges();
-            this.UpdateStock(clinicalTrialsDonationLine.ClinicalTrialsProductsId);
-            //}
-            //else if (totaldays < 360)
-            //{
-            //    Err err = new Err
-            //    {
+             if (totaldays > 360)
+             {
+                    clinicalTrialsDonationLine.InStock = clinicalTrialsDonationLine.Quantity;
+                    _context.ClinicalTrialsDonationLine.Add(clinicalTrialsDonationLine);
+                    _context.SaveChanges();
+                    this.UpdateStock(clinicalTrialsDonationLine.ClinicalTrialsProductsId);
+            }
+            else if (totaldays < 360)
+            {
+                Err err = new Err
+                {
 
-            //        message = "Drug will expire less than one year"
-            //    };
-            //    string errMsg = JsonConvert.SerializeObject(err);
+                    message = "Drug will expire less than one year"
+                };
+                string errMsg = JsonConvert.SerializeObject(err);
 
-            //    return BadRequest(err);
+                return BadRequest(err);
 
-            //}
+            }
             return Ok(clinicalTrialsDonationLine);
         }
 
@@ -135,28 +135,28 @@ namespace coderush.Controllers.Api
             DateTime current = DateTime.Now;
             double totaldays = (clinicalTrialsDonationLine.ExpiryDate - current).TotalDays;
 
-            //if (totaldays > 360)
-            //{
-            List<ClinicalTrialsSalesLine> lines = new List<ClinicalTrialsSalesLine>();
-            lines = _context.ClinicalTrialsSalesLine.Where(x => x.ClinicalTrialsDonationLineId.Equals(clinicalTrialsDonationLine.ClinicalTrialsDonationLineId)).ToList();
+            if (totaldays > 360)
+            {
+                    List<ClinicalTrialsSalesLine> lines = new List<ClinicalTrialsSalesLine>();
+                    lines = _context.ClinicalTrialsSalesLine.Where(x => x.ClinicalTrialsDonationLineId.Equals(clinicalTrialsDonationLine.ClinicalTrialsDonationLineId)).ToList();
 
-            clinicalTrialsDonationLine.Sold = lines.Sum(x => x.Quantity);
-            clinicalTrialsDonationLine.InStock = clinicalTrialsDonationLine.Quantity - clinicalTrialsDonationLine.Sold - clinicalTrialsDonationLine.Expired;
-            _context.ClinicalTrialsDonationLine.Update(clinicalTrialsDonationLine);
-            _context.SaveChanges();
-            this.UpdateStock(clinicalTrialsDonationLine.ClinicalTrialsProductsId);
-            //}
-            //else if (totaldays < 360)
-            //{
-            //    Err err = new Err
-            //    {
-            //        message = "Drug will expire less than one year"
-            //    };
-            //    string errMsg = JsonConvert.SerializeObject(err);
+                    clinicalTrialsDonationLine.Sold = lines.Sum(x => x.Quantity);
+                    clinicalTrialsDonationLine.InStock = clinicalTrialsDonationLine.Quantity - clinicalTrialsDonationLine.Sold - clinicalTrialsDonationLine.Expired;
+                    _context.ClinicalTrialsDonationLine.Update(clinicalTrialsDonationLine);
+                    _context.SaveChanges();
+                    this.UpdateStock(clinicalTrialsDonationLine.ClinicalTrialsProductsId);
+            }
+            else if (totaldays < 360)
+            {
+                Err err = new Err
+                {
+                    message = "Drug will expire less than one year"
+                };
+                string errMsg = JsonConvert.SerializeObject(err);
 
-            //    return BadRequest(err);
+                return BadRequest(err);
 
-            //}
+            }
 
             return Ok(clinicalTrialsDonationLine);
         }

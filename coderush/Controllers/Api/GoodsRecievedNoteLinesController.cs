@@ -156,17 +156,17 @@ namespace coderush.Controllers.Api
             DateTime current = DateTime.Now;
             double totaldays = (goodsRecievedNoteLine.ExpiryDate - current).TotalDays;
 
-            //if (totaldays < 360)
-            //{
-            //    Err err = new Err
-            //    {
+            if (totaldays < 360)
+            {
+                Err err = new Err
+               {
 
-            //        message = "Drug will expire less than one year"
-            //    };
-            //    string errMsg = JsonConvert.SerializeObject(err);
+                    message = "Drug will expire less than one year"
+                };
+                string errMsg = JsonConvert.SerializeObject(err);
 
-            //    return BadRequest(err);
-            //}
+                return BadRequest(err);
+            }
 
             goodsRecievedNoteLine.InStock = goodsRecievedNoteLine.Quantity;
             _context.GoodsRecievedNoteLine.Add(goodsRecievedNoteLine);
