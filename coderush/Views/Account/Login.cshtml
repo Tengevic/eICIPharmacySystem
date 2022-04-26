@@ -26,7 +26,7 @@
             </div>
             <div class="form-group has-feedback">
                 <label asp-for="Password"></label>
-                <input asp-for="Password" type="password" value="123456" class="form-control" placeholder="Password" />
+                <input asp-for="Password" type="password" class="form-control" placeholder="Password" />
                 <span class="glyphicon glyphicon-lock form-control-feedback"></span>
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
@@ -57,11 +57,9 @@
                 </a>
             </div>
             <!-- /.social-auth-links -->
-            <a asp-action="ForgotPassword" class="hidden">I forgot my password</a><br>
-            <a asp-action="Register" asp-route-returnurl="@ViewData["ReturnUrl"]" class="text-center hidden">Register a new membership</a>
-            <p class="pull-right">
-                <span style="font-style:italic;"><small>*Demo => Email: super@admin.com Password: 123456</small></span>
-            </p>
+            <a asp-action="ForgotPassword" class="">I forgot my password</a><br>
+            <a asp-action="Register" asp-route-returnurl="@ViewData["ReturnUrl"]" class="text-center ">Register a new membership</a>
+          
         </form>
 
 

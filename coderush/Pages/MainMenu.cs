@@ -146,7 +146,7 @@ namespace coderush.Pages
         public static class Invoice
         {
             public const string PageName = "ICI Invoice";
-            public const string RoleName = "ICIInvoice";
+            public const string RoleName = "ICI Invoice";
             public const string Path = "/Invoice/Index";
             public const string ControllerName = "Invoice";
             public const string ActionName = "Index";

@@ -13,6 +13,7 @@ using Microsoft.Extensions.Options;
 using coderush.Models;
 using coderush.Models.AccountViewModels;
 using coderush.Services;
+using coderush.Data;
 
 namespace coderush.Controllers
 {
@@ -24,13 +25,16 @@ namespace coderush.Controllers
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailSender _emailSender;
         private readonly ILogger _logger;
+        private readonly ApplicationDbContext _context;
 
         public AccountController(
+            ApplicationDbContext context,
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             IEmailSender emailSender,
             ILogger<AccountController> logger)
         {
+            _context = context;
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
@@ -343,6 +347,16 @@ namespace coderush.Controllers
                 throw new ApplicationException($"Unable to load user with ID '{userId}'.");
             }
             var result = await _userManager.ConfirmEmailAsync(user, code);
+            UserProfile register = new UserProfile();
+            if (result.Succeeded)
+            {
+                register.Email = user.Email;
+                register.Password = user.PasswordHash;
+                register.ConfirmPassword = user.PasswordHash;
+                register.ApplicationUserId = user.Id;
+                _context.UserProfile.Add(register);
+                await _context.SaveChangesAsync();
+            }
             return View(result.Succeeded ? "ConfirmEmail" : "Error");
         }
 
