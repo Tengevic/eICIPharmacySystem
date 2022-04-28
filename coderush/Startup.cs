@@ -13,7 +13,7 @@ using coderush.Models;
 using coderush.Services;
 using Newtonsoft.Json.Serialization;
 using Microsoft.AspNetCore.Http;
-
+using Microsoft.Extensions.Hosting;
 
 namespace coderush
 {
@@ -92,6 +92,10 @@ namespace coderush
             services.AddTransient<IRoles, Roles>();
 
             services.AddTransient<IFunctional, Functional>();
+
+            services.AddTransient<EmailNotifications>();
+
+            services.AddTransient<IHostedService, DataRefreshService>();
 
             services.AddMvc()
             .AddJsonOptions(options =>

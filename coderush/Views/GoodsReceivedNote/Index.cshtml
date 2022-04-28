@@ -102,7 +102,7 @@
                         { field: "GRNDate", headerText: 'Receiving Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
                         { field: "VendorDONumber", headerText: 'Vendor DO#', validationRules: { required: true } },
                         { field: "VendorInvoiceNumber", headerText: 'Vendor Invoice#', },
-                        { field: "WarehouseId", headerText: 'Warehouse', foreignKeyField: "WarehouseId", foreignKeyValue: "WarehouseName", dataSource: dataManagerWarehouse, validationRules: { required: true }, defaultValue: 0, visible: false },
+                        { field: "WarehouseId", headerText: 'Warehouse', foreignKeyField: "WarehouseId", foreignKeyValue: "WarehouseName", dataSource: dataManagerWarehouse, validationRules: { required: true }, defaultValue: 1, visible: false },
                     ],
                     actionComplete: "complete",
                 });
