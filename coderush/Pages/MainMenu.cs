@@ -9,7 +9,7 @@ namespace coderush.Pages
     {
         public static class Notifications
         {
-            public const string PageName = "Notifications";
+            public const string PageName = "Expired drugs";
             public const string RoleName = "Notifications";
             public const string Path = "/Notifications/Index";
             public const string ControllerName = "Notifications";
@@ -65,7 +65,7 @@ namespace coderush.Pages
         }
         public static class ClinicalTrialsNotifications
         {
-            public const string PageName = "Notifications";
+            public const string PageName = "Expired Drugs";
             public const string RoleName = "ClinicalTrialsNotifications";
             public const string Path = "/ClinicalTrialsNotifications/Index";
             public const string ControllerName = "ClinicalTrialsNotifications";

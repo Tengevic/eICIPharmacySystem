@@ -118,7 +118,7 @@
                         { headerText: 'Detail', template: "<a href='/ClinicalTrialsStock/Detail/{{:ClinicalTrialsProductId}}'>Detail</a>" },
                         { field: "ClinicalTrialsProductId", headerText: 'Product Id', isPrimaryKey: true, isIdentity: true, visible: false },
                         { field: "ProductName", headerText: 'Product Name', validationRules: { required: true } },
-                        { field: "UnitOfMeasureId", headerText: 'UOM', foreignKeyField: "UnitOfMeasureId", foreignKeyValue: "UnitOfMeasureName", dataSource: dataManagerUnitOfMeasure, validationRules: { required: true }, visible: false },
+                        { field: "UnitOfMeasureId", headerText: 'UOM', foreignKeyField: "UnitOfMeasureId", foreignKeyValue: "UnitOfMeasureName", dataSource: dataManagerUnitOfMeasure, validationRules: { required: true } },
                         { field: "Barcode", headerText: 'Barcode', visible: false },
                         { field: "Description", headerText: 'Description', visible: false },
                         { field: "ProductImageUrl", headerText: 'ProductImageUrl', visible: false },

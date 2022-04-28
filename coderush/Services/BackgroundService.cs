@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace coderush.Services
 {
-    public class DataRefreshService : HostedService
+    public class BackgroundService : HostedService
     {
         private readonly EmailNotifications _emailNotifications;
 
-        public DataRefreshService(EmailNotifications emailNotifications)
+        public BackgroundService(EmailNotifications emailNotifications)
         {
             _emailNotifications = emailNotifications;
         }
@@ -19,13 +19,7 @@ namespace coderush.Services
         {
             while (!cancellationToken.IsCancellationRequested)
             {
-                string test = "this is a test\n";
-                string test2 = "second line test";
-                Console.WriteLine(test+test2);
-                
-                
-                await Task.Delay(TimeSpan.FromSeconds(10), cancellationToken);
-                Console.WriteLine("start");
+                await Task.Delay(TimeSpan.FromDays(1), cancellationToken);
                 await _emailNotifications.SendEmail();
 
             }

@@ -95,7 +95,7 @@ namespace coderush
 
             services.AddTransient<EmailNotifications>();
 
-            services.AddTransient<IHostedService, DataRefreshService>();
+            services.AddTransient<IHostedService, BackgroundService>();
 
             services.AddMvc()
             .AddJsonOptions(options =>

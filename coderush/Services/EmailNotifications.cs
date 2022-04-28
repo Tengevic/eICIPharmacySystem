@@ -52,19 +52,21 @@ namespace coderush.Services
 
                 if (Items != null)
                 {
-                    string title = "The following drugs are in low stock \n";
+                    string title = "<P>The following drugs are in low stock </p>";
 
+                   
                     string drugrow = "";
                     int num = 1;
                     foreach (var batch in Items)
                     {
+                       
                         string drug = "  " + num + " Name: " + batch.ProductName + " Units of measure: "
                                         + batch.UnitOfMeasureId + " Quantity: " + batch.InStock ;
                         drugrow = drugrow + "\r\n " + drug;
                         num++;
                     }
 
-                    var message = title + " \n " + drugrow;
+                    var message = title  + drugrow;
 
                     Console.WriteLine(message);
                     emailSender.SendEmailAsync("tengevictor7@gmail.com", "Low Stock", message);

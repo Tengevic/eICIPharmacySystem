@@ -99,7 +99,7 @@
                     $("#UploadDefault").ejUploadbox({
                         saveUrl: "/api/UploadFiles",
                         allowDraggable: true,
-                        multipleFilesSelection: false,
+                        multipleFilesSelection: true,
                         success: function (args) {
                             location.reload();
                         },

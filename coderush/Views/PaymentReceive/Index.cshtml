@@ -71,7 +71,7 @@
             dataManager.ready.done(function (e) {
 
                 $('#dialog').ejDialog({
-                    title: "Upload Insuarance files",
+                    title: "Upload files",
                     showOnInit: false,
                     height: 400,
                     width: 600 
@@ -167,7 +167,7 @@
                             $("#UploadDefault").ejUploadbox({
                                 saveUrl: "/api/UploadFiles",
                                 allowDraggable: true,
-                                multipleFilesSelection: false,
+                                multipleFilesSelection: true,
                                 success: "uploadSuccess",
                                 beforeSend: function (args) {
                                     args.xhr.setRequestHeader("test", pay);

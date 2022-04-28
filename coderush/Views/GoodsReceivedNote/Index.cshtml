@@ -94,7 +94,7 @@
                     allowPaging: true,
                     pageSettings: { pageSize: 10, printMode: ej.Grid.PrintMode.CurrentPage },
                     columns: [
-                        { headerText: 'Detail', template: "<a href='/GoodsReceivedNote/Detail/{{:PurchaseOrderId}}'>Detail</a>" },
+                        { headerText: 'Detail', template: "<a href='/GoodsReceivedNote/Detail/{{:GoodsReceivedNoteId}}'>Detail</a>" },
                         { field: "GoodsReceivedNoteId", headerText: 'GRN', isPrimaryKey: true, isIdentity: true, visible: false },
                         { field: "GoodsReceivedNoteName", headerText: 'Drug Recieve#', allowEditing: false },
                         { field: "PurchaseOrderId", headerText: 'Purchase Order', foreignKeyField: "PurchaseOrderId", foreignKeyValue: "PurchaseOrderName", dataSource: dataManagerPurchaseOrder, validationRules: { required: true } },

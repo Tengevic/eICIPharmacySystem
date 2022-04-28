@@ -1,6 +1,6 @@
 ﻿
 @{
-    ViewData["Title"] = "Product Type";
+    ViewData["Title"] = "Generic Type";
 }
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
@@ -85,7 +85,7 @@
                     pageSettings: { pageSize: 10, printMode: ej.Grid.PrintMode.CurrentPage },
                     columns: [
                         { field: "ProductTypeId", headerText: 'Product Type Id', isPrimaryKey: true, isIdentity: true, visible: false },
-                        { field: "ProductTypeName", headerText: 'Product Type Name', validationRules: { required: true } },
+                        { field: "ProductTypeName", headerText: 'Generic Type Name', validationRules: { required: true } },
                         { field: "Description", headerText: 'Description', },
                     ],
                     actionComplete: "complete",

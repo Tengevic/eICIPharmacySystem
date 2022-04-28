@@ -101,7 +101,7 @@
                         { field: "VendorInvoiceNumber", headerText: 'Vendor Invoice#' },
                         { field: "BillDate", headerText: 'Bill Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true }, validationRules: { required: true } },
                         { field: "BillDueDate", headerText: 'Bill Due Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true }, validationRules: { required: true } },
-                        { field: "BillTypeId", headerText: 'Bill Type', foreignKeyField: "BillTypeId", foreignKeyValue: "BillTypeName", dataSource: dataManagerBillType },
+                        { field: "BillTypeId", headerText: 'Bill Type', foreignKeyField: "BillTypeId", foreignKeyValue: "BillTypeName", dataSource: dataManagerBillType, defaultValue: 1, visible: false },
                     ],
                     actionComplete: "complete",
                 });
