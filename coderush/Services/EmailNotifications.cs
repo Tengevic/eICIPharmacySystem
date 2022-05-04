@@ -27,11 +27,12 @@ namespace coderush.Services
 
         public Task SendEmail()
         {
-
+            // Send emails for the expired drugs
             ExpiredDrugs();
 
+            //
             OutOfStock();
-            Console.WriteLine("test");
+
             return Task.CompletedTask;
         }
         public Task OutOfStock()

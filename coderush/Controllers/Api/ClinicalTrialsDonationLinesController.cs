@@ -105,14 +105,7 @@ namespace coderush.Controllers.Api
             DateTime current = DateTime.Now;
             double totaldays = (clinicalTrialsDonationLine.ExpiryDate - current).TotalDays;
 
-             if (totaldays > 360)
-             {
-                    clinicalTrialsDonationLine.InStock = clinicalTrialsDonationLine.Quantity;
-                    _context.ClinicalTrialsDonationLine.Add(clinicalTrialsDonationLine);
-                    _context.SaveChanges();
-                    this.UpdateStock(clinicalTrialsDonationLine.ClinicalTrialsProductsId);
-            }
-            else if (totaldays < 360)
+            if (totaldays < 360)
             {
                 Err err = new Err
                 {
@@ -124,6 +117,12 @@ namespace coderush.Controllers.Api
                 return BadRequest(err);
 
             }
+            clinicalTrialsDonationLine.InStock = clinicalTrialsDonationLine.Quantity;
+            _context.ClinicalTrialsDonationLine.Add(clinicalTrialsDonationLine);
+            _context.SaveChanges();
+            this.UpdateStock(clinicalTrialsDonationLine.ClinicalTrialsProductsId);
+
+
             return Ok(clinicalTrialsDonationLine);
         }
 
@@ -135,18 +134,7 @@ namespace coderush.Controllers.Api
             DateTime current = DateTime.Now;
             double totaldays = (clinicalTrialsDonationLine.ExpiryDate - current).TotalDays;
 
-            if (totaldays > 360)
-            {
-                    List<ClinicalTrialsSalesLine> lines = new List<ClinicalTrialsSalesLine>();
-                    lines = _context.ClinicalTrialsSalesLine.Where(x => x.ClinicalTrialsDonationLineId.Equals(clinicalTrialsDonationLine.ClinicalTrialsDonationLineId)).ToList();
-
-                    clinicalTrialsDonationLine.Sold = lines.Sum(x => x.Quantity);
-                    clinicalTrialsDonationLine.InStock = clinicalTrialsDonationLine.Quantity - clinicalTrialsDonationLine.Sold - clinicalTrialsDonationLine.Expired;
-                    _context.ClinicalTrialsDonationLine.Update(clinicalTrialsDonationLine);
-                    _context.SaveChanges();
-                    this.UpdateStock(clinicalTrialsDonationLine.ClinicalTrialsProductsId);
-            }
-            else if (totaldays < 360)
+            if (totaldays < 360)
             {
                 Err err = new Err
                 {
@@ -157,6 +145,15 @@ namespace coderush.Controllers.Api
                 return BadRequest(err);
 
             }
+            List<ClinicalTrialsSalesLine> lines = new List<ClinicalTrialsSalesLine>();
+            lines = _context.ClinicalTrialsSalesLine.Where(x => x.ClinicalTrialsDonationLineId.Equals(clinicalTrialsDonationLine.ClinicalTrialsDonationLineId)).ToList();
+
+            clinicalTrialsDonationLine.Sold = lines.Sum(x => x.Quantity);
+            clinicalTrialsDonationLine.InStock = clinicalTrialsDonationLine.Quantity - clinicalTrialsDonationLine.Sold - clinicalTrialsDonationLine.Expired;
+            _context.ClinicalTrialsDonationLine.Update(clinicalTrialsDonationLine);
+            _context.SaveChanges();
+            this.UpdateStock(clinicalTrialsDonationLine.ClinicalTrialsProductsId);
+
 
             return Ok(clinicalTrialsDonationLine);
         }
@@ -171,7 +168,7 @@ namespace coderush.Controllers.Api
             _context.ClinicalTrialsDonationLine.Remove(clinicalTrialsDonationLine);
             _context.SaveChanges();
             this.UpdateStock(clinicalTrialsDonationLine.ClinicalTrialsProductsId);
-            
+
             return Ok(clinicalTrialsDonationLine);
 
         }
@@ -209,7 +206,7 @@ namespace coderush.Controllers.Api
                     }
                     else
                     {
-                        stock.InStock =  stock.TotalRecieved - stock.TotalSales - stock.Expired - stock.Returned;
+                        stock.InStock = stock.TotalRecieved - stock.TotalSales - stock.Expired - stock.Returned;
                         stock.Deficit = 0;
                     }
 
@@ -248,11 +245,11 @@ namespace coderush.Controllers.Api
                 clinicalTrialsDonationLine.Expired = clinicalTrialsDonationLine.InStock;
                 clinicalTrialsDonationLine.InStock = 0;
             }
-           
+
             _context.ClinicalTrialsDonationLine.Update(clinicalTrialsDonationLine);
             _context.SaveChanges();
             this.UpdateStock(clinicalTrialsDonationLine.ClinicalTrialsProductsId);
-          
+
 
             return Ok(clinicalTrialsDonationLine);
         }
@@ -278,7 +275,7 @@ namespace coderush.Controllers.Api
                 {
                     expiredDrugs.one = expiredDrugs.one + 1;
                 }
-                else if (months < 60 )
+                else if (months < 60)
                 {
                     expiredDrugs.two = expiredDrugs.two + 1;
                 }

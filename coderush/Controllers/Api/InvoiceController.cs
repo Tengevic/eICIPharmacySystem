@@ -10,6 +10,7 @@ using coderush.Models;
 using coderush.Services;
 using coderush.Models.SyncfusionViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Newtonsoft.Json;
 
 namespace coderush.Controllers.Api
 {
@@ -70,6 +71,23 @@ namespace coderush.Controllers.Api
         public IActionResult Insert([FromBody]CrudViewModel<Invoice> payload)
         {
             Invoice invoice = payload.value;
+
+            DateTime current = DateTime.Now;
+          
+            double Totaldays = (invoice.InvoiceDueDate - current).TotalDays;
+
+            if (!(Totaldays < 90))
+            {
+                Err err = new Err
+                {
+                    message = "Invoice should not be more than  90 days"
+                };
+                string errMsg = JsonConvert.SerializeObject(err);
+
+                return BadRequest(err);
+
+            }
+
             invoice.InvoiceName = _numberSequence.GetNumberSequence("INV");
             _context.Invoice.Add(invoice);
             _context.SaveChanges();

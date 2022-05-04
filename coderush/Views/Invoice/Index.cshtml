@@ -106,6 +106,13 @@
                         { field: "InvoiceTypeId", headerText: 'Invoice Type', foreignKeyField: "InvoiceTypeId", foreignKeyValue: "InvoiceTypeName", dataSource: dataManagerInvoiceType, defaultValue: 1, visible: false },
                     ],
                     actionComplete: "complete",
+                    actionFailure: function (args) {
+                        if (args.requestType == "save") {
+                            var s = ej.parseJSON(args.error.responseText)
+                            toastr.info(s.message, "Invalid due date");
+                        }
+
+                    }
                 });
             });
 
