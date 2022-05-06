@@ -27,11 +27,12 @@ namespace coderush.Controllers
         public IActionResult Detail(int id)
         {
             SalesOrder salesOrder = _context.SalesOrder.SingleOrDefault(x => x.SalesOrderId.Equals(id));
-
+            
             if (salesOrder == null)
             {
                 return NotFound();
             }
+           
             return View(salesOrder);
         }
     }

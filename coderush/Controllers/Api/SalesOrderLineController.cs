@@ -170,7 +170,7 @@ namespace coderush.Controllers.Api
                 {
                     List<SalesOrderLine> lines = new List<SalesOrderLine>();
                     lines = _context.SalesOrderLine.Where(x => x.SalesOrderId.Equals(salesOrderId)).ToList();
-
+                    
                     //update master data by its lines
                     salesOrder.Amount = lines.Sum(x => x.Amount);
                     salesOrder.SubTotal = lines.Sum(x => x.SubTotal);

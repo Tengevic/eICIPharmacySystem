@@ -125,7 +125,16 @@ namespace coderush.Pages
             public const string ActionName = "Index";
         }
 
-        public static class SalesOrder
+        public static class Prescription
+        {
+            public const string PageName = "Prescription";
+            public const string RoleName = "Prescription";
+            public const string Path = "/Prescription/Index";
+            public const string ControllerName = "Prescription";
+            public const string ActionName = "Index";
+
+        }
+            public static class SalesOrder
         {
             public const string PageName = "Drug Sell";
             public const string RoleName = "Drug Sell";

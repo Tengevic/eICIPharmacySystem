@@ -1,11 +1,13 @@
 ﻿using coderush.Data;
 using coderush.Models;
+using Grpc.Core;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -97,12 +99,7 @@ namespace coderush.Services
                             await emailSender.SendEmailAsync(userProfile.Email, "Clinical Trials Expired drugs", message);
                         }
                     }
-
-
                 }
-
-
-
             }
 
             return Task.CompletedTask;
@@ -120,29 +117,23 @@ namespace coderush.Services
                     .Where(x => x.InStock < 20)
                    // .Include(x => x.UnitOfMeasure)
                     .ToList();
-                int count = Items.Count();
-
-
 
                 if (Items.Count != 0)
                 {
                     string title = "<P>The following  clinical trial drugs are in low stock </p>";
-
-
                     string drugrow = "";
                     int num = 1;
                     foreach (var batch in Items)
                     {
 
-                        string drug = "  " + num + " Name: " + batch.ProductName + " Units of measure: "
-                                        + batch.UnitOfMeasure + " Quantity: " + batch.InStock;
-                        drugrow = drugrow + "\r\n " + drug;
-                        num++;
+                        //string drug = "  " + num + " Name: " + batch.ProductName + " Units of measure: "
+                        //                + batch.UnitOfMeasure + " Quantity: " + batch.InStock;
+                        //drugrow = drugrow + "\r\n " + drug;
+                        //num++;
                     }
 
                     var message = title + drugrow;
 
-                    Console.WriteLine(message);
                     List<UserProfile> users = context.UserProfile.ToList();
 
                     foreach (UserProfile userProfile in users)
@@ -157,12 +148,8 @@ namespace coderush.Services
                             await emailSender.SendEmailAsync(userProfile.Email, "Clinical Trials low stock", message);
                         }
                     }
-
-
                 }
-
             }
-
             return Task.CompletedTask;
         }
 
@@ -194,22 +181,17 @@ namespace coderush.Services
                 if (Due.Count != 0)
                 {
                     string title = "<P>The following Invoice are due in one month </p>";
-
-
                     string InvoiceRow = "";
                     int num = 1;
                     foreach (var batch in Due)
                     {
-
                         string invoice = "  " + num + " Name: " + batch.BillName + " Invoice date: "
                                         + batch.BillDate + " Invoice Due date: " + batch.BillDate;
                         InvoiceRow = InvoiceRow + "\r\n " + invoice;
                         num++;
                     }
-
                     var message = title + InvoiceRow;
 
-                    Console.WriteLine(message);
                     List<UserProfile> users = context.UserProfile.ToList();
 
                     foreach (UserProfile userProfile in users)
@@ -224,14 +206,8 @@ namespace coderush.Services
                             await emailSender.SendEmailAsync(userProfile.Email, "Due Bill", message);
                         }
                     }
-
-
                 }
-
-
-
             }
-
             return Task.CompletedTask;
         }
         public async Task<Task> InvoiceDueDate()
@@ -262,13 +238,10 @@ namespace coderush.Services
                 if (Due.Count != 0)
                 {
                     string title = "<P>The following Invoice are due in one month </p>";
-
-
                     string InvoiceRow = "";
                     int num = 1;
                     foreach (var batch in Due)
                     {
-
                         string invoice = "  " + num + " Name: " + batch.InvoiceName + " Invoice date: "
                                         + batch.InvoiceDate + " Invoice Due date: " + batch.InvoiceDueDate;
                         InvoiceRow = InvoiceRow + "\r\n " + invoice;
@@ -276,7 +249,6 @@ namespace coderush.Services
                     }
 
                     var message = title + InvoiceRow;
-
                     
                     List<UserProfile> users = context.UserProfile.ToList();
 
@@ -292,14 +264,8 @@ namespace coderush.Services
                             await emailSender.SendEmailAsync(userProfile.Email, "Due ICI Invoices", message);
                         }
                     }
-
-
                 }
-
-
-
             }
-
             return Task.CompletedTask;
         }
         public async Task<Task> OutOfStock()
@@ -315,28 +281,23 @@ namespace coderush.Services
                     .Where(x => x.InStock < 20)
                    // .Include(x => x.UnitOfMeasure)
                     .ToList();
-                int count = Items.Count();
-               
-               
 
                 if (Items.Count != 0)
                 {
                     string title = "<P>The following drugs are in low stock </p>";
-
-                   
+  
                     string drugrow = "";
                     int num = 1;
-                    foreach (var batch in Items)
-                    {
-                       
-                        string drug = "  " + num + " Name: " + batch.ProductName + " Units of measure: "
-                                        + batch.UnitOfMeasureId + " Quantity: " + batch.InStock ;
-                        drugrow = drugrow + "\r\n " + drug;
-                        num++;
-                    }
+                    //foreach (var batch in Items)
+                    //{
+                   
+                    //    string drug = "  " + num + " Name: " + batch.ProductName + " Units of measure: "
+                    //                    + batch.UnitOfMeasureId + " Quantity: " + batch.InStock ;
+                    //    drugrow = drugrow + "\r\n " + drug;
+                    //    num++;
+                    //}
 
                     var message = title  + drugrow;
-
                    
                     List<UserProfile> users = context.UserProfile.ToList();
 
@@ -352,14 +313,8 @@ namespace coderush.Services
                             await emailSender.SendEmailAsync(userProfile.Email, "Low stock", message);
                         }
                     }
-
-
                 }
-
-
-
             }
-
             return Task.CompletedTask;
         }
         public async Task<Task> ExpiredDrugs()
@@ -404,8 +359,6 @@ namespace coderush.Services
 
                     var message = title + " \n "+ drugrow;
 
-                    Console.WriteLine(message);
-
                     await roles.GenerateRolesFromPagesAsync();
 
                     List<UserProfile> users = context.UserProfile.ToList();
@@ -422,16 +375,10 @@ namespace coderush.Services
                               await emailSender.SendEmailAsync(userProfile.Email, "Expired drugs", message);
                         }
                     }
-                   
-
-                    
-                }
-                
-
-               
-            }
-          
+                }                          
+            }          
             return Task.CompletedTask;
         }
+      
     }
 }

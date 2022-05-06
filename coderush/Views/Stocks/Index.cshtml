@@ -44,6 +44,18 @@
         $(function () {
             $.ajax({
                 type: 'GET',
+                url: '/api/Product/GetLow',
+                success: function (data) {
+
+                    if (data != 0) {
+                        var str = data + " drugs are in low stock";
+                        toastr.error(str, "Low Stock")
+                    }
+
+                }
+            });
+            $.ajax({
+                type: 'GET',
                 url: '/api/GoodsRecievedNoteLines/GetExpired',
                 success: function (data) {
                     console.log(data);

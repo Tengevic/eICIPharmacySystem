@@ -99,6 +99,8 @@ namespace coderush.Data
         public DbSet<coderush.Models.ClinicalTrialsReturned> ClinicalTrialsReturned { get; set; }
 
         public DbSet<coderush.Models.ClinicalTrialsReturnedLine> ClinicalTrialsReturnedLine { get; set; }
+        public DbSet<Prescription> Prescription { get; set; }
+        public DbSet<PrescriptionLines> PrescriptionLines { get; set; }
 
     }
 }

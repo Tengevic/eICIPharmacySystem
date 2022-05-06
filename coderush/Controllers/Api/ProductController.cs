@@ -57,11 +57,27 @@ namespace coderush.Controllers.Api
             _context.SaveChanges();
             return Ok(product);
         }
+        [HttpPost("[action]")]
+        public IActionResult Add([FromBody] Product payload)
+        {
+            Product product = payload;
+            _context.Product.Add(product);
+            _context.SaveChanges();
+            return Ok(product);
+        }
 
         [HttpPost("[action]")]
         public IActionResult Update([FromBody]CrudViewModel<Product> payload)
         {
             Product product = payload.value;
+            _context.Product.Update(product);
+            _context.SaveChanges();
+            return Ok(product);
+        }
+        [HttpPost("[action]")]
+        public IActionResult Put([FromBody] Product payload)
+        {
+            Product product = payload;
             _context.Product.Update(product);
             _context.SaveChanges();
             return Ok(product);
@@ -72,6 +88,17 @@ namespace coderush.Controllers.Api
         {
             Product product = _context.Product
                 .Where(x => x.ProductId == (int)payload.key)
+                .FirstOrDefault();
+            _context.Product.Remove(product);
+            _context.SaveChanges();
+            return Ok(product);
+
+        }
+        [HttpPost("[action]/{id}")]
+        public IActionResult Delete([FromRoute] int id)
+        {
+            Product product = _context.Product
+                .Where(x => x.ProductId == id)
                 .FirstOrDefault();
             _context.Product.Remove(product);
             _context.SaveChanges();

@@ -141,16 +141,52 @@ namespace coderush.Controllers.Api
         {
             SalesOrder salesOrder = payload.value;
             salesOrder.SalesOrderName = _numberSequence.GetNumberSequence("SO");
+            if (salesOrder.PrescriptionId == null)
+            {
+                salesOrder.PrescriptionId = 0;
+            }
+            _context.SalesOrder.Add(salesOrder);
+            _context.SaveChanges();
+            this.UpdateSalesOrder(salesOrder.SalesOrderId);
+            return Ok(salesOrder);
+        }
+        //Endpoint
+        [HttpPost("[action]")]
+        public IActionResult Add([FromBody] SalesOrder payload)
+        {
+            SalesOrder salesOrder = payload;
+            salesOrder.SalesOrderName = _numberSequence.GetNumberSequence("SO");
+            if (salesOrder.PrescriptionId == null)
+            {
+                salesOrder.PrescriptionId = 0;
+            }
             _context.SalesOrder.Add(salesOrder);
             _context.SaveChanges();
             this.UpdateSalesOrder(salesOrder.SalesOrderId);
             return Ok(salesOrder);
         }
 
+
         [HttpPost("[action]")]
         public IActionResult Update([FromBody]CrudViewModel<SalesOrder> payload)
         {
             SalesOrder salesOrder = payload.value;
+            if (salesOrder.PrescriptionId == null)
+            {
+                salesOrder.PrescriptionId = 0;
+            }
+            _context.SalesOrder.Update(salesOrder);
+            _context.SaveChanges();
+            return Ok(salesOrder);
+        }
+        [HttpPost("[action]")]
+        public IActionResult Put([FromBody] SalesOrder payload)
+        {
+            SalesOrder salesOrder = payload;
+            if (salesOrder.PrescriptionId == null)
+            {
+                salesOrder.PrescriptionId = 0;
+            }
             _context.SalesOrder.Update(salesOrder);
             _context.SaveChanges();
             return Ok(salesOrder);
@@ -161,6 +197,18 @@ namespace coderush.Controllers.Api
         {
             SalesOrder salesOrder = _context.SalesOrder
                 .Where(x => x.SalesOrderId == (int)payload.key)
+                .FirstOrDefault();
+
+            _context.SalesOrder.Remove(salesOrder);
+            _context.SaveChanges();
+            return Ok(salesOrder);
+
+        }
+        [HttpPost("[action]/{id}")]
+        public IActionResult Delete([FromRoute] int id)
+        {
+            SalesOrder salesOrder = _context.SalesOrder
+                .Where(x => x.SalesOrderId == id)
                 .FirstOrDefault();
             _context.SalesOrder.Remove(salesOrder);
             _context.SaveChanges();

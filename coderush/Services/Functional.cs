@@ -146,6 +146,7 @@ namespace coderush.Services
             message.To.Add(new MailAddress(toEmail, toFullName));
             message.From = new MailAddress(fromEmail, fromFullName);
             message.Subject = subject;
+            message.IsBodyHtml = true;
             message.Body = body;
             message.IsBodyHtml = true;
 

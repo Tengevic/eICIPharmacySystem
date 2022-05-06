@@ -1,4 +1,4 @@
-﻿@model coderush.Models.SalesOrder
+@model coderush.Models.SalesOrder
 @{
     ViewData["Title"] = "Sales Order Detail";
 }
@@ -7,57 +7,95 @@
     <!-- Main content -->
     <section class="content">
         <!-- Default box -->
-        <div class="box">
-            <div class="box-header with-border">
-                <h3 class="box-title"><i class="fa fa-building"></i> @ViewData["Title"]</h3>
-                <div class="box-tools pull-right">
-                    <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
-                            title="Collapse">
-                        <i class="fa fa-minus"></i>
-                    </button>
-                    <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
-                        <i class="fa fa-times"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="box-body">
-                <div class="content-container-fluid">
-                    <div class="row">
-                        <dl class="dl-horizontal">
-                            <dt>
-                                @Html.DisplayNameFor(model => model.SalesOrderId)
-                            </dt>
-                            <dd>
-                                @Html.DisplayFor(model => model.SalesOrderId)
-                            </dd>
-                            <dt>
-                                @Html.DisplayNameFor(model => model.SalesOrderName)
-                            </dt>
-                            <dd>
-                                @Html.DisplayFor(model => model.SalesOrderName)
-                            </dd>
-                            <dt>
-                                @Html.DisplayNameFor(model => model.CustomerId)
-                            </dt>
-                            <dd>
-                                <input type="text" id="CustomerId" />
-                            </dd>
-                            <dt>
-                                @Html.DisplayNameFor(model => model.SaleDate)
-                            </dt>
-                            <dd>
-                                @Html.DisplayFor(model => model.SaleDate)
-                            </dd>
-                            
-                        </dl>
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="box">
+                    <div class="box-header with-border">
+                        <h3 class="box-title"><i class="fa fa-building"></i> @ViewData["Title"]</h3>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
+                                    title="Collapse">
+                                <i class="fa fa-minus"></i>
+                            </button>
+                            <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
+                                <i class="fa fa-times"></i>
+                            </button>
+                        </div>
                     </div>
+                    <div class="box-body">
+                        <div class="content-container-fluid">
+                            <div class="row">
+                                <dl class="dl-horizontal">
+                                    <dt>
+                                        @Html.DisplayNameFor(model => model.SalesOrderId)
+                                    </dt>
+                                    <dd>
+                                        @Html.DisplayFor(model => model.SalesOrderId)
+                                    </dd>
+                                    <dt>
+                                        @Html.DisplayNameFor(model => model.SalesOrderName)
+                                    </dt>
+                                    <dd>
+                                        @Html.DisplayFor(model => model.SalesOrderName)
+                                    </dd>
+                                    <dt>
+                                        @Html.DisplayNameFor(model => model.CustomerId)
+                                    </dt>
+                                    <dd>
+                                        <input type="text" id="CustomerId" />
+                                    </dd>
+                                    <dt>
+                                        @Html.DisplayNameFor(model => model.SaleDate)
+                                    </dt>
+                                    <dd>
+                                        @Html.DisplayFor(model => model.SaleDate)
+                                    </dd>
 
+                                </dl>
+                            </div>
+
+                        </div>
+
+                    </div>
                 </div>
             </div>
-            <!-- /.box-body -->
-            <!-- /.box-footer-->
+            <div class="col-lg-6">
+                <div class="box">
+                    <div class="box-header with-border">
+                        <h3 class="box-title text-primary"><i class="fa fa-pie-chart"></i> Prescriptions</h3>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
+                                    title="Collapse">
+                                <i class="fa fa-minus"></i>
+                            </button>
+                            <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
+                                <i class="fa fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="box-body">
+                        <div class="Prescription">
+                            <table id="Prescription" align="center" cellpadding="20">
+                                <thead>
+                                    <tr>
+                                        <th> # </th>
+                                        <th>product Name</th>
+                                        <th>Units of Measure</th>
+                                        <th>Quantity</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <!-- /.box -->
+        
+             <!-- /.box -->
         <div class="box">
 
             <div class="box-body">
@@ -102,11 +140,11 @@
                                 <label id="Tax" name="Tax">@Model.Tax</label>
                             </dd>
                             @*<dt>
-                                    @Html.DisplayNameFor(model => model.Freight)
-                                </dt>
-                                <dd>
-                                    <label id="Freight" name="Freight">@Model.Freight</label>
-                                </dd>*@
+                                @Html.DisplayNameFor(model => model.Freight)
+                            </dt>
+                            <dd>
+                                <label id="Freight" name="Freight">@Model.Freight</label>
+                            </dd>*@
                             <dt>
                                 @Html.DisplayNameFor(model => model.Total)
                             </dt>
@@ -130,6 +168,25 @@
     <script type="text/javascript">
         $(function () {
 
+            $.ajax({
+                type: 'GET',
+                url: '/api/PrescriptionLines/GetByPrescriptionId/' +@Model.PrescriptionId ,
+                success: function (data) {
+                    if (data.Count == 0) {                      
+                        $("div.Prescription").replaceWith("<h4>No prescription Available</h4>");
+                    } else {                        
+                        var table = document.getElementById("Prescription");
+                        item = data.Items;
+                        for (let i = 0; i < item.length; i++) {
+                            var row = table.insertRow(-1);
+                            row.insertCell(0).innerHTML = i+1;
+                            row.insertCell(1).innerHTML = item[i].Product.ProductName;
+                            row.insertCell(2).innerHTML = item[i].Product.UnitOfMeasure.UnitOfMeasureName;
+                            row.insertCell(3).innerHTML = item[i].Quantity;
+                        }
+                    }
+                }
+            });
             var dataManager = ej.DataManager({
                 url: "/api/SalesOrderLine",
                 adaptor: new ej.WebApiAdaptor(),
@@ -201,7 +258,7 @@
                     allowAdding: true,
                     allowDeleting: true,
                     showDeleteConfirmDialog: true,
-                
+
 
                 },
                 allowPaging: true,
@@ -235,7 +292,7 @@
 
 
         });
-        
+
         function complete(args) {
 
             if (args.requestType == 'beginedit') {
@@ -284,4 +341,5 @@
 
 
     </script>
+
 }

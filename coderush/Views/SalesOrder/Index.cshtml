@@ -70,6 +70,10 @@
                 url: "/api/Currency",
                 adaptor: new ej.WebApiAdaptor()
             });
+            var dataManagerPrescription = ej.DataManager({
+                url: "/api/Prescription",
+                adaptor: new ej.WebApiAdaptor()
+            });
 
             dataManager.ready.done(function (e) { 
                 $("#Grid").ejGrid({
@@ -112,7 +116,8 @@
                         { field: "SaleDate", headerText: 'Sell Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
                         { field: "SalesTypeId", headerText: 'Sales Type', foreignKeyField: "SalesTypeId", foreignKeyValue: "SalesTypeName", dataSource: dataManagerSalesType, visible: false, defaultValue: 1  },
                         { field: "CurrencyId", headerText: 'Currency', allowEditing: false, foreignKeyField: "CurrencyId", foreignKeyValue: "CurrencyName", dataSource: dataManagerCurrency, visible: false, defaultValue: 1 },
-                        { field: "PatientRefNumber", headerText: 'ICI patient Number', defaultValue: "Default"},
+                        { field: "PatientRefNumber", headerText: 'ICI patient Number', defaultValue: "Default" },
+                        { field: "PrescriptionId", headerText: 'Prescription', foreignKeyField: "PrescriptionId", foreignKeyValue: "PrescriptionName", dataSource: dataManagerPrescription },
                         { field: "Freight", headerText: 'Freight', defaultValue: 0, editType: "numericedit", format: "{0:n2}", visible: false },
                         { field: "Total", headerText: 'Total', defaultValue: 0, allowEditing: false, editType: "numericedit", format: "{0:n2}" },
                     ],
@@ -128,7 +133,24 @@
                 $("#" + this._id + "_dialogEdit").ejDialog({ title: "Edit Record" });
             }
             if (args.requestType == 'beginedit' || args.requestType == 'add') {
-                $('#GridBranchId').ejDropDownList({ change: 'branchDdlChange' });
+                //var selected = $('#GridPrescriptionId').data('ejDropDownList');
+                //var selectedValue = parseInt(selected.option('value'));
+                //var selectedText = selected.option('text');
+                //$.ajax({
+                //    type: 'GET',
+                //    url: '/api/Prescription/GetNotSoldYet',
+                //    success: function (data) {
+                //        if (args.requestType == 'beginedit') {
+                //            data.push({ 'PrescriptionId': selectedValue, 'PrescriptionName': selectedText });
+                //        }
+
+                //        $("#GridPrescriptionId").ejDropDownList({
+                //            dataSource: data,
+                //            fields: { id: 'PrescriptionId', text: 'PrescriptionName', value: 'PrescriptionId' },
+                //            value: selectedValue
+                //        });
+                //    }
+                //});
             }
         }
 
@@ -145,6 +167,7 @@
                 }
             })
         }
+       
 
 
     </script>

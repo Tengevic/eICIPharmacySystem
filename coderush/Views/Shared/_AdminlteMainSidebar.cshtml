@@ -22,10 +22,10 @@
         <ul class="sidebar-menu" data-widget="tree">
             @*<li class="header">DASHBOARD</li>*@
             @*<li class="@Html.IsSelected(controller: MainMenu.Dashboard.ControllerName)">
-          <a href="@MainMenu.Dashboard.Path">
-              <i class="fa fa-pie-chart"></i> <span>@MainMenu.Dashboard.PageName</span>
-          </a>
-        </li>*@
+              <a href="@MainMenu.Dashboard.Path">
+                  <i class="fa fa-pie-chart"></i> <span>@MainMenu.Dashboard.PageName</span>
+              </a>
+            </li>*@
 
             <li class="header">SALES</li>
             <li class="@Html.IsSelected(controller: MainMenu.CustomerType.ControllerName)">
@@ -43,6 +43,11 @@
                 <i class="fa fa-gear"></i> <span>@MainMenu.SalesType.PageName</span>
             </a>
         </li>*@
+            <li class="@Html.IsSelected(controller: MainMenu.Prescription.ControllerName)">
+                <a href="@MainMenu.Prescription.Path">
+                    <i class="fa fa-ambulance"></i> <span>@MainMenu.Prescription.PageName</span>
+                </a>
+            </li>
             <li class="@Html.IsSelected(controller: MainMenu.SalesOrder.ControllerName)">
                 <a href="@MainMenu.SalesOrder.Path">
                     <i class="fa fa-ambulance"></i> <span>@MainMenu.SalesOrder.PageName</span>
