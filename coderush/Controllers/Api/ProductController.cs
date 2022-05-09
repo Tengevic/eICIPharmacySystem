@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace coderush.Controllers.Api
 {
-   
     [Produces("application/json")]
     [Route("api/Product")]
     public class ProductController : Controller

@@ -133,24 +133,24 @@
                 $("#" + this._id + "_dialogEdit").ejDialog({ title: "Edit Record" });
             }
             if (args.requestType == 'beginedit' || args.requestType == 'add') {
-                //var selected = $('#GridPrescriptionId').data('ejDropDownList');
-                //var selectedValue = parseInt(selected.option('value'));
-                //var selectedText = selected.option('text');
-                //$.ajax({
-                //    type: 'GET',
-                //    url: '/api/Prescription/GetNotSoldYet',
-                //    success: function (data) {
-                //        if (args.requestType == 'beginedit') {
-                //            data.push({ 'PrescriptionId': selectedValue, 'PrescriptionName': selectedText });
-                //        }
+                var selected = $('#GridPrescriptionId').data('ejDropDownList');
+                var selectedValue = parseInt(selected.option('value'));
+                var selectedText = selected.option('text');
+                $.ajax({
+                    type: 'GET',
+                    url: '/api/Prescription/GetNotSoldYet',
+                    success: function (data) {
+                        if (args.requestType == 'beginedit') {
+                            data.push({ 'PrescriptionId': selectedValue, 'PrescriptionName': selectedText });
+                        }
 
-                //        $("#GridPrescriptionId").ejDropDownList({
-                //            dataSource: data,
-                //            fields: { id: 'PrescriptionId', text: 'PrescriptionName', value: 'PrescriptionId' },
-                //            value: selectedValue
-                //        });
-                //    }
-                //});
+                        $("#GridPrescriptionId").ejDropDownList({
+                            dataSource: data,
+                            fields: { id: 'PrescriptionId', text: 'PrescriptionName', value: 'PrescriptionId' },
+                            value: selectedValue
+                        });
+                    }
+                });
             }
         }
 

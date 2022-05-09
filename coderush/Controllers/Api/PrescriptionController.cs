@@ -43,11 +43,11 @@ namespace coderush.Controllers.Api
             {
                 List<SalesOrder> salesOrder = new List<SalesOrder>();
                 salesOrder = await _context.SalesOrder.ToListAsync();
-                List<int> ids = new List<int>();
+                List<int?> ids = new List<int?>();
 
                 foreach (var item in salesOrder)
                 {
-                    ids.Add(item.SalesOrderId);
+                    ids.Add(item.PrescriptionId);
                 }
 
                 prescription = await _context.Prescription

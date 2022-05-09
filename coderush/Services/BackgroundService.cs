@@ -20,8 +20,7 @@ namespace coderush.Services
             while (!cancellationToken.IsCancellationRequested)
             {
                 await Task.Delay(TimeSpan.FromDays(1), cancellationToken);
-                await _emailNotifications.SendEmail();
-
+               // await _emailNotifications.SendEmail();
             }
         }
     }
