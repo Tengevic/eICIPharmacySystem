@@ -373,10 +373,10 @@ namespace coderush.Services
 
                     if (isInRole)
                     {
-                      //  await emailSender.SendEmailAsync(userProfile.Email,title, message);
+                        await emailSender.SendEmailAsync(userProfile.Email,title, message);
                     }
                 }
-                await emailSender.SendEmailAsync("tengevictor7@gmail.com", title, message);
+               
 
             }
                 return Task.CompletedTask;
