@@ -95,20 +95,7 @@ namespace coderush.Services
 
                     var message = emailbody("Expire", drugrow);
 
-                    List<UserProfile> users = context.UserProfile.ToList();
-
-                    foreach (UserProfile userProfile in users)
-                    {
-                        var id = userProfile.ApplicationUserId;
-                        var user = await userManager.FindByIdAsync(id);
-
-                        bool isInRole = (await userManager.IsInRoleAsync(user, "Clinical Trial Drug")) ? true : false;
-
-                        if (isInRole)
-                        {
-                            await emailSender.SendEmailAsync(userProfile.Email, "Clinical Trials Expired drugs", message);
-                        }
-                    }
+                    await CompleteSendEmail("Clinical Trial Drug", message, "Clinical Trials Expired drugs");
                 }
             }
 
@@ -148,22 +135,7 @@ namespace coderush.Services
 
                     string message = emailbody("Stock", drugrow);
                    
-
-                    List<UserProfile> users = context.UserProfile.ToList();
-
-                    foreach (UserProfile userProfile in users)
-                    {
-                        var id = userProfile.ApplicationUserId;
-                        var user = await userManager.FindByIdAsync(id);
-
-                        bool isInRole = (await userManager.IsInRoleAsync(user, "Clinical Trial Drug")) ? true : false;
-
-                        if (isInRole)
-                        {
-                           await emailSender.SendEmailAsync(userProfile.Email, "Clinical Trials low stock", message);
-                        }
-                    }
-                    
+                    await CompleteSendEmail("Clinical Trial Drug", message, "Clinical Trials low stock");
                 }
             }
             return Task.CompletedTask;
@@ -211,20 +183,7 @@ namespace coderush.Services
                     }
                     var message = emailbody("DueInvoice", InvoiceRow);
 
-                    List<UserProfile> users = context.UserProfile.ToList();
-
-                    foreach (UserProfile userProfile in users)
-                    {
-                        var id = userProfile.ApplicationUserId;
-                        var user = await userManager.FindByIdAsync(id);
-
-                        bool isInRole = (await userManager.IsInRoleAsync(user, "Bill")) ? true : false;
-
-                        if (isInRole)
-                        {
-                           await emailSender.SendEmailAsync(userProfile.Email, "Due Bill", message);
-                        }
-                    }
+                    await CompleteSendEmail("Bill", message, "Due Bills");
                 }
             }
             return Task.CompletedTask;
@@ -271,21 +230,8 @@ namespace coderush.Services
                     }
 
                     var message = emailbody("DueInvoice",InvoiceRow);
-                    
-                    List<UserProfile> users = context.UserProfile.ToList();
 
-                    foreach (UserProfile userProfile in users)
-                    {
-                        var id = userProfile.ApplicationUserId;
-                        var user = await userManager.FindByIdAsync(id);
-
-                        bool isInRole = (await userManager.IsInRoleAsync(user, "ICI Invoice")) ? true : false;
-
-                        if (isInRole)
-                        {
-                           await emailSender.SendEmailAsync(userProfile.Email, "Due ICI Invoices", message);
-                        }
-                    }
+                    await CompleteSendEmail("ICI Invoice", message, "Due ICI Invoices");
                 }
             }
             return Task.CompletedTask;
@@ -299,6 +245,8 @@ namespace coderush.Services
                 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
                 var emailSender = scope.ServiceProvider.GetRequiredService<IEmailSender>();
                 var roles = scope.ServiceProvider.GetRequiredService<IRoles>();
+
+                await roles.GenerateRolesFromPagesAsync();
 
                 List<GoodsRecievedNoteLine> Items = context.GoodsRecievedNoteLine
                     .Where(x => x.InStock > 0)
@@ -335,23 +283,7 @@ namespace coderush.Services
 
                     var message = emailbody("Expire", drugrow);
 
-
-                    await roles.GenerateRolesFromPagesAsync();
-
-                    List<UserProfile> users = context.UserProfile.ToList();
-
-                    foreach (UserProfile userProfile in users)
-                    {
-                        var id = userProfile.ApplicationUserId;
-                        var user = await userManager.FindByIdAsync(id);
-
-                        bool isInRole = (await userManager.IsInRoleAsync(user, "Drugs")) ? true : false;
-
-                        if (isInRole)
-                        {
-                           await emailSender.SendEmailAsync(userProfile.Email, "Expired drugs", message);
-                        }
-                    }
+                    await CompleteSendEmail("Drugs", message, "Expiring Drugs");
                 }
             }
             return Task.CompletedTask;
@@ -364,6 +296,7 @@ namespace coderush.Services
                 var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
                 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
                 var emailSender = scope.ServiceProvider.GetRequiredService<IEmailSender>();
+
 
                 List<Product> Items = context.Product
                     .Where(x => x.InStock < 20)
@@ -387,20 +320,7 @@ namespace coderush.Services
                         num++;
                     }
                     string message = emailbody("Stock", drugrow);
-                    List<UserProfile> users = context.UserProfile.ToList();
-
-                    foreach (UserProfile userProfile in users)
-                    {
-                        var id = userProfile.ApplicationUserId;
-                        var user = await userManager.FindByIdAsync(id);
-
-                        bool isInRole = (await userManager.IsInRoleAsync(user, "Drugs")) ? true : false;
-
-                        if (isInRole)
-                        {
-                          await emailSender.SendEmailAsync(userProfile.Email, "Low stock", message);
-                        }
-                    }
+                    await CompleteSendEmail("Drugs", message, "Low Stock");
                 }
             }
             return Task.CompletedTask;
@@ -431,6 +351,35 @@ namespace coderush.Services
           
 
             return body; 
+        }
+        public async Task<Task> CompleteSendEmail(string role, string message, string title)
+        {
+            using (var scope = _provider.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+                var emailSender = scope.ServiceProvider.GetRequiredService<IEmailSender>();
+
+
+                List<UserProfile> users = context.UserProfile.ToList();
+
+                foreach (UserProfile userProfile in users)
+                {
+                    var id = userProfile.ApplicationUserId;
+                    var user = await userManager.FindByIdAsync(id);
+
+                    bool isInRole = (await userManager.IsInRoleAsync(user, role)) ? true : false;
+
+                    if (isInRole)
+                    {
+                      //  await emailSender.SendEmailAsync(userProfile.Email,title, message);
+                    }
+                }
+                await emailSender.SendEmailAsync("tengevictor7@gmail.com", title, message);
+
+            }
+                return Task.CompletedTask;
         }
     }
 }
