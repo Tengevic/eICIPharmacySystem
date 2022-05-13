@@ -7,53 +7,128 @@
     <!-- Main content -->
     <section class="content">
         <!-- Default box -->
-        <div class="box">
-            <div class="box-header with-border">
-                <h3 class="box-title"><i class="fa fa-building"></i> @ViewData["Title"]</h3>
-                <div class="box-tools pull-right">
-                    <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
-                            title="Collapse">
-                        <i class="fa fa-minus"></i>
-                    </button>
-                    <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
-                        <i class="fa fa-times"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="box-body">
-                <div class="content-container-fluid">
-                    <div class="row">
-                        <dl class="dl-horizontal">
-                            <dt>
-                                @Html.DisplayNameFor(model => model.PrescriptionId)
-                            </dt>
-                            <dd>
-                                @Html.DisplayFor(model => model.PrescriptionId)
-                            </dd>
-                            <dt>
-                                @Html.DisplayNameFor(model => model.PrescriptionName)
-                            </dt>
-                            <dd>
-                                @Html.DisplayFor(model => model.PrescriptionName)
-                            </dd>
-                            <dt>
-                                @Html.DisplayNameFor(model => model.Customer.CustomerName)
-                            </dt>
-                            <dd>
-                                @Html.DisplayFor(model => model.Customer.CustomerName)
-                            </dd>
-                            <dt>
-                                @Html.DisplayNameFor(model => model.presciptionDate)
-                            </dt>
-                            <dd>
-                                @Html.DisplayFor(model => model.presciptionDate)
-                            </dd>
-                        </dl>
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="box">
+                    <div class="box-header with-border">
+                        <h3 class="box-title"><i class="fa fa-building"></i> @ViewData["Title"]</h3>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
+                                    title="Collapse">
+                                <i class="fa fa-minus"></i>
+                            </button>
+                            <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
+                                <i class="fa fa-times"></i>
+                            </button>
+                        </div>
                     </div>
+                    <div class="box-body">
+                        <div class="content-container-fluid" style="height: 150px;">
+                            <div class="row">
+                                <dl class="dl-horizontal">
+                                    <dt>
+                                        @Html.DisplayNameFor(model => model.PrescriptionId)
+                                    </dt>
+                                    <dd>
+                                        @Html.DisplayFor(model => model.PrescriptionId)
+                                    </dd>
+                                    <dt>
+                                        @Html.DisplayNameFor(model => model.PrescriptionName)
+                                    </dt>
+                                    <dd>
+                                        @Html.DisplayFor(model => model.PrescriptionName)
+                                    </dd>
+                                    <dt>
+                                        @Html.DisplayNameFor(model => model.Customer.CustomerName)
+                                    </dt>
+                                    <dd>
+                                        @Html.DisplayFor(model => model.Customer.CustomerName)
+                                    </dd>
+                                    <dt>
+                                        @Html.DisplayNameFor(model => model.presciptionDate)
+                                    </dt>
+                                    <dd>
+                                        @Html.DisplayFor(model => model.presciptionDate)
+                                    </dd>
+                                </dl>
+                            </div>
 
+                        </div>
+
+                    </div>
                 </div>
             </div>
-            <!-- /.box-body -->
+            <div class="col-lg-6">
+                <div class="box">
+                    <div class="box-header with-border">
+                        <h3 class="box-title text-primary"><i class="fa fa-pie-chart"></i> Prescriptions</h3>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
+                                    title="Collapse">
+                                <i class="fa fa-minus"></i>
+                            </button>
+                            <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
+                                <i class="fa fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="box-body">
+                        <table class="table table-bordered table-striped mb-0">
+                            <tr>
+                                <td>
+                                    Drug Name
+                                </td>
+                                <td>
+                                    <input id="ProductId" />
+                                </td>
+                                <td>
+                                    Units of Measure:
+                                </td>
+                                <td>
+                                    <label id="UnitsofMeasure" name="UnitsofMeasure"></label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    InStock
+                                </td>
+                                <td>
+                                    <label id="instock" name="instock"></label>
+                                </td>
+                                
+                                <td>
+                                    Selling price
+                                </td>
+                                <td>
+                                    <label id="sellPrice" name="sellPrice"></label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Quantity:
+                                </td>
+                                <td>
+                                    <input id="Quantity" type="number" onchange="NewAmount(this.value)" />
+                                </td>
+                                <td>
+                                    Total Cost:
+                                </td>
+                                <td>
+                                    <label id="Cost" name="cost"></label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <button id="btnsubmit" type="button" onclick="AddPrescription()">Send</button>
+                                </td>
+                                <td>
+                                    <p id="sendp" style="color: green">Sending... </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
         <!-- /.box -->
         <div class="box">
@@ -77,13 +152,62 @@
     <!-- /.content -->
 </div>
 <!-- /.content-wrapper -->
+<script>
 
+</script>
 
 @section Styles{
 }
 @section Scripts{
     <script type="text/javascript">
+        var Drugs;
+        var productId;
+        function NewAmount(x) {
+            Amount = x * Drugs.DefaultSellingPrice;
+            $("#Cost").text(Amount);
+        }
+        function AddPrescription() {
+            Quantity = $("#Quantity").val();
+            if (Quantity == "") {
+                Quantity = "0";
+            }
+            data = {
+                PrescriptionId:  @Model.PrescriptionId,
+                ProductId: productId,
+                Quantity: parseInt(Quantity),
+                remainder: 0
+            }
+            if (data.ProductId == null) {
+                toastr.warning("Please select a drug")
+            } else if (data.Quantity < 1) {
+                toastr.warning("Quantity can not be less than 1")
+            }
+            else {
+                $.ajax({
+                    type: "POST",
+                    contentType: "application/json;charset=utf-8",
+                    data: JSON.stringify(data),
+                    url: "/api/PrescriptionLines/Add",
+                    beforeSend: function () {
+                        $("#sendp").show();
+                        $("#btnsubmit").prop('disabled', true);
+                    },
+                    success: function (result) {
+                        $("#sendp").hide();
+                        $("#btnsubmit").prop('disabled', false);
+                        toastr.success("Success");
+                        location.reload();
+                    },
+                    error: function (result) {
+                        var s = ej.parseJSON(result.responseText)
+                        toastr.warning(s.message, "Cannot make sale");
+                    }
+                });
+            }
+           
+        }
         $(function () {
+            $("#sendp").hide();
 
             var dataManager = ej.DataManager({
                 url: "/api/PrescriptionLines",
@@ -101,8 +225,26 @@
                 url: "/api/Prescription",
                 adaptor: new ej.WebApiAdaptor()
             });
-
-
+            Drugs = dataManagerProduct;
+            $('#ProductId').ejDropDownList({
+                dataSource: Drugs,
+                fields: { id: 'ProductId', text: 'ProductName', value: 'ProductId' },
+                change: function (args) {
+                    productId = args.value;
+                    $.ajax({
+                        type: 'GET',
+                        url: '/api/Product/GetProductbyId/' + productId,
+                        success: function (data) {
+                            Drugs = data;
+                            console.log(Drugs);
+                            $("#UnitsofMeasure").text(Drugs.UnitOfMeasure.UnitOfMeasureName);
+                            $("#instock").text(Drugs.InStock); 
+                            $("#sellPrice").text(Drugs.DefaultSellingPrice);
+                            NewAmount(0);
+                        }
+                    });
+                }
+            });
 
 
             dataManager.ready.done(function (e) {
@@ -131,10 +273,10 @@
                     { field: "ProductId", headerText: 'Drug', foreignKeyField: "ProductId", foreignKeyValue: "ProductName", dataSource: dataManagerProduct },
                     { field: "Quantity", headerText: 'units/batch', defaultValue: 1, editType: "numericedit"},
                     { field: "remainder", headerText: 'Units sold', defaultValue: 0, editType: "numericedit", allowEditing: false, visible: false  },
-                  
+
                 ],
 
-               
+
             });
             });
 

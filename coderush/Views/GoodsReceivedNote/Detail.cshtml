@@ -2,58 +2,110 @@
 @{
     ViewData["Title"] = "GoodsRecieveDetail";
 }
+<style>
+    .my-custom-scrollbar {
+        position: relative;
+        height: 150px;
+        overflow: auto;
+    }
+
+    .table-wrapper-scroll-y {
+        display: block;
+    }
+</style>
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
     <!-- Main content -->
     <section class="content">
         <!-- Default box -->
-        <div class="box">
-            <div class="box-header with-border">
-                <h3 class="box-title"><i class="fa fa-building"></i> @ViewData["Title"]</h3>
-                <div class="box-tools pull-right">
-                    <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
-                            title="Collapse">
-                        <i class="fa fa-minus"></i>
-                    </button>
-                    <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
-                        <i class="fa fa-times"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="box-body">
-                <div class="content-container-fluid">
-                    <div class="row">
-                        <dl class="dl-horizontal">
-                            <dt>
-                                @Html.DisplayNameFor(model => model.GoodsReceivedNoteId)
-                            </dt>
-                            <dd>
-                                @Html.DisplayFor(model => model.GoodsReceivedNoteId)
-                            </dd>
-                            <dt>
-                                @Html.DisplayNameFor(model => model.VendorDONumber)
-                            </dt>
-                            <dd>
-                                @Html.DisplayFor(model => model.VendorDONumber)
-                            </dd>
-                            <dt>
-                                @Html.DisplayNameFor(model => model.GRNDate)
-                            </dt>
-                            <dd>
-                                @Html.DisplayFor(model => model.GRNDate)
-                            </dd>
-                            <dt>
-                                @Html.DisplayNameFor(model => model.VendorInvoiceNumber)
-                            </dt>
-                            <dd>
-                                @Html.DisplayFor(model => model.VendorInvoiceNumber)
-                            </dd>
-                        </dl>
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="box">
+                    <div class="box-header with-border">
+                        <h3 class="box-title"><i class="fa fa-building"></i> @ViewData["Title"]</h3>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
+                                    title="Collapse">
+                                <i class="fa fa-minus"></i>
+                            </button>
+                            <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
+                                <i class="fa fa-times"></i>
+                            </button>
+                        </div>
                     </div>
+                    <div class="box-body">
+                        <div style="height: 150px;" class="content-container-fluid">
+                            <div class="row">
+                                <dl class="dl-horizontal">
+                                    <dt>
+                                        @Html.DisplayNameFor(model => model.GoodsReceivedNoteId)
+                                    </dt>
+                                    <dd>
+                                        @Html.DisplayFor(model => model.GoodsReceivedNoteId)
+                                    </dd>
+                                    <dt>
+                                        @Html.DisplayNameFor(model => model.VendorDONumber)
+                                    </dt>
+                                    <dd>
+                                        @Html.DisplayFor(model => model.VendorDONumber)
+                                    </dd>
+                                    <dt>
+                                        @Html.DisplayNameFor(model => model.GRNDate)
+                                    </dt>
+                                    <dd>
+                                        @Html.DisplayFor(model => model.GRNDate)
+                                    </dd>
+                                    <dt>
+                                        @Html.DisplayNameFor(model => model.VendorInvoiceNumber)
+                                    </dt>
+                                    <dd>
+                                        @Html.DisplayFor(model => model.VendorInvoiceNumber)
+                                    </dd>
 
+                                </dl>
+                            </div>
+
+                        </div>
+
+                    </div>
                 </div>
             </div>
-            <!-- /.box-body -->
+            <div class="col-lg-6">
+                <div class="box">
+                    <div class="box-header with-border">
+                        <h3 class="box-title text-primary"><i class="fa fa-pie-chart"></i> Purchase order</h3>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
+                                    title="Collapse">
+                                <i class="fa fa-minus"></i>
+                            </button>
+                            <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
+                                <i class="fa fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="box-body">
+                        <div class="Prescription">
+                            <div class="table-wrapper-scroll-y my-custom-scrollbar">
+                                <table id="Prescription" align="center" class="table table-bordered table-striped mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th> # </th>
+                                            <th>product Name</th>
+                                            <th>Units of Measure</th>
+                                            <th>Quantity</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                         </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <!-- /.box -->
         <div class="box">
@@ -67,7 +119,7 @@
                     <div class="col-lg-8">
                     </div>
                     <div class="col-lg-4">
-                       
+
                     </div>
                 </div>
             </div>
@@ -84,7 +136,7 @@
 @section Scripts{
     <script type="text/javascript">
         $(function () {
-
+            
             var dataManager = ej.DataManager({
                 url: "/api/GoodsRecievedNoteLines",
                 adaptor: new ej.WebApiAdaptor(),
@@ -140,17 +192,38 @@
                     { field: "InStock", headerText: ' stock', defaultValue: 0, editType: "numericedit", allowEditing: false, visible: false  },
                     { field: "Expired", headerText: ' Expired ', defaultValue: 0, editType: "numericedit", allowEditing: false, visible: false  },
                 ],
-
                 actionFailure: function (args) {
                     if (args.requestType == "save") {
                         var s = ej.parseJSON(args.error.responseText)
                         toastr.warning(s.message, "Cannot add drug");
-                    }                   
+                    }
+                },
+                actionComplete: function (args) {
+                    $.ajax({
+                        type: 'GET',
+                        url: '/api/PurchaseOrderLine/GetByPurchaseOrderId/' +@Model.PurchaseOrderId ,
+                        success: function (data) {
+                            if (data.Count == 0) {
+                                $("div.Prescription").replaceWith("<h4>No Purchase order Available</h4>");
+                                } else {
+                                var table = document.getElementById("Prescription");
+                                item = data.Items;
+                                for (let i = 0; i < item.length; i++) {
+                                    var row = table.insertRow(-1);
+                                    row.insertCell(0).innerHTML = i+1;
+                                    row.insertCell(1).innerHTML = item[i].Product.ProductName;
+                                    row.insertCell(2).innerHTML = item[i].Product.UnitOfMeasure.UnitOfMeasureName;
+                                    row.insertCell(3).innerHTML = item[i].Quantity;
+
+                                 }
+                    }
+                }
+            });
                 }
             });
             });
 
-            
+
         });
 
 

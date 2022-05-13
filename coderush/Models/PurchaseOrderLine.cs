@@ -15,6 +15,7 @@ namespace coderush.Models
         public PurchaseOrder PurchaseOrder { get; set; }
         [Display(Name = "Product Item")]
         public int ProductId { get; set; }
+        public Product Product { get; set; }
         public string Description { get; set; }
         public double Quantity { get; set; }
         public double Price { get; set; }

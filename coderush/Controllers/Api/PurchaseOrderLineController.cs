@@ -127,5 +127,18 @@ namespace coderush.Controllers.Api
             return Ok(purchaseOrderLine);
 
         }
+        //api/PurchaseOrderLine/GetByPurchaseOrderId"
+        [HttpGet("[action]/{id}")]
+        public async Task<IActionResult> GetByPurchaseOrderId([FromRoute] int id)
+        {
+            List<PurchaseOrderLine> Items = await _context.PurchaseOrderLine
+                    .Include(x => x.Product)
+                        .ThenInclude(x => x.UnitOfMeasure)
+                    .Where(x => x.PurchaseOrderId == id)
+                    .ToListAsync();
+
+            int Count = Items.Count();
+            return Ok(new { Items, Count });
+        }
     }
 }

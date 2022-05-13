@@ -156,6 +156,17 @@ namespace coderush.Controllers.Api
             DateTime current = DateTime.Now;
             double totaldays = (goodsRecievedNoteLine.ExpiryDate - current).TotalDays;
 
+            if (goodsRecievedNoteLine.ManufareDate > current)
+            {
+                Err err = new Err
+                {
+                    message = "Invalid Manufacture date"
+                };
+                string errMsg = JsonConvert.SerializeObject(err);
+
+                return BadRequest(err);
+            }
+
             if (totaldays < 360)
             {
                 Err err = new Err
@@ -180,20 +191,19 @@ namespace coderush.Controllers.Api
         public IActionResult Update([FromBody] CrudViewModel<GoodsRecievedNoteLine> payload)
         {
             GoodsRecievedNoteLine goodsRecievedNoteLine = payload.value;
-            if (goodsRecievedNoteLine.InStock < goodsRecievedNoteLine.Expired)
+
+            DateTime current = DateTime.Now;
+            double totaldays = (goodsRecievedNoteLine.ExpiryDate - current).TotalDays;
+            if (goodsRecievedNoteLine.ManufareDate > current)
             {
                 Err err = new Err
                 {
-                    message = "Expired Stock cannot be more than stock"
+                    message = "Invalid Manufacture date"
                 };
                 string errMsg = JsonConvert.SerializeObject(err);
 
                 return BadRequest(err);
             }
-
-            DateTime current = DateTime.Now;
-            double totaldays = (goodsRecievedNoteLine.ExpiryDate - current).TotalDays;
-
             if (totaldays < 360)
             {
                 Err err = new Err
@@ -310,6 +320,18 @@ namespace coderush.Controllers.Api
             }
 
             return Ok(expiredDrugs);
+        }
+        //api/GoodsRecievedNoteLines/GetByProductId
+        [HttpGet("[action]/{id}")]
+        public async Task<IActionResult> GetByProductId(int id)
+        {
+            List<GoodsRecievedNoteLine> result = await _context.GoodsRecievedNoteLine
+                .Where(x => x.ProductId.Equals(id))
+                .Where(x =>x.InStock > 0)
+                .ToListAsync();
+
+            return Ok(result);
+
         }
     }
 

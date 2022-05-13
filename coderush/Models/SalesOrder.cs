@@ -22,6 +22,7 @@ namespace coderush.Models
         [Display(Name = "ICI Patient Number")]
         public string PatientRefNumber { get; set; }
         public int? PrescriptionId { get; set; } = 1;
+        public Prescription Prescription { get; set; }
         [Display(Name = "Sales Type")]
         public int SalesTypeId { get; set; }
         public string Remarks { get; set; }

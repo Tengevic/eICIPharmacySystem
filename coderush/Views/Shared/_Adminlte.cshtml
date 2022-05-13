@@ -81,6 +81,15 @@
     <script src="~/scripts/jquery.validate.min.js"></script>
     <script src="~/scripts/jquery.validate.unobtrusive.min.js"></script>
     <script type="text/javascript" charset="utf8" src="https:////cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <script>
+        $(document).ready(function () {
+                toastr.options = {
+                    "closeButton": true,
+                    "showDuration": "2000",
+                    "progressBar": true,
+                };
+        });
+    </script>
 
 
     @RenderSection("Scripts", required: false)

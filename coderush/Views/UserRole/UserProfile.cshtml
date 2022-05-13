@@ -200,10 +200,9 @@
                 type: 'GET',
                 url: '/api/Product/GetLow',
                 success: function (data) {
-    
-                    if (data != 0) {
-                        var str = data + " drugs are in low stock";
-                        toastr.error(str, "Low Stock")
+                    if (data.Count != 0) {
+                        var str = data.Count + " drugs are in low stock";
+                        toastr.error(str + ", <a style='color:black' href='/Stocks/LowStock'> Click Here</a>", "Low Stock")
                     }
                    
                 }
@@ -215,15 +214,15 @@
                     if (data.one != 0)
                     {
                         var str = data.one + " drug batch(s) will expire in one month";
-                         toastr.error(str,"Expiring drugs")
+                        toastr.error(str + ", <a style='color:black' href='/Notifications/Index'> Click Here</a>","Expiring drugs")
                     }
                     if (data.two != 0) {
                         var str = data.two + " drug batch(s) will expire in two months";
-                        toastr.warning(str, "Expiring drugs")
+                        toastr.warning(str + ", <a style='color:black' href='/Notifications/Index'> Click Here</a>", "Expiring drugs")
                     }
                     if (data.three != 0) {
                         var str = data.three + " drug batch(s) will expire in three months";
-                        toastr.info(str, "Expiring drugs")
+                        toastr.info(str + ", <a style='color:black' href='/Notifications/Index'> Click Here</a>", "Expiring drugs")
                     }
                 }
             });

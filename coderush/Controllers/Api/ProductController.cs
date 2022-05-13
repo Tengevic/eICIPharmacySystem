@@ -31,6 +31,16 @@ namespace coderush.Controllers.Api
             int Count = Items.Count();
             return Ok(new { Items, Count });
         }
+        [HttpGet("[action]/{id}")]
+        public async Task<IActionResult> GetProductbyId([FromRoute] int id)
+        {
+            Product Items = await _context.Product
+                .Include(x => x.UnitOfMeasure)
+                .Where(x => x.ProductId == id)
+                .FirstOrDefaultAsync();
+           
+            return Ok(Items);
+        }
         [HttpGet("[action]/{name}")]
         public async Task<IActionResult> GetByProductName([FromRoute] string name)
         {
@@ -115,9 +125,9 @@ namespace coderush.Controllers.Api
 
 
             List<Product> Items = await product.ToListAsync();
-            int count = Items.Count();
+            int Count = Items.Count();
 
-            return Ok(count);
+            return Ok(new { Items, Count });
         }
     }
 

@@ -42,37 +42,8 @@
 
     <script type="text/javascript">
         $(function () {
-            $.ajax({
-                type: 'GET',
-                url: '/api/Product/GetLow',
-                success: function (data) {
-                    if (data.Count != 0) {
-                        var str = data.Count + " drugs are in low stock";
-                        toastr.error(str + ", <a style='color:black' href='/Stocks/LowStock'> Click Here</a>", "Low Stock,")
-                    }
-                }
-            });
-            $.ajax({
-                type: 'GET',
-                url: '/api/GoodsRecievedNoteLines/GetExpired',
-                success: function (data) {
-                    console.log(data);
-                    if (data.one != 0) {
-                        var str = data.one + " drug batch(s) will expire in one month";
-                        toastr.error(str + ", <a style='color:black' href='/Notifications/Index'> Click Here</a>", "Expiring drugs")
-                    }
-                    if (data.two != 0) {
-                        var str = data.two + " drug batch(s) will expire in one month";
-                        toastr.warning(str + ", <a style='color:black' href='/Notifications/Index'> Click Here</a>", "Expiring drugs")
-                    }
-                    if (data.three != 0) {
-                        var str = data.three + " drug batch(s) will expire in one month";
-                        toastr.info(str + ", <a style='color:black' href='/Notifications/Index'> Click Here</a>", "Expiring drugs")
-                    }
-                }
-            });
             var dataManager = ej.DataManager({
-                url: "/api/Product",
+                url: "/api/Product/GetLow",
                 adaptor: new ej.WebApiAdaptor(),
                 offline: true
             });
@@ -97,7 +68,7 @@
                     dataSource: ej.DataManager({
                         json: e.result,
                         adaptor: new ej.remoteSaveAdaptor(),
-                      
+
                     }),
                     toolbarSettings: {
                         showToolbar: true,

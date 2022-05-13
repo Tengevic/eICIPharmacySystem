@@ -12,13 +12,14 @@ namespace coderush.Models
         [Required]
         public string ProductName { get; set; }
         public int ProductTypeId { get; set; }
+        public ProductType ProductType { get; set; }
         public string ProductCode { get; set; }
         public string Barcode { get; set; }
         public string Description { get; set; }
         public string ProductImageUrl { get; set; }
         [Display(Name = "UOM")]
         public int UnitOfMeasureId { get; set; }
-      
+        public UnitOfMeasure UnitOfMeasure { get; set; }
         public double DefaultBuyingPrice { get; set; } = 0.0;
         public double DefaultSellingPrice { get; set; } = 0.0;
         [Display(Name = "Branch")]

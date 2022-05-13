@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace coderush.Controllers.Api
 {
-   
+
     [Produces("application/json")]
     [Route("api/Prescription")]
     public class PrescriptionController : Controller

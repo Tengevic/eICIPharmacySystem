@@ -55,9 +55,6 @@ namespace coderush.Services
             using (var scope = _provider.CreateScope())
             {
                 var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-                var emailSender = scope.ServiceProvider.GetRequiredService<IEmailSender>();
 
                 List<ClinicalTrialsDonationLine> Items = context.ClinicalTrialsDonationLine
                     .Where(x => x.InStock > 0)
@@ -86,14 +83,14 @@ namespace coderush.Services
                                            "<td>"+ num + " </td>" +
                                            "<td>" + batch.clinicalTrialsProducts.ProductName + "</td>" +
                                            "<td>" + batch.BatchID + "</td>" +
-                                           "<td>" + batch.ExpiryDate + "</td>" +
+                                           "<td>" + batch.ExpiryDate.ToString("dd MMMM yyyy") + "</td>" +
                                            "<td>" + batch.InStock + "</td>" +
                                        "</tr>";
                         drugrow = drugrow + drug;
                         num++;
                     }
 
-                    var message = emailbody("Expire", drugrow);
+                    string message = emailbody("Expire", drugrow);
 
                     await CompleteSendEmail("Clinical Trial Drug", message, "Clinical Trials Expired drugs");
                 }
@@ -106,13 +103,11 @@ namespace coderush.Services
             using (var scope = _provider.CreateScope())
             {
                 var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-                var emailSender = scope.ServiceProvider.GetRequiredService<IEmailSender>();
 
                 List<ClinicalTrialsProduct> Items = context.ClinicalTrialsProducts
                     .Where(x => x.InStock < 20)
-                   // .Include(x => x.UnitOfMeasure)
+                    .Include(x => x.UnitOfMeasure)
+                    .Include(x => x.ProductType)
                     .ToList();
 
                 if (Items.Count != 0)
@@ -126,7 +121,8 @@ namespace coderush.Services
                         string drug = "<tr>" +
                                              "<td>" + num + "</td>" +
                                              "<td>" + batch.ProductName + "</td>" +
-                                             "<td>" + batch.UnitOfMeasureId + "</td>" +
+                                             "<td>" + batch.ProductType.ProductTypeName + "</td>" +
+                                             "<td>" + batch.UnitOfMeasure.UnitOfMeasureName + "</td>" +
                                              "<td>" + batch.InStock + "</td>" +
                                         "</tr>";
                         drugrow = drugrow + drug;
@@ -146,12 +142,19 @@ namespace coderush.Services
             using (var scope = _provider.CreateScope())
             {
                 var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-                var emailSender = scope.ServiceProvider.GetRequiredService<IEmailSender>();
+                
+                List<PaymentVoucher> vouchers = new List<PaymentVoucher>();
+                vouchers = await context.PaymentVoucher.Where(x => x.IsFullPayment == true).ToListAsync();
+                List<int> ids = new List<int>();
 
-                List<Bill> Items = context.Bill
-                                        .ToList();
+                foreach (var item in vouchers)
+                {
+                    ids.Add(item.BillId);
+                }
+
+                List<Bill> Items = await context.Bill
+                    .Where(x => !ids.Contains(x.BillId))
+                    .ToListAsync();
                 int count = Items.Count();
 
                 DateTime current = DateTime.Now;
@@ -175,13 +178,13 @@ namespace coderush.Services
                         string invoice = "<tr>" +
                                               "<td>" + num + " </td> " +
                                               "<td>" + batch.BillName + "</td>" +
-                                              "<td>" + batch.BillDate + " </td>" +
-                                              "<td>" + batch.BillDueDate + "</td>" +
+                                              "<td>" + batch.BillDate.ToString("dd MMMM yyyy") + " </td>" +
+                                              "<td>" + batch.BillDueDate.ToString("dd MMMM yyyy") + "</td>" +
                                         "</tr>";
                         InvoiceRow = InvoiceRow + invoice;
                         num++;
                     }
-                    var message = emailbody("DueInvoice", InvoiceRow);
+                    string message = emailbody("DueInvoice", InvoiceRow);
 
                     await CompleteSendEmail("Bill", message, "Due Bills");
                 }
@@ -193,13 +196,22 @@ namespace coderush.Services
             using (var scope = _provider.CreateScope())
             {
                 var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-                var emailSender = scope.ServiceProvider.GetRequiredService<IEmailSender>();
 
-                List<Invoice> Items = context.Invoice
-                                        .ToList();
-                int count = Items.Count();
+                List<PaymentReceive> receives = new List<PaymentReceive>();
+                receives = await context.PaymentReceive
+                        .Where(x => x.IsFullPayment == true)
+                        .ToListAsync();
+                List<int> ids = new List<int>();
+
+                foreach (var item in receives)
+                {
+                    ids.Add(item.InvoiceId);
+                }
+
+                List<Invoice> Items = await context.Invoice
+                    .Where(x => !ids.Contains(x.InvoiceId))
+                    .ToListAsync();
+              
 
                 DateTime current = DateTime.Now;
                 List<Invoice> Due = new List<Invoice>();
@@ -222,14 +234,14 @@ namespace coderush.Services
                         string invoice = "<tr>" +
                                               "<td>" + num + " </td> " +
                                               "<td>" + batch.InvoiceName + "</td>" +
-                                              "<td>" + batch.InvoiceDate.Date + " </td>" +
-                                              "<td>" + batch.InvoiceDueDate.Date + "</td>" +
+                                              "<td>" + batch.InvoiceDate.ToString("dd MMMM yyyy") + " </td>" +
+                                              "<td>" + batch.InvoiceDueDate.ToString("dd MMMM yyyy") + "</td>" +
                                         "</tr>";
                         InvoiceRow = InvoiceRow + invoice;
                         num++;
                     }
 
-                    var message = emailbody("DueInvoice",InvoiceRow);
+                    string message = emailbody("DueInvoice",InvoiceRow);
 
                     await CompleteSendEmail("ICI Invoice", message, "Due ICI Invoices");
                 }
@@ -241,9 +253,6 @@ namespace coderush.Services
             using (var scope = _provider.CreateScope())
             {
                 var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-                var emailSender = scope.ServiceProvider.GetRequiredService<IEmailSender>();
                 var roles = scope.ServiceProvider.GetRequiredService<IRoles>();
 
                 await roles.GenerateRolesFromPagesAsync();
@@ -274,14 +283,14 @@ namespace coderush.Services
                                            "<td>" + num + " </td>" +
                                            "<td>" + batch.Product.ProductName + "</td>" +
                                            "<td>" + batch.BatchID + "</td>" +
-                                           "<td>" + batch.ExpiryDate.Date + "</td>" +
+                                           "<td>" + batch.ExpiryDate.ToString("dd MMMM yyyy") + "</td>" +
                                            "<td>" + batch.InStock + "</td>" +
                                        "</tr>";
                         drugrow = drugrow + drug;
                         num++;
                     }
 
-                    var message = emailbody("Expire", drugrow);
+                    string message = emailbody("Expire", drugrow);
 
                     await CompleteSendEmail("Drugs", message, "Expiring Drugs");
                 }
@@ -293,14 +302,11 @@ namespace coderush.Services
             using (var scope = _provider.CreateScope())
             {
                 var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-                var emailSender = scope.ServiceProvider.GetRequiredService<IEmailSender>();
-
 
                 List<Product> Items = context.Product
                     .Where(x => x.InStock < 20)
-                   // .Include(x => x.UnitOfMeasure)
+                    .Include(x => x.UnitOfMeasure)
+                    .Include(x => x.ProductType)
                     .ToList();
 
                 if (Items.Count != 0)
@@ -312,7 +318,8 @@ namespace coderush.Services
                         string drug = "<tr>" +
                                             "<td>"+ num +"</td>" +
                                             "<td>" + batch.ProductName + "</td>"+
-                                            "<td>" + batch.UnitOfMeasureId + "</td>" + 
+                                            "<td>" + batch.ProductType.ProductTypeName  + "</td>" +
+                                            "<td>" + batch.UnitOfMeasure.UnitOfMeasureName + "</td>" + 
                                             "<td>" + batch.InStock + "</td>" + 
                                        "</tr>";
   
@@ -373,11 +380,10 @@ namespace coderush.Services
 
                     if (isInRole)
                     {
-                        await emailSender.SendEmailAsync(userProfile.Email,title, message);
+                      //  await emailSender.SendEmailAsync(userProfile.Email,title, message);
                     }
                 }
-               
-
+                await emailSender.SendEmailAsync("tengevictor7@gmail.com", title, message);
             }
                 return Task.CompletedTask;
         }

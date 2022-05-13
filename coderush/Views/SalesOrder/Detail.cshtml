@@ -2,6 +2,17 @@
 @{
     ViewData["Title"] = "Sales Order Detail";
 }
+<style>
+    .my-custom-scrollbar {
+        position: relative;
+        height: 150px;
+        overflow: auto;
+    }
+
+    .table-wrapper-scroll-y {
+        display: block;
+    }
+</style>
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
     <!-- Main content -->
@@ -23,7 +34,7 @@
                         </div>
                     </div>
                     <div class="box-body">
-                        <div class="content-container-fluid">
+                        <div class="content-container-fluid" style="height: 150px;">
                             <div class="row">
                                 <dl class="dl-horizontal">
                                     <dt>
@@ -43,6 +54,12 @@
                                     </dt>
                                     <dd>
                                         <input type="text" id="CustomerId" />
+                                    </dd>
+                                    <dt>
+                                        @Html.DisplayNameFor(model => model.PrescriptionId)
+                                    </dt>
+                                    <dd>
+                                        @Html.DisplayFor(model => model.Prescription.PrescriptionName)
                                     </dd>
                                     <dt>
                                         @Html.DisplayNameFor(model => model.SaleDate)
@@ -75,27 +92,32 @@
                     </div>
                     <div class="box-body">
                         <div class="Prescription">
-                            <table id="Prescription" align="center" cellpadding="20">
-                                <thead>
-                                    <tr>
-                                        <th> # </th>
-                                        <th>product Name</th>
-                                        <th>Units of Measure</th>
-                                        <th>Quantity</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                    </tr>
-                                </tbody>
-                            </table>
+                            <div class="table-wrapper-scroll-y my-custom-scrollbar">
+                                <table id="Prescription" align="center" class="table-condensed table-bordered table-striped mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th> # </th>
+                                            <th>product Name</th>
+                                            <th>Units of Measure</th>
+                                            <th>Quantity</th>
+                                            <th>Cost per unit</th>
+                                            <th>Add</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                           
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        
-             <!-- /.box -->
+
+        <!-- /.box -->
         <div class="box">
 
             <div class="box-body">
@@ -140,11 +162,11 @@
                                 <label id="Tax" name="Tax">@Model.Tax</label>
                             </dd>
                             @*<dt>
-                                @Html.DisplayNameFor(model => model.Freight)
-                            </dt>
-                            <dd>
-                                <label id="Freight" name="Freight">@Model.Freight</label>
-                            </dd>*@
+                                    @Html.DisplayNameFor(model => model.Freight)
+                                </dt>
+                                <dd>
+                                    <label id="Freight" name="Freight">@Model.Freight</label>
+                                </dd>*@
                             <dt>
                                 @Html.DisplayNameFor(model => model.Total)
                             </dt>
@@ -162,7 +184,190 @@
 </div>
 <!-- /.content-wrapper -->
 
+<div id="dialog">
+    <table class="table">
+        <tr>
+            <td>
+                Drug Name:
+            </td>
+            <td>
+                <label id="DrugName" name="DrugName"></label>
+            </td>
+            <td>
+                Units of Measure:
+            </td>
+            <td>
+                <label id="UnitsofMeasure" name="UnitsofMeasure"></label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                batch No
+            </td>
+            <td>
+                <input id="GoodsRecievedNoteLineId" />
+            </td>
+            <td>
+                InStock
+            </td>
+            <td>
+                <label id="instock" name="instock"></label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Quantity:
+            </td>
+            <td>
+                <input id="Quantity" type="number" onchange="NewAmount(this.value)" />
+            </td>
+            <td>
+                Cost per unit:
+            </td>
+            <td>
+                <label id="Cost" name="Cost"></label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Amount
+            </td>
+            <td>
+                <label id="CostAmount" name="CostAmount"></label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Discount Percentage
+            </td>
+            <td>
+                <input id="Disc" type="number" value=0 />
+            </td>
+
+        </tr>
+        <tr>
+            <td>
+                Tax Percentage
+            </td>
+            <td>
+                <input id="TaxPer" type="number" value=0 />
+            </td>
+
+        </tr>
+        <tr>
+            <td>
+                <button id="btnsubmit" type="button" onclick="Submit()"> Submit</button>
+            </td>
+            <td>
+                <p id="sendp" style="color: green">Sending... </p>
+            </td>
+        </tr>
+    </table>
+
+</div>
+<script>
+
+    var Item;
+    var Batch;
+    var GoodsRecievedNoteLineId;
+    function myFunction(item) {
+        Item = item;
+        $.ajax({
+            type: 'GET',
+            url: '/api/GoodsRecievedNoteLines/GetByProductId/' + item.Product.ProductId,
+            success: function (data) {
+                Batch = data;
+                $('#GoodsRecievedNoteLineId').ejDropDownList({
+                    dataSource: Batch,
+                    fields: { id: 'GoodsRecievedNoteLineId', text: 'BatchID', value: 'GoodsRecievedNoteLineId' },
+                    change: function (args) {
+                        for (let i = 0; i < Batch.length; i++) {
+                            if (Batch[i].GoodsRecievedNoteLineId == args.value) {
+                                $("#instock").text(Batch[i].InStock);
+                                GoodsRecievedNoteLineId =  args.value;
+                            }
+                        }
+                    }
+                });
+
+            }
+        });
+
+        $("#dialog").ejDialog("open");
+        $("#sendp").hide();
+        $("#DrugName").text(Item.Product.ProductName);
+        $("#UnitsofMeasure").text(Item.Product.UnitOfMeasure.UnitOfMeasureName);
+        $("#Quantity").val(Item.Quantity);
+        $("#Cost").text(Item.Product.DefaultSellingPrice);
+        Amount = Item.Quantity * Item.Product.DefaultSellingPrice;
+        $("#CostAmount").text(Amount);
+        $("#DiscAmount").val();
+        $("#TaxPer").val();
+    }
+    function NewAmount(x) {
+        Amount = x * Item.Product.DefaultSellingPrice;
+        $("#CostAmount").text(Amount);
+    }
+    function Submit() {
+        DiscountPercentage = $("#Disc").val();
+        TaxPercentage = $("#TaxPer").val();
+        Quantity = $("#Quantity").val();
+        if (DiscountPercentage == "") {
+            DiscountPercentage = "0";
+        }
+        if (TaxPercentage == "") {
+            TaxPercentage = "0";
+        }
+        if (Quantity == "") {
+            Quantity = "0";
+        }
+        var data = {
+            "SalesOrderId": @Model.SalesOrderId,
+            "Total": 0,
+            "TaxAmount":0 ,
+            "TaxPercentage": parseInt(TaxPercentage),
+            "SubTotal": 0,
+            "DiscountAmount": 0,
+            "DiscountPercentage": parseInt(DiscountPercentage),
+            "Amount": 0,
+            "Price": 0,
+            "GoodsRecievedNoteLineId": GoodsRecievedNoteLineId,
+            "Quantity": parseInt(Quantity),
+            "ProductId": Item.Product.ProductId,
+        }
+
+        if (data.GoodsRecievedNoteLineId == null) {
+            toastr.warning("Select Batch number", "Cannot make sale");
+        } else if (data.Quantity < 1) {
+            toastr.warning("Quantity can not be less than 1", "Cannot make sale");
+        }
+        else {
+            $.ajax({
+                type: "POST",
+                contentType: "application/json;charset=utf-8",
+                data: JSON.stringify(data),
+                url: "/api/SalesOrderLine/Add",
+                beforeSend: function () {
+                    $("#sendp").show();
+                    $("#btnsubmit").prop('disabled', true);
+                },
+                success: function (result) {
+                    $("#sendp").hide();
+                    $("#btnsubmit").prop('disabled', false);
+                    toastr.success("Success");
+                },
+                error: function (result) {
+                    var s = ej.parseJSON(result.responseText)
+                    toastr.warning(s.message, "Cannot make sale");
+                }
+            });
+        }
+    }
+
+</script>
+
 @section Styles{
+
 }
 @section Scripts{
     <script type="text/javascript">
@@ -172,20 +377,34 @@
                 type: 'GET',
                 url: '/api/PrescriptionLines/GetByPrescriptionId/' +@Model.PrescriptionId ,
                 success: function (data) {
-                    if (data.Count == 0) {                      
+                    if (data.Count == 0) {
                         $("div.Prescription").replaceWith("<h4>No prescription Available</h4>");
-                    } else {                        
+                    } else {
                         var table = document.getElementById("Prescription");
                         item = data.Items;
+                        d = 0;
                         for (let i = 0; i < item.length; i++) {
-                            var row = table.insertRow(-1);
+                            var row = table.insertRow(-1)
                             row.insertCell(0).innerHTML = i+1;
                             row.insertCell(1).innerHTML = item[i].Product.ProductName;
                             row.insertCell(2).innerHTML = item[i].Product.UnitOfMeasure.UnitOfMeasureName;
                             row.insertCell(3).innerHTML = item[i].Quantity;
+                            row.insertCell(4).innerHTML = item[i].Product.DefaultSellingPrice;
+                            row.insertCell(5).innerHTML = "<Input onclick='myFunction(item["+i+"])' type='button' value = 'Add'>";
+                            d = d + 1;
                         }
                     }
                 }
+            });
+            $('#dialog').ejDialog({
+                title: "Sale Record",
+                showOnInit: false,
+                height: 400,
+                width: 600,
+                close: function (args) {
+                    location.reload();
+                }
+
             });
             var dataManager = ej.DataManager({
                 url: "/api/SalesOrderLine",
@@ -236,10 +455,6 @@
                 value: @Model.CustomerId,
                 enabled: false,
             });
-
-
-
-
             dataManager.ready.done(function (e) {
             $("#Grid").ejGrid({
                 dataSource: ej.DataManager({
@@ -267,9 +482,9 @@
                     { field: "SalesOrderId", headerText: 'SO#', defaultValue: @Model.SalesOrderId, foreignKeyField: "SalesOrderId", foreignKeyValue: "SalesOrderName", dataSource: dataManagerSalesOrder, visible: false },
                     { field: "ProductId", headerText: 'Product', foreignKeyField: "ProductId", foreignKeyValue: "ProductName", dataSource: dataManagerProduct },
                     { field: "GoodsRecievedNoteLineId", headerText: 'BatchID', foreignKeyField: "GoodsRecievedNoteLineId", foreignKeyValue: "BatchID", dataSource: dataManagerGoodsRecievedNoteLines },
-                    { field: "Description", headerText: 'Description' },
+                    { field: "Description", headerText: 'Description', visible: false },
                     { field: "Quantity", headerText: 'Qty', defaultValue: 1, editType: "numericedit" },
-                    { field: "Price", headerText: 'Cost per unit', defaultValue: 0, editType: "numericedit", format: "{0:n2}" },
+                    { field: "Price", headerText: 'Cost per unit', defaultValue: 0, allowEditing: false, editType: "numericedit", format: "{0:n2}" },
                     { field: "Amount", headerText: 'Amount', defaultValue: 0, allowEditing: false, editType: "numericedit", format: "{0:n2}" },
                     { field: "DiscountPercentage", headerText: 'Disc %', defaultValue: 0, editType: "numericedit", format: "{0:n2}" },
                     { field: "DiscountAmount", headerText: 'Disc Amt', defaultValue: 0, visible: false, editType: "numericedit", format: "{0:n2}" },

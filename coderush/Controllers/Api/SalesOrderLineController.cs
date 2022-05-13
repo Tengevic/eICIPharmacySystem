@@ -242,6 +242,45 @@ namespace coderush.Controllers.Api
 
                 return BadRequest(err);
             }
+            Product product = _context.Product.Find(salesOrderLine.ProductId);
+            salesOrderLine.Price = product.DefaultSellingPrice;  
+            salesOrderLine = this.Recalculate(salesOrderLine);
+            _context.SalesOrderLine.Add(salesOrderLine);
+            _context.SaveChanges();
+            this.UpdateSalesOrder(salesOrderLine.SalesOrderId);
+            this.UpdateStock(salesOrderLine.ProductId);
+            this.UpdateBatch(salesOrderLine.GoodsRecievedNoteLineId);
+            return Ok(salesOrderLine);
+
+        }
+        [HttpPost("[action]")]
+        public IActionResult Add([FromBody] SalesOrderLine payload)
+        {
+            SalesOrderLine salesOrderLine = payload;
+            GoodsRecievedNoteLine batch = _context.GoodsRecievedNoteLine.Find(salesOrderLine.GoodsRecievedNoteLineId);
+
+            if (batch.ProductId != salesOrderLine.ProductId)
+            {
+                Err err = new Err
+                {
+                    message = "Product doesn't have the batchId"
+                };
+                string errMsg = JsonConvert.SerializeObject(err);
+
+                return BadRequest(err);
+            }
+            if (batch.InStock < salesOrderLine.Quantity)
+            {
+                Err err = new Err
+                {
+                    message = $"Stock available for this Batch is {batch.InStock} ",
+                };
+                string errMsg = JsonConvert.SerializeObject(err);
+
+                return BadRequest(err);
+            }
+            Product product = _context.Product.Find(salesOrderLine.ProductId);
+            salesOrderLine.Price = product.DefaultSellingPrice;
             salesOrderLine = this.Recalculate(salesOrderLine);
             _context.SalesOrderLine.Add(salesOrderLine);
             _context.SaveChanges();
@@ -278,6 +317,8 @@ namespace coderush.Controllers.Api
 
                 return BadRequest(err);
             }
+            Product product = _context.Product.Find(salesOrderLine.ProductId);
+            salesOrderLine.Price = product.DefaultSellingPrice;
             salesOrderLine = this.Recalculate(salesOrderLine);
             _context.SalesOrderLine.Update(salesOrderLine);
             _context.SaveChanges();
