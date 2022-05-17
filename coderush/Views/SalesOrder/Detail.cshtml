@@ -1,6 +1,6 @@
 @model coderush.Models.SalesOrder
 @{
-    ViewData["Title"] = "Sales Order Detail";
+    ViewData["Title"] = "Sale Detail";
 }
 <style>
     .my-custom-scrollbar {
@@ -38,13 +38,13 @@
                             <div class="row">
                                 <dl class="dl-horizontal">
                                     <dt>
-                                        @Html.DisplayNameFor(model => model.SalesOrderId)
+                                        Drug Sale ID
                                     </dt>
                                     <dd>
                                         @Html.DisplayFor(model => model.SalesOrderId)
                                     </dd>
                                     <dt>
-                                        @Html.DisplayNameFor(model => model.SalesOrderName)
+                                        Drug Sale Number
                                     </dt>
                                     <dd>
                                         @Html.DisplayFor(model => model.SalesOrderName)
@@ -62,12 +62,17 @@
                                         @Html.DisplayFor(model => model.Prescription.PrescriptionName)
                                     </dd>
                                     <dt>
+                                        @Html.DisplayNameFor(model => model.PatientRefNumber)
+                                    </dt>
+                                    <dd>
+                                        @Html.DisplayFor(model => model.PatientRefNumber)
+                                    </dd>
+                                    <dt>
                                         @Html.DisplayNameFor(model => model.SaleDate)
                                     </dt>
                                     <dd>
                                         @Html.DisplayFor(model => model.SaleDate)
                                     </dd>
-
                                 </dl>
                             </div>
 
@@ -259,7 +264,7 @@
                 <button id="btnsubmit" type="button" onclick="Submit()"> Submit</button>
             </td>
             <td>
-                <p id="sendp" style="color: green">Sending... </p>
+                <p id="sendp" style="color: green">Submiting... </p>
             </td>
         </tr>
     </table>
@@ -359,6 +364,7 @@
                 error: function (result) {
                     var s = ej.parseJSON(result.responseText)
                     toastr.warning(s.message, "Cannot make sale");
+                    $("#btnsubmit").prop('disabled', false);
                 }
             });
         }
@@ -372,7 +378,6 @@
 @section Scripts{
     <script type="text/javascript">
         $(function () {
-
             $.ajax({
                 type: 'GET',
                 url: '/api/PrescriptionLines/GetByPrescriptionId/' +@Model.PrescriptionId ,
@@ -391,7 +396,7 @@
                             row.insertCell(3).innerHTML = item[i].Quantity;
                             row.insertCell(4).innerHTML = item[i].Product.DefaultSellingPrice;
                             row.insertCell(5).innerHTML = "<Input onclick='myFunction(item["+i+"])' type='button' value = 'Add'>";
-                            d = d + 1;
+                      
                         }
                     }
                 }
@@ -404,7 +409,6 @@
                 close: function (args) {
                     location.reload();
                 }
-
             });
             var dataManager = ej.DataManager({
                 url: "/api/SalesOrderLine",
@@ -412,7 +416,6 @@
                 headers: [{ "SalesOrderId": @Model.SalesOrderId}],
                 offline: true
             });
-
             var dataManagerProduct = ej.DataManager({
                 url: "/api/Product",
                 adaptor: new ej.WebApiAdaptor()
@@ -421,34 +424,26 @@
                 url: "/api/GoodsRecievedNoteLines",
                 adaptor: new ej.WebApiAdaptor()
             });
-
             var dataManagerSalesOrder = ej.DataManager({
                 url: "/api/SalesOrder",
                 adaptor: new ej.WebApiAdaptor()
             });
-
             var dataManagerStock = ej.DataManager({
                 url: "/api/Branch",
                 adaptor: new ej.WebApiAdaptor()
             });
-
             var dataManagerCustomer = ej.DataManager({
                 url: "/api/Customer",
                 adaptor: new ej.WebApiAdaptor()
             });
-
             var dataManagerCurrency = ej.DataManager({
                 url: "/api/Currency",
                 adaptor: new ej.WebApiAdaptor()
             });
-
             var dataManagerSalesType = ej.DataManager({
                 url: "/api/SalesType",
                 adaptor: new ej.WebApiAdaptor()
             });
-
-
-
             $('#CustomerId').ejDropDownList({
                 dataSource: dataManagerCustomer,
                 fields: { id: 'CustomerId', text: 'CustomerName', value: 'CustomerId' },
@@ -473,15 +468,13 @@
                     allowAdding: true,
                     allowDeleting: true,
                     showDeleteConfirmDialog: true,
-
-
                 },
                 allowPaging: true,
                 columns: [
                     { field: "SalesOrderLineId", headerText: 'Line Id', isPrimaryKey: true, isIdentity: true, visible: false },
                     { field: "SalesOrderId", headerText: 'SO#', defaultValue: @Model.SalesOrderId, foreignKeyField: "SalesOrderId", foreignKeyValue: "SalesOrderName", dataSource: dataManagerSalesOrder, visible: false },
-                    { field: "ProductId", headerText: 'Product', foreignKeyField: "ProductId", foreignKeyValue: "ProductName", dataSource: dataManagerProduct },
-                    { field: "GoodsRecievedNoteLineId", headerText: 'BatchID', foreignKeyField: "GoodsRecievedNoteLineId", foreignKeyValue: "BatchID", dataSource: dataManagerGoodsRecievedNoteLines },
+                    { field: "ProductId", headerText: 'Product', foreignKeyField: "ProductId", foreignKeyValue: "ProductName", dataSource: dataManagerProduct, validationRules: { required: true }  },
+                    { field: "GoodsRecievedNoteLineId", headerText: 'BatchID', foreignKeyField: "GoodsRecievedNoteLineId", foreignKeyValue: "BatchID", dataSource: dataManagerGoodsRecievedNoteLines, validationRules: { required: true } },
                     { field: "Description", headerText: 'Description', visible: false },
                     { field: "Quantity", headerText: 'Qty', defaultValue: 1, editType: "numericedit" },
                     { field: "Price", headerText: 'Cost per unit', defaultValue: 0, allowEditing: false, editType: "numericedit", format: "{0:n2}" },
@@ -502,12 +495,7 @@
                 }
             });
             });
-
-
-
-
         });
-
         function complete(args) {
 
             if (args.requestType == 'beginedit') {
@@ -517,27 +505,41 @@
                 RewriteTotal(args.data.SalesOrderId);
             }
             if (args.requestType == 'beginedit' || args.requestType == 'add') {
-                var selected = $('#GridGoodsRecievedNoteLineId').data('ejDropDownList');
-                var selectedValue = parseInt(selected.option('value'));
-                var selectedText = selected.option('text');
-                $.ajax({
-                    type: 'GET',
-                    url: '/api/GoodsRecievedNoteLines/GetInstock',
-                    success: function (data) {
-                        if (args.requestType == 'beginedit') {
-                            data.push({ 'GoodsRecievedNoteLineId': selectedValue, 'BatchID': selectedText });
-                        }
-
-                        $("#GridGoodsRecievedNoteLineId").ejDropDownList({
-                            dataSource: data,
-                            fields: { id: 'GoodsRecievedNoteLineId', text: 'BatchID', value: 'GoodsRecievedNoteLineId' },
-                            value: selectedValue
+                $('#GridProductId').ejDropDownList({
+                    change: function (args) {
+                        $.ajax({
+                            type: 'GET',
+                            url: '/api/GoodsRecievedNoteLines/GetByProductId/' + args.value,
+                            success: function (data) {
+                                $("#GridGoodsRecievedNoteLineId").ejDropDownList({
+                                    dataSource: data,
+                                    fields: { id: 'GoodsRecievedNoteLineId', text: 'BatchID', value: 'GoodsRecievedNoteLineId' },
+                                });
+                            }
+                        });
+                        $.ajax({
+                            type: 'GET',
+                            url: '/api/Product/GetProductbyId/' + args.value,
+                            success: function (data) {  
+                                $('#GridPrice').ejNumericTextbox({ value: data.DefaultSellingPrice });
+                            }
+                        });
+                    }
+                });
+                $('#GridGoodsRecievedNoteLineId').ejDropDownList({
+                    change: function (args) {
+                        $.ajax({
+                            type: 'GET',
+                            url: '/api/GoodsRecievedNoteLines/GetById/' + args.value,
+                            success: function (data) {
+                                str = data.BatchID + " Has " + data.InStock + " Drugs in stock"
+                                toastr.info(str);
+                            }
                         });
                     }
                 });
             }
         }
-
         function RewriteTotal(salesOrderId) {
             $.ajax({
                 type: 'GET',
@@ -552,9 +554,5 @@
                 }
             });
         }
-
-
-
     </script>
-
 }

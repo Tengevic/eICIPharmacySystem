@@ -41,7 +41,7 @@ namespace coderush.Controllers.Api
         {
             try
             {
-                purchaseOrderLine.Amount = /*purchaseOrderLine.Quantity * */ purchaseOrderLine.Price;
+                purchaseOrderLine.Amount = purchaseOrderLine.Quantity * purchaseOrderLine.Price;
                 purchaseOrderLine.DiscountAmount = (purchaseOrderLine.DiscountPercentage * purchaseOrderLine.Amount) / 100.0;
                 purchaseOrderLine.SubTotal = purchaseOrderLine.Amount - purchaseOrderLine.DiscountAmount;
                 purchaseOrderLine.TaxAmount = (purchaseOrderLine.TaxPercentage * purchaseOrderLine.SubTotal) / 100.0;
@@ -97,6 +97,20 @@ namespace coderush.Controllers.Api
         public IActionResult Insert([FromBody]CrudViewModel<PurchaseOrderLine> payload)
         {
             PurchaseOrderLine purchaseOrderLine = payload.value;
+            Product product = _context.Product.Find(purchaseOrderLine.ProductId);
+            purchaseOrderLine.Price = product.DefaultBuyingPrice;
+            purchaseOrderLine = this.Recalculate(purchaseOrderLine);
+            _context.PurchaseOrderLine.Add(purchaseOrderLine);
+            _context.SaveChanges();
+            this.UpdatePurchaseOrder(purchaseOrderLine.PurchaseOrderId);
+            return Ok(purchaseOrderLine);
+        }
+        [HttpPost("[action]")]
+        public IActionResult Add([FromBody] PurchaseOrderLine payload)
+        {
+            PurchaseOrderLine purchaseOrderLine = payload;
+            Product product = _context.Product.Find(purchaseOrderLine.ProductId);
+            purchaseOrderLine.Price = product.DefaultBuyingPrice;
             purchaseOrderLine = this.Recalculate(purchaseOrderLine);
             _context.PurchaseOrderLine.Add(purchaseOrderLine);
             _context.SaveChanges();
@@ -108,6 +122,8 @@ namespace coderush.Controllers.Api
         public IActionResult Update([FromBody]CrudViewModel<PurchaseOrderLine> payload)
         {
             PurchaseOrderLine purchaseOrderLine = payload.value;
+            Product product = _context.Product.Find(purchaseOrderLine.ProductId);
+            purchaseOrderLine.Price = product.DefaultBuyingPrice;
             purchaseOrderLine = this.Recalculate(purchaseOrderLine);
             _context.PurchaseOrderLine.Update(purchaseOrderLine);
             _context.SaveChanges();

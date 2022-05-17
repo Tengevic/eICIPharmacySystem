@@ -105,16 +105,19 @@ namespace coderush.Controllers.Api
             DateTime current = DateTime.Now;
             double totaldays = (clinicalTrialsDonationLine.ExpiryDate - current).TotalDays;
 
-            if (totaldays < 360)
+            if (!User.IsInRole("Add Low Expiry date"))
             {
-                Err err = new Err
+                if (totaldays < 360)
                 {
+                    Err err = new Err
+                    {
 
-                    message = "Drug will expire less than one year"
-                };
-                string errMsg = JsonConvert.SerializeObject(err);
+                        message = "Drug will expire less than one year"
+                    };
+                    string errMsg = JsonConvert.SerializeObject(err);
 
-                return BadRequest(err);
+                    return BadRequest(err);
+                }
 
             }
             clinicalTrialsDonationLine.InStock = clinicalTrialsDonationLine.Quantity;
@@ -134,15 +137,19 @@ namespace coderush.Controllers.Api
             DateTime current = DateTime.Now;
             double totaldays = (clinicalTrialsDonationLine.ExpiryDate - current).TotalDays;
 
-            if (totaldays < 360)
+            if (!User.IsInRole("Add Low Expiry date"))
             {
-                Err err = new Err
+                if (totaldays < 360)
                 {
-                    message = "Drug will expire less than one year"
-                };
-                string errMsg = JsonConvert.SerializeObject(err);
+                    Err err = new Err
+                    {
 
-                return BadRequest(err);
+                        message = "Drug will expire less than one year"
+                    };
+                    string errMsg = JsonConvert.SerializeObject(err);
+
+                    return BadRequest(err);
+                }
 
             }
             List<ClinicalTrialsSalesLine> lines = new List<ClinicalTrialsSalesLine>();
@@ -287,6 +294,17 @@ namespace coderush.Controllers.Api
             }
 
             return Ok(expiredDrugs);
+        }
+        [HttpGet("[action]/{id}")]
+        public async Task<IActionResult> GetByProductId(int id)
+        {
+            List<ClinicalTrialsDonationLine> result = await _context.ClinicalTrialsDonationLine
+                .Where(x => x.ClinicalTrialsProductsId.Equals(id))
+                .Where(x => x.InStock > 0)
+                .ToListAsync();
+
+            return Ok(result);
+
         }
     }
 }

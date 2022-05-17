@@ -85,7 +85,7 @@
                     columns: [
                         { headerText: 'Detail', template: "<a href='/ClinicalTrialsReturned/Detail/{{:ClinicalTrialsReturnedId}}'>Detail</a>" },
                         { field: "ClinicalTrialsReturnedId", headerText: 'CTR Id', isPrimaryKey: true, isIdentity: true, visible: false },
-                        { field: "ClinicalTrialsReturnedName", headerText: 'SO#', allowEditing: false },            
+                        { field: "ClinicalTrialsReturnedName", headerText: 'ReturnName', allowEditing: false },            
                         { field: "VendorId", headerText: 'Vendor', foreignKeyField: "VendorId", foreignKeyValue: "VendorName", dataSource: dataManagerVendor, validationRules: { required: true } },
                         { field: "ReturnedDate", headerText: 'Return Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
                     ],
@@ -99,13 +99,7 @@
         function complete(args) {
             if (args.requestType == 'beginedit') {
                 $("#" + this._id + "_dialogEdit").ejDialog({ title: "Edit Record" });
-            }
-           
+            }           
         }
-
-       
-     
-
-
     </script>
 }

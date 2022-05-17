@@ -1,6 +1,6 @@
 ﻿@model coderush.Models.GoodsReceivedNote
 @{
-    ViewData["Title"] = "GoodsRecieveDetail";
+    ViewData["Title"] = "Recieve Detail";
 }
 <style>
     .my-custom-scrollbar {
@@ -38,22 +38,28 @@
                             <div class="row">
                                 <dl class="dl-horizontal">
                                     <dt>
-                                        @Html.DisplayNameFor(model => model.GoodsReceivedNoteId)
+                                        Drug Recieve ID
                                     </dt>
                                     <dd>
                                         @Html.DisplayFor(model => model.GoodsReceivedNoteId)
+                                    </dd>
+                                    <dt>
+                                        Drug Recieved Number
+                                    </dt>
+                                    <dd>
+                                        @Html.DisplayFor(model => model.GoodsReceivedNoteName)
+                                    </dd>
+                                    <dt>
+                                        Recieved Date
+                                    </dt>
+                                    <dd>
+                                        @Html.DisplayFor(model => model.GRNDate)
                                     </dd>
                                     <dt>
                                         @Html.DisplayNameFor(model => model.VendorDONumber)
                                     </dt>
                                     <dd>
                                         @Html.DisplayFor(model => model.VendorDONumber)
-                                    </dd>
-                                    <dt>
-                                        @Html.DisplayNameFor(model => model.GRNDate)
-                                    </dt>
-                                    <dd>
-                                        @Html.DisplayFor(model => model.GRNDate)
                                     </dd>
                                     <dt>
                                         @Html.DisplayNameFor(model => model.VendorInvoiceNumber)
@@ -85,7 +91,7 @@
                         </div>
                     </div>
                     <div class="box-body">
-                        <div class="Prescription">
+                        <div class="PurchaseOrder">
                             <div class="table-wrapper-scroll-y my-custom-scrollbar">
                                 <table id="Prescription" align="center" class="table table-bordered table-striped mb-0">
                                     <thead>
@@ -94,6 +100,7 @@
                                             <th>product Name</th>
                                             <th>Units of Measure</th>
                                             <th>Quantity</th>
+                                            <th>Add</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -115,13 +122,7 @@
                         <div id="Grid"></div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-lg-8">
-                    </div>
-                    <div class="col-lg-4">
-
-                    </div>
-                </div>
+     
             </div>
         </div>
 
@@ -129,14 +130,192 @@
     <!-- /.content -->
 </div>
 <!-- /.content-wrapper -->
+<div id="dialog">
+    <table class="table-condensed">
+        <tr>
+            <td>
+                Drug Name:
+            </td>
+            <td>
+                <label id="DrugName" name="DrugName"></label>
+            </td>
+            <td>
+                Units of Measure:
+            </td>
+            <td>
+                <label id="UnitsofMeasure" name="UnitsofMeasure"></label>
+            </td>
+        </tr>
 
+        <tr>
+            <td>
+               Purchase Quantity:
+            </td>
+            <td>
+                <label id="Quantity" name="Quantity"></label>
+            </td>
+            <td>
+                Buying price per unit:
+            </td>
+            <td>
+                <label id="Cost" name="Cost"></label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Batch No:
+            </td>
+            <td>
+                <input id="BatchId" name="BatchId" />
+            </td>
+            <td>
+                Units in Batch
+            </td>
+            <td>
+                <input id="BatchQuanity" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Manufacture Date
+            </td>
+            <td>
+                <input id="ManufareDate"  />
+            </td>
+            <td>
+                Expiry Date
+            </td>
+            <td>
+                <input id="ExpiryDate" />
+            </td>
+
+        </tr>
+        <tr>
+            <td>
+                <button id="btnsubmit" type="button" onclick="Submit()"> Submit</button>
+            </td>
+            <td>
+                <p id="sendp" style="color: green">Submiting... </p>
+            </td>
+        </tr>
+    </table>
+
+</div>
 
 @section Styles{
 }
 @section Scripts{
     <script type="text/javascript">
+
+        var Drug;
+        var ExpiryDate;
+        var ManufareDate;
+        function myFunction(Item) {
+       
+            Drug = Item;
+            $("#dialog").ejDialog("open");
+            $("#sendp").hide();
+            $("#DrugName").text(Item.Product.ProductName);
+            $("#UnitsofMeasure").text(Item.Product.UnitOfMeasure.UnitOfMeasureName);
+            $("#Quantity").text(Item.Quantity); 
+            $("#Cost").text(Item.Product.DefaultBuyingPrice);
+            $("#ManufareDate").ejDatePicker({
+                width: "100%",
+                change: function (args) {
+                    ManufareDate = args.value;
+                }
+            });
+            $("#ExpiryDate").ejDatePicker({
+                width: "100%",
+                change: function (args) {
+                    ExpiryDate = args.value;
+                }
+            });
+        }
+        function Submit() {
+            BatchQuanity = $("#BatchQuanity").val();
+            if (BatchQuanity == "") {
+                BatchQuanity = "0";
+            }
+            BatchId = $("#BatchId").val();
+            data = {
+                GoodsReceivedNoteId: @Model.GoodsReceivedNoteId,
+                ProductId: Drug.ProductId,
+                Dispose: false,
+                Description: "",
+                BatchID: BatchId,
+                Quantity: parseInt(BatchQuanity),
+                ManufareDate: ManufareDate,
+                ExpiryDate: ExpiryDate,
+                Sold: 0,
+                InStock: 0,
+                Expired: 0
+            }
+            if (data.BatchID == "") {
+                toastr.warning("Enter batch Number");
+            } else if (data.Quantity < 1) {
+                toastr.warning("Batch Quantity cannot be less than 1")
+            } else if (data.ManufareDate == null) {
+                toastr.warning("Please enter Manufacture date")
+            } else if (data.ExpiryDate == null) {
+                toastr.warning("Please enter Expiry date")
+            }
+            else {
+                $.ajax({
+                    type: "POST",
+                    contentType: "application/json;charset=utf-8",
+                    data: JSON.stringify(data),
+                    url: "/api/GoodsRecievedNoteLines/Add",
+                    beforeSend: function () {
+                        $("#sendp").show();
+                        $("#btnsubmit").prop('disabled', true);
+                    },
+                    success: function (result) {
+                        $("#sendp").hide();
+                        $("#btnsubmit").prop('disabled', false);
+                        toastr.success("Success");
+                    },
+                    error: function (result) {
+                        $("#sendp").hide();
+                        $("#btnsubmit").prop('disabled', false);
+                        var s = ej.parseJSON(result.responseText)
+                        toastr.warning(s.message, "Cannot add drug");
+                    }
+                });
+            }
+        }
         $(function () {
-            
+              $.ajax({
+                        type: 'GET',
+                        url: '/api/PurchaseOrderLine/GetByPurchaseOrderId/' +@Model.PurchaseOrderId ,
+                        success: function (data) {
+                            if (data.Count == 0) {
+                                $("div.Prescription").replaceWith("<h4>No Purchase order Available</h4>");
+                                } else {
+                                var table = document.getElementById("Prescription");
+                                item = data.Items;
+                                for (let i = 0; i < item.length; i++) {
+                                    var row = table.insertRow(-1);
+                                    row.insertCell(0).innerHTML = i+1;
+                                    row.insertCell(1).innerHTML = item[i].Product.ProductName;
+                                    row.insertCell(2).innerHTML = item[i].Product.UnitOfMeasure.UnitOfMeasureName;
+                                    row.insertCell(3).innerHTML = item[i].Quantity;
+                                    row.insertCell(4).innerHTML = "<Input onclick='myFunction(item[" + i + "])' type='button' value = 'Add'>";
+
+                                 }
+                    }
+                }
+              });
+            $('#dialog').ejDialog({
+                title: "Recieved",
+                showOnInit: false,
+                height: 400,
+                width: 600,
+                close: function (args) {
+                    location.reload();
+                }
+            });
+
             var dataManager = ej.DataManager({
                 url: "/api/GoodsRecievedNoteLines",
                 adaptor: new ej.WebApiAdaptor(),
@@ -183,8 +362,8 @@
                     { field: "GoodsReceivedNoteId", headerText: 'GNR#', defaultValue: @Model.GoodsReceivedNoteId, foreignKeyField: "GoodsReceivedNoteId", foreignKeyValue: "GoodsReceivedNoteName", dataSource: dataManagerGoodsReceivedNote, visible: false },
                     { field: "Dispose", headerText: 'Dispose', allowEditing: false, type: "boolean", editType: "booleanedit", defaultValue: false, visible: false },
                     { field: "ProductId", headerText: 'Drug', foreignKeyField: "ProductId", foreignKeyValue: "ProductName", dataSource: dataManagerProduct },
-                    { field: "Description", headerText: 'Description' },
-                    { field: "BatchID", headerText: 'BatchID' },
+                    { field: "Description", headerText: 'Description', visible: false },
+                    { field: "BatchID", headerText: 'BatchID', validationRules: { required: true }  },
                     { field: "Quantity", headerText: 'units/batch', defaultValue: 1, editType: "numericedit"},
                     { field: "ManufareDate", headerText: 'Manufacture Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
                     { field: "ExpiryDate", headerText: 'Expiry Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
@@ -199,26 +378,7 @@
                     }
                 },
                 actionComplete: function (args) {
-                    $.ajax({
-                        type: 'GET',
-                        url: '/api/PurchaseOrderLine/GetByPurchaseOrderId/' +@Model.PurchaseOrderId ,
-                        success: function (data) {
-                            if (data.Count == 0) {
-                                $("div.Prescription").replaceWith("<h4>No Purchase order Available</h4>");
-                                } else {
-                                var table = document.getElementById("Prescription");
-                                item = data.Items;
-                                for (let i = 0; i < item.length; i++) {
-                                    var row = table.insertRow(-1);
-                                    row.insertCell(0).innerHTML = i+1;
-                                    row.insertCell(1).innerHTML = item[i].Product.ProductName;
-                                    row.insertCell(2).innerHTML = item[i].Product.UnitOfMeasure.UnitOfMeasureName;
-                                    row.insertCell(3).innerHTML = item[i].Quantity;
 
-                                 }
-                    }
-                }
-            });
                 }
             });
             });

@@ -119,10 +119,10 @@
                             </tr>
                             <tr>
                                 <td>
-                                    <button id="btnsubmit" type="button" onclick="AddPrescription()">Send</button>
+                                    <button id="btnsubmit" type="button" onclick="AddPrescription()">Submit</button>
                                 </td>
                                 <td>
-                                    <p id="sendp" style="color: green">Sending... </p>
+                                    <p id="sendp" style="color: green">Submiting... </p>
                                 </td>
                             </tr>
                         </table>
@@ -201,6 +201,7 @@
                     error: function (result) {
                         var s = ej.parseJSON(result.responseText)
                         toastr.warning(s.message, "Cannot make sale");
+                        $("#btnsubmit").prop('disabled', false);
                     }
                 });
             }
@@ -225,9 +226,9 @@
                 url: "/api/Prescription",
                 adaptor: new ej.WebApiAdaptor()
             });
-            Drugs = dataManagerProduct;
+            
             $('#ProductId').ejDropDownList({
-                dataSource: Drugs,
+                dataSource: dataManagerProduct,
                 fields: { id: 'ProductId', text: 'ProductName', value: 'ProductId' },
                 change: function (args) {
                     productId = args.value;
@@ -236,7 +237,6 @@
                         url: '/api/Product/GetProductbyId/' + productId,
                         success: function (data) {
                             Drugs = data;
-                            console.log(Drugs);
                             $("#UnitsofMeasure").text(Drugs.UnitOfMeasure.UnitOfMeasureName);
                             $("#instock").text(Drugs.InStock); 
                             $("#sellPrice").text(Drugs.DefaultSellingPrice);

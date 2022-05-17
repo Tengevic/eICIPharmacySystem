@@ -1,6 +1,6 @@
 ﻿
 @{
-    ViewData["Title"] = "Drug Sell";
+    ViewData["Title"] = "Drug Sale";
 }
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
@@ -110,7 +110,7 @@
                     columns: [
                         { headerText: 'Detail', template: "<a href='/SalesOrder/Detail/{{:SalesOrderId}}'>Detail</a>" },
                         { field: "SalesOrderId", headerText: 'SO Id', isPrimaryKey: true, isIdentity: true, visible: false },
-                        { field: "SalesOrderName", headerText: 'Drug Sell number', allowEditing: false },
+                        { field: "SalesOrderName", headerText: 'Drug Sale number', allowEditing: false },
                         { field: "BranchId", headerText: 'Branch', foreignKeyField: "BranchId", foreignKeyValue: "BranchName", dataSource: dataManagerBranch, validationRules: { required: true }, visible: false, defaultValue: 1  },
                         { field: "CustomerId", headerText: 'Customer', foreignKeyField: "CustomerId", foreignKeyValue: "CustomerName", dataSource: dataManagerCustomer, validationRules: { required: true } },
                         { field: "SaleDate", headerText: 'Sell Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },

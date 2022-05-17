@@ -25,13 +25,13 @@
                     <div class="row">
                         <dl class="dl-horizontal">
                             <dt>
-                                @Html.DisplayNameFor(model => model.ClinicalTrialsReturnedId)
+                                Return ID
                             </dt>
                             <dd>
                                 @Html.DisplayFor(model => model.ClinicalTrialsReturnedId)
                             </dd>
                             <dt>
-                                @Html.DisplayNameFor(model => model.ClinicalTrialsReturnedName)
+                               Return Name
                             </dt>
                             <dd>
                                 @Html.DisplayFor(model => model.ClinicalTrialsReturnedName)
@@ -43,7 +43,7 @@
                                 <input type="text" id="VendorId" />
                             </dd>
                             <dt>
-                                @Html.DisplayNameFor(model => model.ReturnedDate)
+                                Return Date
                             </dt>
                             <dd>
                                 @Html.DisplayFor(model => model.ReturnedDate)
@@ -144,7 +144,7 @@
                 columns: [
                     { field: "ClinicalTrialsReturnedLineId", headerText: 'Line Id', isPrimaryKey: true, isIdentity: true, visible: false },
                     { field: "ClinicalTrialsReturnedId", headerText: 'SO#', defaultValue: @Model.ClinicalTrialsReturnedId, foreignKeyField: "ClinicalTrialsSalesId", foreignKeyValue: "ClinicalTrialsSalesName", dataSource: dataManagerClinicalTrialsSales, visible: false },
-                    { field: "ClinicalTrialsProductsId", headerText: 'Drug', foreignKeyField: "ClinicalTrialsProductId", foreignKeyValue: "ProductName", dataSource: dataManagerProduct },
+                    { field: "ClinicalTrialsProductsId", headerText: 'IP', foreignKeyField: "ClinicalTrialsProductId", foreignKeyValue: "ProductName", dataSource: dataManagerProduct },
                     { field: "ClinicalTrialsDonationLineId", headerText: 'BatchID', foreignKeyField: "ClinicalTrialsDonationLineId", foreignKeyValue: "BatchID", dataSource: dataManagerClinicalTrialsDonationLines },
                     { field: "Description", headerText: 'Description' },
                     { field: "Quantity", headerText: 'Qty', defaultValue: 1, editType: "numericedit" },
@@ -171,21 +171,18 @@
                 $("#" + this._id + "_dialogEdit").ejDialog({ title: "Edit Record" });
             }
             if (args.requestType == 'beginedit' || args.requestType == 'add') {
-                var selected = $('#GridClinicalTrialsDonationLineId').data('ejDropDownList');
-                var selectedValue = parseInt(selected.option('value'));
-                var selectedText = selected.option('text');
-                $.ajax({
-                    type: 'GET',
-                    url: '/api/ClinicalTrialsDonationLines/GetInstock',
-                    success: function (data) {
-                        if (args.requestType == 'beginedit') {
-                            data.push({ 'ClinicalTrialsDonationLineId': selectedValue, 'BatchID': selectedText });
-                        }
-
-                        $("#GridClinicalTrialsDonationLineId").ejDropDownList({
-                            dataSource: data,
-                            fields: { id: 'ClinicalTrialsDonationLineId', text: 'BatchID', value: 'ClinicalTrialsDonationLineId' },
-                            value: selectedValue
+                $('#GridClinicalTrialsProductsId').ejDropDownList({
+                    change: function (args) {
+                        console.log(args.value)
+                        $.ajax({
+                            type: 'GET',
+                            url: '/api/ClinicalTrialsDonationLines/GetByProductId/' + args.value,
+                            success: function (data) {
+                                $("#GridClinicalTrialsDonationLineId").ejDropDownList({
+                                    dataSource: data,
+                                    fields: { id: 'ClinicalTrialsDonationLineId', text: 'BatchID', value: 'ClinicalTrialsDonationLineId' },
+                                });
+                            }
                         });
                     }
                 });

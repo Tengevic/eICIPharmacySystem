@@ -94,7 +94,7 @@
                 columns: [
                     { field: "ClinicalTrialsDonationLineId", headerText: 'Line Id', isPrimaryKey: true, isIdentity: true, visible: false },
                     { field: "ClinicalTrialsDonationId", headerText: 'CTD#', foreignKeyField: "ClinicalTrialsDonationId", foreignKeyValue: "dataManagerClinicalTrialsDonations", dataSource: dataManagerClinicalTrialsDonations, visible: false},
-                    { field: "ClinicalTrialsProductsId", headerText: 'Drug', foreignKeyField: "ClinicalTrialsProductId", foreignKeyValue: "ProductName", dataSource: dataManagerProduct, allowEditing: false },
+                    { field: "ClinicalTrialsProductsId", headerText: 'IP', foreignKeyField: "ClinicalTrialsProductId", foreignKeyValue: "ProductName", dataSource: dataManagerProduct, allowEditing: false },
                     { field: "Dispose", headerText: 'Dispose', type: "boolean", editType: "booleanedit", defaultValue: false },
                     { field: "Description", headerText: 'Description', allowEditing: false },
                     { field: "BatchID", headerText: 'BatchID', allowEditing: false },

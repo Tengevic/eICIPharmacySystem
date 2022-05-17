@@ -1,6 +1,6 @@
 ﻿@model coderush.Models.ClinicalTrialsDonation
 @{
-    ViewData["Title"] = "Clinical Trials Donation Detail";
+    ViewData["Title"] = "Recieve Detail";
 }
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
@@ -25,7 +25,7 @@
                     <div class="row">
                         <dl class="dl-horizontal">
                             <dt>
-                                @Html.DisplayNameFor(model => model.ClinicalTrialsDonationId)
+                                Recieve ID
                             </dt>
                             <dd>
                                 @Html.DisplayFor(model => model.ClinicalTrialsDonationId)
@@ -129,7 +129,7 @@
                 columns: [
                     { field: "ClinicalTrialsDonationLineId", headerText: 'Line Id', isPrimaryKey: true, isIdentity: true, visible: false },
                     { field: "ClinicalTrialsDonationId", headerText: 'CTD#', defaultValue: @Model.ClinicalTrialsDonationId, foreignKeyField: "ClinicalTrialsDonationId", foreignKeyValue: "ClinicalTrialsDonationName", dataSource: dataManagerClinicalTrialsDonations, visible: false},
-                    { field: "ClinicalTrialsProductsId", headerText: 'Drug', foreignKeyField: "ClinicalTrialsProductId", foreignKeyValue: "ProductName", dataSource: dataManagerProduct },
+                    { field: "ClinicalTrialsProductsId", headerText: 'IP', foreignKeyField: "ClinicalTrialsProductId", foreignKeyValue: "ProductName", dataSource: dataManagerProduct },
                     { field: "Dispose", headerText: 'Dispose', allowEditing: false, type: "boolean", editType: "booleanedit", defaultValue: false, visible: false },
                     { field: "Description", headerText: 'Description' },
                     { field: "BatchID", headerText: 'BatchID' },

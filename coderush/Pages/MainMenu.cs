@@ -9,8 +9,8 @@ namespace coderush.Pages
     {
         public static class Notifications
         {
-            public const string PageName = "Expired drugs";
-            public const string RoleName = "Notifications";
+            public const string PageName = "Expiring drugs";
+            public const string RoleName = "Expiring Drugs";
             public const string Path = "/Notifications/Index";
             public const string ControllerName = "Notifications";
             public const string ActionName = "Index";
@@ -33,8 +33,8 @@ namespace coderush.Pages
         }
         public static class ClinicalTrialsProducts
         {
-            public const string PageName = "Drugs";
-            public const string RoleName = "Clinical Trial Drug";
+            public const string PageName = "IP";
+            public const string RoleName = "IP";
             public const string Path = "/ClinicalTrialsProducts/Index";
             public const string ControllerName = "ClinicalTrialsProducts";
             public const string ActionName = "Index";
@@ -58,15 +58,15 @@ namespace coderush.Pages
         public static class ClinicalTrialsStock
         {
             public const string PageName = "Stock";
-            public const string RoleName = "ClinicalTrialsStock";
+            public const string RoleName = "Clinical Trial Stock";
             public const string Path = "/ClinicalTrialsStock/Index";
             public const string ControllerName = "ClinicalTrialsStock";
 
         }
         public static class ClinicalTrialsNotifications
         {
-            public const string PageName = "Expired Drugs";
-            public const string RoleName = "ClinicalTrialsNotifications";
+            public const string PageName = "Expiring IP";
+            public const string RoleName = "Clinical Trials Expiring IP";
             public const string Path = "/ClinicalTrialsNotifications/Index";
             public const string ControllerName = "ClinicalTrialsNotifications";
 
@@ -347,6 +347,10 @@ namespace coderush.Pages
             public const string Path = "/Dashboard/Index";
             public const string ControllerName = "Dashboard";
             public const string ActionName = "Index";
+        }
+        public static class LowExpiry
+        {
+            public const string RoleName = "Add Low Expiry date";
         }
 
     }

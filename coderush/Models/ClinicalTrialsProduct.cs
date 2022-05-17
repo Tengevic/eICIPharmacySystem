@@ -20,8 +20,6 @@ namespace coderush.Models
         [Display(Name = "UOM")]
         public int UnitOfMeasureId { get; set; }
         public UnitOfMeasure UnitOfMeasure { get; set; }
-        public double DefaultBuyingPrice { get; set; } = 0.0;
-        public double DefaultSellingPrice { get; set; } = 0.0;
         [Display(Name = "Branch")]
         public int BranchId { get; set; }
         [Display(Name = "Currency")]

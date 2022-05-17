@@ -10,6 +10,7 @@ using coderush.Models;
 using coderush.Models.SyncfusionViewModels;
 using Newtonsoft.Json;
 
+
 namespace coderush.Controllers.Api
 {
     [Produces("application/json")]
@@ -166,17 +167,82 @@ namespace coderush.Controllers.Api
 
                 return BadRequest(err);
             }
-
-            if (totaldays < 360)
+            if (goodsRecievedNoteLine.ExpiryDate < current)
             {
                 Err err = new Err
-               {
-
-                    message = "Drug will expire less than one year"
+                {
+                    message = "Invalid Expiry date"
                 };
                 string errMsg = JsonConvert.SerializeObject(err);
 
                 return BadRequest(err);
+            }
+            if (!User.IsInRole("Add Low Expiry date"))
+            {
+                if (totaldays < 360)
+                {
+                    Err err = new Err
+                    {
+
+                        message = "Drug will expire less than one year"
+                    };
+                    string errMsg = JsonConvert.SerializeObject(err);
+
+                    return BadRequest(err);
+                }
+
+            }
+
+
+            goodsRecievedNoteLine.InStock = goodsRecievedNoteLine.Quantity;
+            _context.GoodsRecievedNoteLine.Add(goodsRecievedNoteLine);
+            _context.SaveChanges();
+            this.UpdateStock(goodsRecievedNoteLine);
+
+            return Ok(goodsRecievedNoteLine);
+        }
+        [HttpPost("[action]")]
+        public IActionResult Add([FromBody] GoodsRecievedNoteLine payload)
+        {
+            GoodsRecievedNoteLine goodsRecievedNoteLine = payload;
+            DateTime current = DateTime.Now;
+            double totaldays = (goodsRecievedNoteLine.ExpiryDate - current).TotalDays;
+
+            if (goodsRecievedNoteLine.ManufareDate > current)
+            {
+                Err err = new Err
+                {
+                    message = "Invalid Manufacture date"
+                };
+                string errMsg = JsonConvert.SerializeObject(err);
+
+                return BadRequest(err);
+            }
+
+            if (goodsRecievedNoteLine.ExpiryDate < current)
+            {
+                Err err = new Err
+                {
+                    message = "Invalid Expiry date"
+                };
+                string errMsg = JsonConvert.SerializeObject(err);
+
+                return BadRequest(err);
+            }
+            if (!User.IsInRole("Add Low Expiry date"))
+            {
+                if (totaldays < 360)
+                {
+                    Err err = new Err
+                    {
+
+                        message = "Drug will expire less than one year"
+                    };
+                    string errMsg = JsonConvert.SerializeObject(err);
+
+                    return BadRequest(err);
+                }
+
             }
 
             goodsRecievedNoteLine.InStock = goodsRecievedNoteLine.Quantity;
@@ -204,17 +270,32 @@ namespace coderush.Controllers.Api
 
                 return BadRequest(err);
             }
-            if (totaldays < 360)
+            if (goodsRecievedNoteLine.ExpiryDate < current)
             {
                 Err err = new Err
                 {
-                    message = "Drug will expire less than one year"
+                    message = "Invalid Expiry date"
                 };
                 string errMsg = JsonConvert.SerializeObject(err);
 
                 return BadRequest(err);
             }
-          
+            if (!User.IsInRole("Add Low Expiry date"))
+            {
+                if (totaldays < 360)
+                {
+                    Err err = new Err
+                    {
+
+                        message = "Drug will expire less than one year"
+                    };
+                    string errMsg = JsonConvert.SerializeObject(err);
+
+                    return BadRequest(err);
+                }
+
+            }
+
             goodsRecievedNoteLine.InStock = goodsRecievedNoteLine.Quantity;
             _context.GoodsRecievedNoteLine.Update(goodsRecievedNoteLine);
             _context.SaveChanges();
@@ -268,11 +349,11 @@ namespace coderush.Controllers.Api
             return Ok(goodsRecievedNoteLine);
 
         }
-
+        [HttpGet("[action]/{id}")]
         public async Task<IActionResult> GetById(int id)
         {
             GoodsRecievedNoteLine result = await _context.GoodsRecievedNoteLine
-                .Where(x => x.ProductId.Equals(id))
+                .Where(x => x.GoodsRecievedNoteLineId.Equals(id))
                 .FirstOrDefaultAsync();
 
             return Ok(result);
@@ -334,17 +415,4 @@ namespace coderush.Controllers.Api
 
         }
     }
-
-
-    public class Err
-    {
-        public string message { get; set; }
-    }
-    public class ExpiredDrugs
-    {
-        public int one { get; set; }
-        public int two { get; set; }
-        public int three { get; set; }
-    }
-
 }

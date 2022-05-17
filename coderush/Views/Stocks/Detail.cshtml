@@ -1,6 +1,6 @@
 ﻿@model coderush.Models.Product
 @{
-    ViewData["Title"] = "Product stock";
+    ViewData["Title"] = "Drug stock";
 }
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
@@ -130,7 +130,7 @@
                     { field: "Dispose", headerText: 'Dispose', allowEditing: false, type: "boolean", editType: "booleanedit", defaultValue: false, visible: false },
                     { field: "ProductId", headerText: 'Drug', foreignKeyField: "ProductId", foreignKeyValue: "ProductName", dataSource: dataManagerProduct, visible: false },
                     { field: "BatchID", headerText: 'BatchID' },
-                    { field: "Description", headerText: 'Description' },
+                    { field: "Description", headerText: 'Description', visible: false },
                     { field: "ManufareDate", headerText: 'Manufacture Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
                     { field: "ExpiryDate", headerText: 'Expiry Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
                     { field: "Quantity", headerText: 'units/batch', defaultValue: 1, editType: "numericedit"},
