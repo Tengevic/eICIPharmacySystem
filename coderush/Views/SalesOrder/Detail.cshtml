@@ -5,7 +5,6 @@
 <style>
     .my-custom-scrollbar {
         position: relative;
-        height: 150px;
         overflow: auto;
     }
 
@@ -20,7 +19,7 @@
         <!-- Default box -->
         <div class="row">
             <div class="col-lg-6">
-                <div class="box">
+                <div class="box" style="height:250px">
                     <div class="box-header with-border">
                         <h3 class="box-title"><i class="fa fa-building"></i> @ViewData["Title"]</h3>
                         <div class="box-tools pull-right">
@@ -82,7 +81,7 @@
                 </div>
             </div>
             <div class="col-lg-6">
-                <div class="box">
+                <div class="box" style="height:250px">
                     <div class="box-header with-border">
                         <h3 class="box-title text-primary"><i class="fa fa-pie-chart"></i> Prescriptions</h3>
                         <div class="box-tools pull-right">
@@ -98,7 +97,7 @@
                     <div class="box-body">
                         <div class="Prescription">
                             <div class="table-wrapper-scroll-y my-custom-scrollbar">
-                                <table id="Prescription" align="center" class="table-condensed table-bordered table-striped mb-0">
+                                <table id="Prescription" align="center" class="table-condensed table-bordered table-striped mb-0" style="width:100%">
                                     <thead>
                                         <tr>
                                             <th> # </th>
@@ -115,7 +114,7 @@
                                     </tbody>
                                 </table>
                             </div>
-                           
+
                         </div>
                     </div>
                 </div>
@@ -270,113 +269,109 @@
     </table>
 
 </div>
-<script>
-
-    var Item;
-    var Batch;
-    var GoodsRecievedNoteLineId;
-    function myFunction(item) {
-        Item = item;
-        $.ajax({
-            type: 'GET',
-            url: '/api/GoodsRecievedNoteLines/GetByProductId/' + item.Product.ProductId,
-            success: function (data) {
-                Batch = data;
-                $('#GoodsRecievedNoteLineId').ejDropDownList({
-                    dataSource: Batch,
-                    fields: { id: 'GoodsRecievedNoteLineId', text: 'BatchID', value: 'GoodsRecievedNoteLineId' },
-                    change: function (args) {
-                        for (let i = 0; i < Batch.length; i++) {
-                            if (Batch[i].GoodsRecievedNoteLineId == args.value) {
-                                $("#instock").text(Batch[i].InStock);
-                                GoodsRecievedNoteLineId =  args.value;
-                            }
-                        }
-                    }
-                });
-
-            }
-        });
-
-        $("#dialog").ejDialog("open");
-        $("#sendp").hide();
-        $("#DrugName").text(Item.Product.ProductName);
-        $("#UnitsofMeasure").text(Item.Product.UnitOfMeasure.UnitOfMeasureName);
-        $("#Quantity").val(Item.Quantity);
-        $("#Cost").text(Item.Product.DefaultSellingPrice);
-        Amount = Item.Quantity * Item.Product.DefaultSellingPrice;
-        $("#CostAmount").text(Amount);
-        $("#DiscAmount").val();
-        $("#TaxPer").val();
-    }
-    function NewAmount(x) {
-        Amount = x * Item.Product.DefaultSellingPrice;
-        $("#CostAmount").text(Amount);
-    }
-    function Submit() {
-        DiscountPercentage = $("#Disc").val();
-        TaxPercentage = $("#TaxPer").val();
-        Quantity = $("#Quantity").val();
-        if (DiscountPercentage == "") {
-            DiscountPercentage = "0";
-        }
-        if (TaxPercentage == "") {
-            TaxPercentage = "0";
-        }
-        if (Quantity == "") {
-            Quantity = "0";
-        }
-        var data = {
-            "SalesOrderId": @Model.SalesOrderId,
-            "Total": 0,
-            "TaxAmount":0 ,
-            "TaxPercentage": parseInt(TaxPercentage),
-            "SubTotal": 0,
-            "DiscountAmount": 0,
-            "DiscountPercentage": parseInt(DiscountPercentage),
-            "Amount": 0,
-            "Price": 0,
-            "GoodsRecievedNoteLineId": GoodsRecievedNoteLineId,
-            "Quantity": parseInt(Quantity),
-            "ProductId": Item.Product.ProductId,
-        }
-
-        if (data.GoodsRecievedNoteLineId == null) {
-            toastr.warning("Select Batch number", "Cannot make sale");
-        } else if (data.Quantity < 1) {
-            toastr.warning("Quantity can not be less than 1", "Cannot make sale");
-        }
-        else {
-            $.ajax({
-                type: "POST",
-                contentType: "application/json;charset=utf-8",
-                data: JSON.stringify(data),
-                url: "/api/SalesOrderLine/Add",
-                beforeSend: function () {
-                    $("#sendp").show();
-                    $("#btnsubmit").prop('disabled', true);
-                },
-                success: function (result) {
-                    $("#sendp").hide();
-                    $("#btnsubmit").prop('disabled', false);
-                    toastr.success("Success");
-                },
-                error: function (result) {
-                    var s = ej.parseJSON(result.responseText)
-                    toastr.warning(s.message, "Cannot make sale");
-                    $("#btnsubmit").prop('disabled', false);
-                }
-            });
-        }
-    }
-
-</script>
-
 @section Styles{
 
 }
 @section Scripts{
     <script type="text/javascript">
+
+            var Item;
+            var Batch;
+            var GoodsRecievedNoteLineId;
+            function myFunction(item) {
+                Item = item;
+                $.ajax({
+                    type: 'GET',
+                    url: '/api/GoodsRecievedNoteLines/GetByProductId/' + item.Product.ProductId,
+                    success: function (data) {
+                        Batch = data;
+                        $('#GoodsRecievedNoteLineId').ejDropDownList({
+                            dataSource: Batch,
+                            fields: { id: 'GoodsRecievedNoteLineId', text: 'BatchID', value: 'GoodsRecievedNoteLineId' },
+                            change: function (args) {
+                                for (let i = 0; i < Batch.length; i++) {
+                                    if (Batch[i].GoodsRecievedNoteLineId == args.value) {
+                                        $("#instock").text(Batch[i].InStock);
+                                        GoodsRecievedNoteLineId =  args.value;
+                                    }
+                                }
+                            }
+                        });
+
+                    }
+                });
+
+                $("#dialog").ejDialog("open");
+                $("#sendp").hide();
+                $("#DrugName").text(Item.Product.ProductName);
+                $("#UnitsofMeasure").text(Item.Product.UnitOfMeasure.UnitOfMeasureName);
+                $("#Quantity").val(Item.Quantity);
+                $("#Cost").text(Item.Product.DefaultSellingPrice);
+                Amount = Item.Quantity * Item.Product.DefaultSellingPrice;
+                $("#CostAmount").text(Amount);
+                $("#DiscAmount").val();
+                $("#TaxPer").val();
+            }
+            function NewAmount(x) {
+                Amount = x * Item.Product.DefaultSellingPrice;
+                $("#CostAmount").text(Amount);
+            }
+            function Submit() {
+                DiscountPercentage = $("#Disc").val();
+                TaxPercentage = $("#TaxPer").val();
+                Quantity = $("#Quantity").val();
+                if (DiscountPercentage == "") {
+                    DiscountPercentage = "0";
+                }
+                if (TaxPercentage == "") {
+                    TaxPercentage = "0";
+                }
+                if (Quantity == "") {
+                    Quantity = "0";
+                }
+                var data = {
+                    "SalesOrderId": @Model.SalesOrderId,
+                    "Total": 0,
+                    "TaxAmount":0 ,
+                    "TaxPercentage": parseInt(TaxPercentage),
+                    "SubTotal": 0,
+                    "DiscountAmount": 0,
+                    "DiscountPercentage": parseInt(DiscountPercentage),
+                    "Amount": 0,
+                    "Price": 0,
+                    "GoodsRecievedNoteLineId": GoodsRecievedNoteLineId,
+                    "Quantity": parseInt(Quantity),
+                    "ProductId": Item.Product.ProductId,
+                }
+
+                if (data.GoodsRecievedNoteLineId == null) {
+                    toastr.warning("Select Batch number", "Cannot make sale");
+                } else if (data.Quantity < 1) {
+                    toastr.warning("Quantity can not be less than 1", "Cannot make sale");
+                }
+                else {
+                    $.ajax({
+                        type: "POST",
+                        contentType: "application/json;charset=utf-8",
+                        data: JSON.stringify(data),
+                        url: "/api/SalesOrderLine/Add",
+                        beforeSend: function () {
+                            $("#sendp").show();
+                            $("#btnsubmit").prop('disabled', true);
+                        },
+                        success: function (result) {
+                            $("#sendp").hide();
+                            $("#btnsubmit").prop('disabled', false);
+                            toastr.success("Success");
+                        },
+                        error: function (result) {
+                            var s = ej.parseJSON(result.responseText)
+                            toastr.warning(s.message, "Cannot make sale");
+                            $("#btnsubmit").prop('disabled', false);
+                        }
+                    });
+                }
+            }
         $(function () {
             $.ajax({
                 type: 'GET',
@@ -396,7 +391,7 @@
                             row.insertCell(3).innerHTML = item[i].Quantity;
                             row.insertCell(4).innerHTML = item[i].Product.DefaultSellingPrice;
                             row.insertCell(5).innerHTML = "<Input onclick='myFunction(item["+i+"])' type='button' value = 'Add'>";
-                      
+
                         }
                     }
                 }
@@ -520,7 +515,7 @@
                         $.ajax({
                             type: 'GET',
                             url: '/api/Product/GetProductbyId/' + args.value,
-                            success: function (data) {  
+                            success: function (data) {
                                 $('#GridPrice').ejNumericTextbox({ value: data.DefaultSellingPrice });
                             }
                         });

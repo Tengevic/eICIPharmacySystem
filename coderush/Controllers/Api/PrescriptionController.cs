@@ -52,6 +52,7 @@ namespace coderush.Controllers.Api
 
                 prescription = await _context.Prescription
                     .Where(x => !ids.Contains(x.PrescriptionId))
+                    .Where(x => x.Approved == true)
                     .ToListAsync();
             }
             catch (Exception)

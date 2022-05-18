@@ -287,7 +287,7 @@ namespace coderush.Controllers.Api
                     Err err = new Err
                     {
 
-                        message = "Drug will expire less than one year"
+                        message = "This user cannot add drugs with expiry within 1 year."
                     };
                     string errMsg = JsonConvert.SerializeObject(err);
 
