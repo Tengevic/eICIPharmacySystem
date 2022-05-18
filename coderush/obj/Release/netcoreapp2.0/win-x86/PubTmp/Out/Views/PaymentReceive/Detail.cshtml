@@ -1,0 +1,150 @@
+﻿@model coderush.Models.PaymentReceive
+@{
+    ViewData["Title"] = "Payment Uploads";
+}
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Main content -->
+    <section class="content">
+        <!-- Default box -->
+        <div class="box">
+            <div class="box-header with-border">
+                <h3 class="box-title"><i class="fa fa-building"></i> @ViewData["Title"]</h3>
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
+                            title="Collapse">
+                        <i class="fa fa-minus"></i>
+                    </button>
+                    <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
+                        <i class="fa fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="box-body">
+                <div class="content-container-fluid">
+                    <div class="row">
+                        <dl class="dl-horizontal">
+                            <dt>
+                                @Html.DisplayNameFor(model => model.PaymentReceiveName)
+                            </dt>
+                            <dd>
+                                @Html.DisplayFor(model => model.PaymentReceiveName)
+                            </dd>
+                            <dt>
+                                @Html.DisplayNameFor(model => model.InvoiceId)
+                            </dt>
+                            <dd>
+                                @Html.DisplayFor(model => model.InvoiceId)
+                            </dd>
+                            <dt>
+                                @Html.DisplayNameFor(model => model.PaymentDate)
+                            </dt>
+                            <dd>
+                                @Html.DisplayFor(model => model.PaymentDate)
+                            </dd>
+                            <dt>
+                                @Html.DisplayNameFor(model => model.PaymentType.PaymentTypeName)
+                            </dt>
+                            <dd>
+                                @Html.DisplayFor(model => model.PaymentType.PaymentTypeName)
+                            </dd>
+                            <dt>
+                                @Html.DisplayNameFor(model => model.PaymentAmount)
+                            </dt>
+                            <dd>
+                                @Html.DisplayFor(model => model.PaymentAmount)
+                            </dd>
+                            <dt>
+                                @Html.DisplayNameFor(model => model.IsFullPayment)
+                            </dt>
+                            <dd>
+                                @Html.DisplayFor(model => model.IsFullPayment)
+                            </dd>
+                        </dl>
+                    </div>
+                    <div id="UploadDefault"></div>
+                </div>
+            </div>
+            <!-- /.box-body -->
+        </div>
+        <!-- /.box -->
+        <div class="box">
+            <div class="box-body">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div id="Grid"></div>
+                    </div>
+                </div>
+              
+            </div>
+        </div>
+
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+
+
+@section Styles{
+}
+@section Scripts{
+    <script type="text/javascript">
+        $(function () {
+            
+            $("#UploadDefault").ejUploadbox({
+                saveUrl: "/api/UploadFiles",
+                allowDraggable: true,
+                multipleFilesSelection: false,
+                success: "uploadSuccess",
+                beforeSend: function (args) {
+                    args.xhr.setRequestHeader("test", @Model.PaymentReceiveId);
+                }
+            });
+
+            var dataManager = ej.DataManager({
+                url: "/api/UploadFiles",
+                adaptor: new ej.WebApiAdaptor(),
+                headers: [{ "PaymentReceiveId": @Model.PaymentReceiveId}],
+                offline: true,
+            });
+
+
+            dataManager.ready.done(function (e) {
+            $("#Grid").ejGrid({
+                dataSource: ej.DataManager({
+                    json: e.result,
+                    adaptor: new ej.remoteSaveAdaptor(),
+                    removeUrl: "/api/UploadFiles/Remove",
+                }),
+                toolbarSettings: {
+                    showToolbar: true,
+                    toolbarItems: [ "delete", "cancel"]
+                },
+                editSettings: {
+                    allowDeleting: true,
+                    showDeleteConfirmDialog: true,
+                },
+                allowPaging: true,
+                columns: [
+                    { field: "Id", headerText: 'Line Id', isPrimaryKey: true, isIdentity: true, visible: false },
+                    { field: "PaymentReceiveId", headerText: 'CTD#', visible: false},
+                    { field: "filename", headerText: 'file name' },
+                    { headerText: 'Download', template: "<a href='/api/UploadFiles/Download/{{:Id}}'>Download</a>" }
+                ],
+
+                actionFailure: function (args) {
+                    if (args.requestType == "save") {
+                        var s = ej.parseJSON(args.error.responseText)
+                        toastr.info(s.message, "Cannot add drug");
+                    }
+
+                }
+            });
+            });
+
+
+        });
+
+
+    </script>
+}
