@@ -116,11 +116,17 @@
                         { field: "SaleDate", headerText: 'Sell Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
                         { field: "SalesTypeId", headerText: 'Sales Type', foreignKeyField: "SalesTypeId", foreignKeyValue: "SalesTypeName", dataSource: dataManagerSalesType, visible: false, defaultValue: 1  },
                         { field: "CurrencyId", headerText: 'Currency', allowEditing: false, foreignKeyField: "CurrencyId", foreignKeyValue: "CurrencyName", dataSource: dataManagerCurrency, visible: false, defaultValue: 1 },
-                        { field: "PatientRefNumber", headerText: 'ICI patient Number', defaultValue: "Default" },
+                        { field: "PatientRefNumber", headerText: 'ICI patient Number', defaultValue: "Default", visible: false},
                         { field: "PrescriptionId", headerText: 'Prescription', foreignKeyField: "PrescriptionId", foreignKeyValue: "PrescriptionName", dataSource: dataManagerPrescription },
                         { field: "Freight", headerText: 'Freight', defaultValue: 0, editType: "numericedit", format: "{0:n2}", visible: false },
                         { field: "Total", headerText: 'Total', defaultValue: 0, allowEditing: false, editType: "numericedit", format: "{0:n2}" },
                     ],
+                    actionFailure: function (args) {
+                        if (args.requestType == "save") {
+                            var s = ej.parseJSON(args.error.responseText)
+                            toastr.warning(s.message);
+                        }
+                    },
                     actionComplete: "complete",
                 });
             });

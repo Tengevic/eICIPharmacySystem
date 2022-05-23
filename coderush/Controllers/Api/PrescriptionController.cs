@@ -10,6 +10,8 @@ using coderush.Models;
 using coderush.Services;
 using coderush.Models.SyncfusionViewModels;
 using Microsoft.AspNetCore.Authorization;
+using coderush.Models.Eici_models;
+using Newtonsoft.Json;
 
 namespace coderush.Controllers.Api
 {
@@ -83,12 +85,62 @@ namespace coderush.Controllers.Api
         }
         //Endpoint
         [HttpPost("[action]")]
-        public IActionResult Add([FromBody] Prescription payload)
+        public IActionResult Add([FromBody] eiciPrescription payload)
         {
-            Prescription prescription = payload;
+            eiciPrescription eiciPrescription = payload;
+            if(eiciPrescription.prescription.Count == 0)
+            {
+                Err err = new Err
+                {
+                    message = "No prescription"
+                };
+                string errMsg = JsonConvert.SerializeObject(err);
+
+                return BadRequest(err);
+            }
+
+            Customer customer = _context.Customer.
+                Where(x => x.EiciRefNumber == eiciPrescription.eiciNo)
+                .FirstOrDefault();
+            if (customer == null)
+            {
+                customer = new Customer {
+                    EiciRefNumber = eiciPrescription.eiciNo,
+                    CustomerName = eiciPrescription.PatientDetail.Name,
+                    Address = eiciPrescription.PatientDetail.Address,
+                    City = eiciPrescription.PatientDetail.city,
+                    CustomerTypeId = eiciPrescription.PatientDetail.type,
+                    Phone = eiciPrescription.PatientDetail.PhoneNumber
+                };
+                _context.Customer.Add(customer);
+                _context.SaveChanges();
+            }
+            Prescription prescription = new Prescription
+            {
+                CustomerId = customer.CustomerId,
+                presciptionDate= DateTime.Now,
+                Approved = false
+            };
             prescription.PrescriptionName = _numberSequence.GetNumberSequence("PS");
             _context.Prescription.Add(prescription);
             _context.SaveChanges();
+            foreach (PrescriptionDetail prescriptionDetail in eiciPrescription.prescription) 
+            {
+                PrescriptionLines prescriptionLines = new PrescriptionLines
+                {
+                    ProductId = prescriptionDetail.DrugId,
+                    Quantity = prescriptionDetail.Quantity,
+                    PrescriptionId = prescription.PrescriptionId,
+                    OderId = prescriptionDetail.OrderId,
+                    prescription = prescriptionDetail.prescription
+                };
+                prescriptionLines.PrescriptionLinesName = _numberSequence.GetNumberSequence("PSL");
+                _context.PrescriptionLines.Add(prescriptionLines);
+                _context.SaveChanges();
+            } 
+            
+            
+            
             return Ok(prescription);
         }
         [HttpPost("[action]")]
@@ -104,6 +156,16 @@ namespace coderush.Controllers.Api
         {
             Prescription prescription = payload;
             _context.Prescription.Update(prescription);
+            _context.SaveChanges();
+            return Ok(prescription);
+        }
+        [HttpPost("[action]")]
+        public IActionResult Approve([FromBody] Prescription payload)
+        {
+            Prescription prescription = payload;
+            Prescription Update = _context.Prescription.Find(prescription.PrescriptionId);
+            Update.Approved = prescription.Approved;
+            _context.Prescription.Update(Update);
             _context.SaveChanges();
             return Ok(prescription);
         }

@@ -11,8 +11,8 @@ using System;
 namespace coderush.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220406072847_uploadscontentType")]
-    partial class uploadscontentType
+    [Migration("20220523072332_fullpay")]
+    partial class fullpay
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -167,11 +167,13 @@ namespace coderush.Migrations
 
                     b.Property<string>("VendorDONumber");
 
-                    b.Property<string>("VendorInvoiceNumber");
+                    b.Property<int>("VendorId");
 
                     b.Property<int>("WarehouseId");
 
                     b.HasKey("ClinicalTrialsDonationId");
+
+                    b.HasIndex("VendorId");
 
                     b.ToTable("ClinicalTrialsDonation");
                 });
@@ -189,6 +191,8 @@ namespace coderush.Migrations
 
                     b.Property<string>("Description");
 
+                    b.Property<bool>("Dispose");
+
                     b.Property<double>("Expired");
 
                     b.Property<DateTime>("ExpiryDate");
@@ -198,6 +202,8 @@ namespace coderush.Migrations
                     b.Property<DateTime>("ManufareDate");
 
                     b.Property<double>("Quantity");
+
+                    b.Property<double>("Returned");
 
                     b.Property<double>("Sold");
 
@@ -221,10 +227,6 @@ namespace coderush.Migrations
 
                     b.Property<int>("CurrencyId");
 
-                    b.Property<double>("DefaultBuyingPrice");
-
-                    b.Property<double>("DefaultSellingPrice");
-
                     b.Property<double>("Deficit");
 
                     b.Property<string>("Description");
@@ -240,6 +242,10 @@ namespace coderush.Migrations
                     b.Property<string>("ProductName")
                         .IsRequired();
 
+                    b.Property<int>("ProductTypeId");
+
+                    b.Property<double>("Returned");
+
                     b.Property<double>("TotalRecieved");
 
                     b.Property<double>("TotalSales");
@@ -248,7 +254,49 @@ namespace coderush.Migrations
 
                     b.HasKey("ClinicalTrialsProductId");
 
+                    b.HasIndex("ProductTypeId");
+
+                    b.HasIndex("UnitOfMeasureId");
+
                     b.ToTable("ClinicalTrialsProducts");
+                });
+
+            modelBuilder.Entity("coderush.Models.ClinicalTrialsReturned", b =>
+                {
+                    b.Property<int>("ClinicalTrialsReturnedId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("ClinicalTrialsReturnedName");
+
+                    b.Property<DateTimeOffset>("ReturnedDate");
+
+                    b.Property<int>("VendorId");
+
+                    b.HasKey("ClinicalTrialsReturnedId");
+
+                    b.ToTable("ClinicalTrialsReturned");
+                });
+
+            modelBuilder.Entity("coderush.Models.ClinicalTrialsReturnedLine", b =>
+                {
+                    b.Property<int>("ClinicalTrialsReturnedLineId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("ClinicalTrialsDonationLineId");
+
+                    b.Property<int>("ClinicalTrialsProductsId");
+
+                    b.Property<int>("ClinicalTrialsReturnedId");
+
+                    b.Property<string>("Description");
+
+                    b.Property<double>("Quantity");
+
+                    b.HasKey("ClinicalTrialsReturnedLineId");
+
+                    b.HasIndex("ClinicalTrialsReturnedId");
+
+                    b.ToTable("ClinicalTrialsReturnedLine");
                 });
 
             modelBuilder.Entity("coderush.Models.ClinicalTrialsSales", b =>
@@ -260,11 +308,9 @@ namespace coderush.Migrations
 
                     b.Property<int>("CustomerId");
 
-                    b.Property<DateTimeOffset>("DeliveryDate");
-
-                    b.Property<DateTimeOffset>("OrderDate");
-
                     b.Property<string>("PatientRefNumber");
+
+                    b.Property<DateTimeOffset>("UseDate");
 
                     b.HasKey("ClinicalTrialsSalesId");
 
@@ -336,20 +382,18 @@ namespace coderush.Migrations
 
                     b.Property<string>("City");
 
-                    b.Property<string>("ContactPerson");
+                    b.Property<string>("Country");
 
                     b.Property<string>("CustomerName")
                         .IsRequired();
 
                     b.Property<int>("CustomerTypeId");
 
+                    b.Property<string>("EiciRefNumber");
+
                     b.Property<string>("Email");
 
                     b.Property<string>("Phone");
-
-                    b.Property<string>("State");
-
-                    b.Property<string>("ZipCode");
 
                     b.HasKey("CustomerId");
 
@@ -404,6 +448,8 @@ namespace coderush.Migrations
 
                     b.Property<string>("Description");
 
+                    b.Property<bool>("Dispose");
+
                     b.Property<double>("Expired");
 
                     b.Property<DateTime>("ExpiryDate");
@@ -442,9 +488,14 @@ namespace coderush.Migrations
 
                     b.Property<int>("InvoiceTypeId");
 
-                    b.Property<int>("ShipmentId");
+                    b.Property<int>("SalesOrderId");
+
+                    b.Property<bool>("fullyPaid");
 
                     b.HasKey("InvoiceId");
+
+                    b.HasIndex("SalesOrderId")
+                        .IsUnique();
 
                     b.ToTable("Invoice");
                 });
@@ -504,6 +555,10 @@ namespace coderush.Migrations
 
                     b.HasKey("PaymentReceiveId");
 
+                    b.HasIndex("InvoiceId");
+
+                    b.HasIndex("PaymentTypeId");
+
                     b.ToTable("PaymentReceive");
                 });
 
@@ -516,6 +571,8 @@ namespace coderush.Migrations
 
                     b.Property<string>("PaymentTypeName")
                         .IsRequired();
+
+                    b.Property<bool>("RequireUpload");
 
                     b.HasKey("PaymentTypeId");
 
@@ -544,6 +601,52 @@ namespace coderush.Migrations
                     b.HasKey("PaymentvoucherId");
 
                     b.ToTable("PaymentVoucher");
+                });
+
+            modelBuilder.Entity("coderush.Models.Prescription", b =>
+                {
+                    b.Property<int>("PrescriptionId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<bool>("Approved");
+
+                    b.Property<int>("CustomerId");
+
+                    b.Property<string>("PrescriptionName");
+
+                    b.Property<DateTime>("presciptionDate");
+
+                    b.HasKey("PrescriptionId");
+
+                    b.HasIndex("CustomerId");
+
+                    b.ToTable("Prescription");
+                });
+
+            modelBuilder.Entity("coderush.Models.PrescriptionLines", b =>
+                {
+                    b.Property<int>("PrescriptionLinesId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("OderId");
+
+                    b.Property<int>("PrescriptionId");
+
+                    b.Property<string>("PrescriptionLinesName");
+
+                    b.Property<int>("ProductId");
+
+                    b.Property<int>("Quantity");
+
+                    b.Property<string>("prescription");
+
+                    b.HasKey("PrescriptionLinesId");
+
+                    b.HasIndex("PrescriptionId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("PrescriptionLines");
                 });
 
             modelBuilder.Entity("coderush.Models.Product", b =>
@@ -576,6 +679,8 @@ namespace coderush.Migrations
                     b.Property<string>("ProductName")
                         .IsRequired();
 
+                    b.Property<int>("ProductTypeId");
+
                     b.Property<double>("TotalRecieved");
 
                     b.Property<double>("TotalSales");
@@ -583,6 +688,10 @@ namespace coderush.Migrations
                     b.Property<int>("UnitOfMeasureId");
 
                     b.HasKey("ProductId");
+
+                    b.HasIndex("ProductTypeId");
+
+                    b.HasIndex("UnitOfMeasureId");
 
                     b.ToTable("Product");
                 });
@@ -671,6 +780,8 @@ namespace coderush.Migrations
 
                     b.HasKey("PurchaseOrderLineId");
 
+                    b.HasIndex("ProductId");
+
                     b.HasIndex("PurchaseOrderId");
 
                     b.ToTable("PurchaseOrderLine");
@@ -698,21 +809,27 @@ namespace coderush.Migrations
 
                     b.Property<double>("Amount");
 
+                    b.Property<int>("BranchId");
+
+                    b.Property<int>("CurrencyId");
+
                     b.Property<int>("CustomerId");
-
-                    b.Property<string>("CustomerRefNumber");
-
-                    b.Property<DateTimeOffset>("DeliveryDate");
 
                     b.Property<double>("Discount");
 
                     b.Property<double>("Freight");
 
-                    b.Property<DateTimeOffset>("OrderDate");
+                    b.Property<string>("PatientRefNumber");
+
+                    b.Property<int?>("PrescriptionId");
 
                     b.Property<string>("Remarks");
 
+                    b.Property<DateTimeOffset>("SaleDate");
+
                     b.Property<string>("SalesOrderName");
+
+                    b.Property<int>("SalesTypeId");
 
                     b.Property<double>("SubTotal");
 
@@ -721,6 +838,10 @@ namespace coderush.Migrations
                     b.Property<double>("Total");
 
                     b.HasKey("SalesOrderId");
+
+                    b.HasIndex("PrescriptionId")
+                        .IsUnique()
+                        .HasFilter("[PrescriptionId] IS NOT NULL");
 
                     b.ToTable("SalesOrder");
                 });
@@ -885,18 +1006,16 @@ namespace coderush.Migrations
 
                     b.Property<string>("ContactPerson");
 
+                    b.Property<string>("Country");
+
                     b.Property<string>("Email");
 
                     b.Property<string>("Phone");
-
-                    b.Property<string>("State");
 
                     b.Property<string>("VendorName")
                         .IsRequired();
 
                     b.Property<int>("VendorTypeId");
-
-                    b.Property<string>("ZipCode");
 
                     b.HasKey("VendorId");
 
@@ -1043,6 +1162,14 @@ namespace coderush.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("coderush.Models.ClinicalTrialsDonation", b =>
+                {
+                    b.HasOne("coderush.Models.Vendor", "Vendor")
+                        .WithMany()
+                        .HasForeignKey("VendorId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("coderush.Models.ClinicalTrialsDonationLine", b =>
                 {
                     b.HasOne("coderush.Models.ClinicalTrialsDonation", "clinicalTrialsDonation")
@@ -1053,6 +1180,27 @@ namespace coderush.Migrations
                     b.HasOne("coderush.Models.ClinicalTrialsProduct", "clinicalTrialsProducts")
                         .WithMany()
                         .HasForeignKey("ClinicalTrialsProductsId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("coderush.Models.ClinicalTrialsProduct", b =>
+                {
+                    b.HasOne("coderush.Models.ProductType", "ProductType")
+                        .WithMany()
+                        .HasForeignKey("ProductTypeId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("coderush.Models.UnitOfMeasure", "UnitOfMeasure")
+                        .WithMany()
+                        .HasForeignKey("UnitOfMeasureId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("coderush.Models.ClinicalTrialsReturnedLine", b =>
+                {
+                    b.HasOne("coderush.Models.ClinicalTrialsReturned", "clinicalTrialsReturned")
+                        .WithMany("ClinicalTrialsReturnedLines")
+                        .HasForeignKey("ClinicalTrialsReturnedId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
@@ -1077,12 +1225,79 @@ namespace coderush.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("coderush.Models.Invoice", b =>
+                {
+                    b.HasOne("coderush.Models.SalesOrder", "SalesOrder")
+                        .WithOne("Invoice")
+                        .HasForeignKey("coderush.Models.Invoice", "SalesOrderId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("coderush.Models.PaymentReceive", b =>
+                {
+                    b.HasOne("coderush.Models.Invoice", "Invoice")
+                        .WithMany()
+                        .HasForeignKey("InvoiceId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("coderush.Models.PaymentType", "PaymentType")
+                        .WithMany()
+                        .HasForeignKey("PaymentTypeId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("coderush.Models.Prescription", b =>
+                {
+                    b.HasOne("coderush.Models.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("coderush.Models.PrescriptionLines", b =>
+                {
+                    b.HasOne("coderush.Models.Prescription")
+                        .WithMany("prescriptionLines")
+                        .HasForeignKey("PrescriptionId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("coderush.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("coderush.Models.Product", b =>
+                {
+                    b.HasOne("coderush.Models.ProductType", "ProductType")
+                        .WithMany()
+                        .HasForeignKey("ProductTypeId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("coderush.Models.UnitOfMeasure", "UnitOfMeasure")
+                        .WithMany()
+                        .HasForeignKey("UnitOfMeasureId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("coderush.Models.PurchaseOrderLine", b =>
                 {
+                    b.HasOne("coderush.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("coderush.Models.PurchaseOrder", "PurchaseOrder")
                         .WithMany("PurchaseOrderLines")
                         .HasForeignKey("PurchaseOrderId")
                         .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("coderush.Models.SalesOrder", b =>
+                {
+                    b.HasOne("coderush.Models.Prescription", "Prescription")
+                        .WithOne("SalesOrder")
+                        .HasForeignKey("coderush.Models.SalesOrder", "PrescriptionId");
                 });
 
             modelBuilder.Entity("coderush.Models.SalesOrderLine", b =>

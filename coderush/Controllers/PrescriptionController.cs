@@ -30,6 +30,7 @@ namespace coderush.Controllers
             {
             Prescription prescription = _context.Prescription
                             .Include(x => x.Customer)
+                            .Include(x=> x.SalesOrder)
                            .SingleOrDefault(x => x.PrescriptionId.Equals(id));
                                 
 

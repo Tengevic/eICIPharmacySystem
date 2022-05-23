@@ -36,11 +36,46 @@ namespace coderush.Controllers.Api
             int Count = Items.Count();
             return Ok(new { Items, Count });
         }
+        [HttpGet("[action]/{id}")]
+        public async Task<IActionResult> GetbyInvoiceId([FromRoute] int id)
+        {
+            List<PaymentReceive> Items = await _context.PaymentReceive
+                .Where(x => x.InvoiceId == id)
+                .Include(x => x.PaymentType)
+                .Include(x => x.Invoice)
+                .ToListAsync();
+            int Count = Items.Count();
 
+            return Ok(new { Items, Count });
+        }
         [HttpPost("[action]")]
         public IActionResult Insert([FromBody]CrudViewModel<PaymentReceive> payload)
         {
             PaymentReceive paymentReceive = payload.value;
+            if (paymentReceive.IsFullPayment)
+            {
+                Invoice invoice = _context.Invoice.Find(paymentReceive.Invoice);
+                invoice.fullyPaid = paymentReceive.IsFullPayment;
+                _context.Invoice.Update(invoice);
+                _context.SaveChanges();
+            }
+
+            paymentReceive.PaymentReceiveName = _numberSequence.GetNumberSequence("PAYRCV");
+            _context.PaymentReceive.Add(paymentReceive);
+            _context.SaveChanges();
+            return Ok(paymentReceive);
+        }
+        [HttpPost("[action]")]
+        public IActionResult Add([FromBody] PaymentReceive payload)
+        {
+            PaymentReceive paymentReceive = payload;
+            if (paymentReceive.IsFullPayment)
+            {
+                Invoice invoice = _context.Invoice.Find(paymentReceive.InvoiceId);
+                invoice.fullyPaid = paymentReceive.IsFullPayment;
+                _context.Invoice.Update(invoice);
+                _context.SaveChanges();
+            }
             paymentReceive.PaymentReceiveName = _numberSequence.GetNumberSequence("PAYRCV");
             _context.PaymentReceive.Add(paymentReceive);
             _context.SaveChanges();
@@ -51,6 +86,13 @@ namespace coderush.Controllers.Api
         public IActionResult Update([FromBody]CrudViewModel<PaymentReceive> payload)
         {
             PaymentReceive paymentReceive = payload.value;
+            if (paymentReceive.IsFullPayment)
+            {
+                Invoice invoice = _context.Invoice.Find(paymentReceive.Invoice);
+                invoice.fullyPaid = paymentReceive.IsFullPayment;
+                _context.Invoice.Update(invoice);
+                _context.SaveChanges();
+            }
             _context.PaymentReceive.Update(paymentReceive);
             _context.SaveChanges();
             return Ok(paymentReceive);

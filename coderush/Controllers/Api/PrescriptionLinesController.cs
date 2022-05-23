@@ -63,6 +63,7 @@ namespace coderush.Controllers.Api
         public IActionResult Insert([FromBody] CrudViewModel<PrescriptionLines> payload)
         {
             PrescriptionLines prescriptionLines = payload.value;
+            prescriptionLines.OderId = 0;
             prescriptionLines.PrescriptionLinesName = _numberSequence.GetNumberSequence("PSL");
             _context.PrescriptionLines.Add(prescriptionLines);
             _context.SaveChanges();
@@ -73,6 +74,7 @@ namespace coderush.Controllers.Api
         public IActionResult Add([FromBody] PrescriptionLines payload)
         {
             PrescriptionLines prescriptionLines = payload;
+            prescriptionLines.OderId = 0;
             prescriptionLines.PrescriptionLinesName = _numberSequence.GetNumberSequence("PSL");
             _context.PrescriptionLines.Add(prescriptionLines);
             _context.SaveChanges();

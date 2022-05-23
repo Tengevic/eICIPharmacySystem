@@ -1,0 +1,290 @@
+﻿@model coderush.Models.Invoice
+@{
+    ViewData["Title"] = "Invoice detail";
+}
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Main content -->
+    <section class="content">
+        <!-- Default box -->
+                <div class="box" style="height:250px">
+                    <div class="box-header with-border">
+                        <h3 class="box-title"><i class="fa fa-building"></i> @ViewData["Title"]</h3>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
+                                    title="Collapse">
+                                <i class="fa fa-minus"></i>
+                            </button>
+                            <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
+                                <i class="fa fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="box-body">
+                        <div class="content-container-fluid" style="height: 150px;">
+                            <div class="row">
+                                <dl class="dl-horizontal">
+                                    <dt>
+                                        Invoice Name
+                                    </dt>
+                                    <dd>
+                                        @Html.DisplayFor(model => model.InvoiceName)
+                                    </dd>
+                                    <dt>
+                                        Drug Sale Number
+                                    </dt>
+                                    <dd>
+                                        @Html.DisplayFor(model => model.SalesOrder.SalesOrderName)
+                                    </dd>
+                                    <dt>
+                                        @Html.DisplayNameFor(model => model.SalesOrder.SaleDate)
+                                    </dt>
+                                    <dd>
+                                        @Html.DisplayFor(model => model.SalesOrder.SaleDate)
+                                    </dd>
+                                    <dt>
+                                        @Html.DisplayNameFor(model => model.SalesOrder.CustomerId)
+                                    </dt>
+                                    <dd>
+                                        <input type="text" id="CustomerId" />
+                                    </dd>
+                                    <dt>
+                                        @Html.DisplayNameFor(model => model.InvoiceDate)
+                                    </dt>
+                                    <dd>
+                                        @Html.DisplayFor(model => model.InvoiceDate)
+                                    </dd>
+                                    <dt>
+                                        @Html.DisplayNameFor(model => model.InvoiceDueDate)
+                                    </dt>
+                                    <dd>
+                                        @Html.DisplayFor(model => model.InvoiceDueDate)
+                                    </dd>
+
+                                </dl>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+        <!-- /.box -->
+        <div class="box">
+
+            <div class="box-body">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div id="Grid"></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-8">
+                    </div>
+                    <div class="col-lg-4">
+                        <dl class="dl-horizontal">
+                            <dt>
+                                @Html.DisplayNameFor(model => model.SalesOrder.Remarks)
+                            </dt>
+                            <dd>
+                                @Html.DisplayFor(model => model.SalesOrder.Remarks)
+                            </dd>
+                            <dt>
+                                @Html.DisplayNameFor(model => model.SalesOrder.Amount)
+                            </dt>
+                            <dd>
+                                <label id="Amount" name="Amount">@Model.SalesOrder.Amount</label>
+                            </dd>
+                            <dt>
+                                @Html.DisplayNameFor(model => model.SalesOrder.Discount)
+                            </dt>
+                            <dd>
+                                <label id="Discount" name="Discount">@Model.SalesOrder.Discount</label>
+                            </dd>
+                            <dt>
+                                @Html.DisplayNameFor(model => model.SalesOrder.SubTotal)
+                            </dt>
+                            <dd>
+                                <label id="SubTotal" name="SubTotal">@Model.SalesOrder.SubTotal</label>
+                            </dd>
+                            <dt>
+                                @Html.DisplayNameFor(model => model.SalesOrder.Tax)
+                            </dt>
+                            <dd>
+                                <label id="Tax" name="Tax">@Model.SalesOrder.Tax</label>
+                            </dd>
+                            @*<dt>
+                                    @Html.DisplayNameFor(model => model.Freight)
+                                </dt>
+                                <dd>
+                                    <label id="Freight" name="Freight">@Model.Freight</label>
+                                </dd>*@
+                            <dt>
+                                @Html.DisplayNameFor(model => model.SalesOrder.Total)
+                            </dt>
+                            <dd>
+                                <label id="Total" name="Total">@Model.SalesOrder.Total</label>
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+
+@section Styles{
+
+}
+@section Scripts{
+    <script type="text/javascript">
+
+        $(function () {
+            var dataManager = ej.DataManager({
+                url: "/api/SalesOrderLine",
+                adaptor: new ej.WebApiAdaptor(),
+                headers: [{ "SalesOrderId": @Model.SalesOrderId}],
+                offline: true
+            });
+            var dataManagerProduct = ej.DataManager({
+                url: "/api/Product",
+                adaptor: new ej.WebApiAdaptor()
+            });
+            var dataManagerGoodsRecievedNoteLines = ej.DataManager({
+                url: "/api/GoodsRecievedNoteLines",
+                adaptor: new ej.WebApiAdaptor()
+            });
+            var dataManagerSalesOrder = ej.DataManager({
+                url: "/api/SalesOrder",
+                adaptor: new ej.WebApiAdaptor()
+            });
+            var dataManagerStock = ej.DataManager({
+                url: "/api/Branch",
+                adaptor: new ej.WebApiAdaptor()
+            });
+            var dataManagerCustomer = ej.DataManager({
+                url: "/api/Customer",
+                adaptor: new ej.WebApiAdaptor()
+            });
+            var dataManagerCurrency = ej.DataManager({
+                url: "/api/Currency",
+                adaptor: new ej.WebApiAdaptor()
+            });
+            var dataManagerSalesType = ej.DataManager({
+                url: "/api/SalesType",
+                adaptor: new ej.WebApiAdaptor()
+            });
+            $('#CustomerId').ejDropDownList({
+                dataSource: dataManagerCustomer,
+                fields: { id: 'CustomerId', text: 'CustomerName', value: 'CustomerId' },
+                value: @Model.SalesOrder.CustomerId,
+                enabled: false,
+            });
+            dataManager.ready.done(function (e) {
+            $("#Grid").ejGrid({
+                dataSource: ej.DataManager({
+                    json: e.result,
+                    adaptor: new ej.remoteSaveAdaptor(),
+                    insertUrl: "/api/SalesOrderLine/Insert",
+                    updateUrl: "/api/SalesOrderLine/Update",
+                    removeUrl: "/api/SalesOrderLine/Remove",
+                }),
+                toolbarSettings: {
+                    showToolbar: true,
+                    toolbarItems: ["add", "edit", "delete", "update", "cancel"]
+                },
+                editSettings: {
+                    allowEditing: true,
+                    allowAdding: true,
+                    allowDeleting: true,
+                    showDeleteConfirmDialog: true,
+                },
+                allowPaging: true,
+                columns: [
+                    { field: "SalesOrderLineId", headerText: 'Line Id', isPrimaryKey: true, isIdentity: true, visible: false },
+                    { field: "SalesOrderId", headerText: 'SO#', defaultValue: @Model.SalesOrderId, foreignKeyField: "SalesOrderId", foreignKeyValue: "SalesOrderName", dataSource: dataManagerSalesOrder, visible: false },
+                    { field: "ProductId", headerText: 'Product', foreignKeyField: "ProductId", foreignKeyValue: "ProductName", dataSource: dataManagerProduct, validationRules: { required: true }  },
+                    { field: "GoodsRecievedNoteLineId", headerText: 'BatchID', foreignKeyField: "GoodsRecievedNoteLineId", foreignKeyValue: "BatchID", dataSource: dataManagerGoodsRecievedNoteLines, validationRules: { required: true } },
+                    { field: "Description", headerText: 'Description', visible: false },
+                    { field: "Quantity", headerText: 'Qty', defaultValue: 1, editType: "numericedit" },
+                    { field: "Price", headerText: 'Cost per unit', defaultValue: 0, allowEditing: false, editType: "numericedit", format: "{0:n2}" },
+                    { field: "Amount", headerText: 'Amount', defaultValue: 0, allowEditing: false, editType: "numericedit", format: "{0:n2}" },
+                    { field: "DiscountPercentage", headerText: 'Disc %', defaultValue: 0, editType: "numericedit", format: "{0:n2}" },
+                    { field: "DiscountAmount", headerText: 'Disc Amt', defaultValue: 0, visible: false, editType: "numericedit", format: "{0:n2}" },
+                    { field: "SubTotal", headerText: 'SubTotal', defaultValue: 0, allowEditing: false, editType: "numericedit", format: "{0:n2}" },
+                    { field: "TaxPercentage", headerText: 'Tax %', defaultValue: 0, editType: "numericedit", format: "{0:n2}" },
+                    { field: "TaxAmount", headerText: 'Tax Amt', defaultValue: 0, visible: false, editType: "numericedit", format: "{0:n2}" },
+                    { field: "Total", headerText: 'Total', defaultValue: 0, allowEditing: false, editType: "numericedit", format: "{0:n2}" },
+                ],
+                actionComplete: "complete",
+                actionFailure: function (args) {
+                    if (args.requestType == "save") {
+                        var s = ej.parseJSON(args.error.responseText)
+                        toastr.warning(s.message, "Cannot make sale");
+                    }
+                }
+            });
+            });
+        });
+        function complete(args) {
+
+            if (args.requestType == 'beginedit') {
+                $("#" + this._id + "_dialogEdit").ejDialog({ title: "Edit Record" });
+            }
+            if (args.requestType == 'save' || args.requestType == 'delete') {
+                RewriteTotal(args.data.SalesOrderId);
+            }
+            if (args.requestType == 'beginedit' || args.requestType == 'add') {
+                $('#GridProductId').ejDropDownList({
+                    change: function (args) {
+                        $.ajax({
+                            type: 'GET',
+                            url: '/api/GoodsRecievedNoteLines/GetByProductId/' + args.value,
+                            success: function (data) {
+                                $("#GridGoodsRecievedNoteLineId").ejDropDownList({
+                                    dataSource: data,
+                                    fields: { id: 'GoodsRecievedNoteLineId', text: 'BatchID', value: 'GoodsRecievedNoteLineId' },
+                                });
+                            }
+                        });
+                        $.ajax({
+                            type: 'GET',
+                            url: '/api/Product/GetProductbyId/' + args.value,
+                            success: function (data) {
+                                $('#GridPrice').ejNumericTextbox({ value: data.DefaultSellingPrice });
+                            }
+                        });
+                    }
+                });
+                $('#GridGoodsRecievedNoteLineId').ejDropDownList({
+                    change: function (args) {
+                        $.ajax({
+                            type: 'GET',
+                            url: '/api/GoodsRecievedNoteLines/GetById/' + args.value,
+                            success: function (data) {
+                                str = data.BatchID + " Has " + data.InStock + " Drugs in stock"
+                                toastr.info(str);
+                            }
+                        });
+                    }
+                });
+            }
+        }
+        function RewriteTotal(salesOrderId) {
+            $.ajax({
+                type: 'GET',
+                url: '/api/SalesOrder/GetById/' + salesOrderId,
+                success: function (data) {
+                    $('#Amount').text(data.Amount);
+                    $('#SubTotal').text(data.SubTotal);
+                    $('#Discount').text(data.Discount);
+                    $('#Tax').text(data.Tax);
+                    $('#Freight').text(data.Freight);
+                    $('#Total').text(data.Total);
+                }
+            });
+        }
+    </script>
+}

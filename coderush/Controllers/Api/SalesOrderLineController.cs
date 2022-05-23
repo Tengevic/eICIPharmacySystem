@@ -220,6 +220,20 @@ namespace coderush.Controllers.Api
         public IActionResult Insert([FromBody]CrudViewModel<SalesOrderLine> payload)
         {
             SalesOrderLine salesOrderLine = payload.value;
+            SalesOrder salesOrder = _context.SalesOrder
+                                .Where(x => x.SalesOrderId == salesOrderLine.SalesOrderId)
+                                .Include(x => x.Invoice)
+                                .FirstOrDefault();
+            if(salesOrder.Invoice != null)
+            {
+                Err err = new Err
+                {
+                    message = "This oder is already Invoiced",
+                };
+                string errMsg = JsonConvert.SerializeObject(err);
+
+                return BadRequest(err);
+            }
             GoodsRecievedNoteLine batch = _context.GoodsRecievedNoteLine.Find(salesOrderLine.GoodsRecievedNoteLineId);
             
             if( batch.ProductId != salesOrderLine.ProductId )
@@ -257,6 +271,20 @@ namespace coderush.Controllers.Api
         public IActionResult Add([FromBody] SalesOrderLine payload)
         {
             SalesOrderLine salesOrderLine = payload;
+            SalesOrder salesOrder = _context.SalesOrder
+                               .Where(x => x.SalesOrderId == salesOrderLine.SalesOrderId)
+                               .Include(x => x.Invoice)
+                               .FirstOrDefault();
+            if (salesOrder.Invoice != null)
+            {
+                Err err = new Err
+                {
+                    message = "This oder is already Invoiced",
+                };
+                string errMsg = JsonConvert.SerializeObject(err);
+
+                return BadRequest(err);
+            }
             GoodsRecievedNoteLine batch = _context.GoodsRecievedNoteLine.Find(salesOrderLine.GoodsRecievedNoteLineId);
 
             if (batch.ProductId != salesOrderLine.ProductId)
@@ -295,6 +323,20 @@ namespace coderush.Controllers.Api
         public IActionResult Update([FromBody]CrudViewModel<SalesOrderLine> payload)
         {
             SalesOrderLine salesOrderLine = payload.value;
+            SalesOrder salesOrder = _context.SalesOrder
+                               .Where(x => x.SalesOrderId == salesOrderLine.SalesOrderId)
+                               .Include(x => x.Invoice)
+                               .FirstOrDefault();
+            if (salesOrder.Invoice != null)
+            {
+                Err err = new Err
+                {
+                    message = "This oder is already Invoiced",
+                };
+                string errMsg = JsonConvert.SerializeObject(err);
+
+                return BadRequest(err);
+            }
             GoodsRecievedNoteLine batch = _context.GoodsRecievedNoteLine.Find(salesOrderLine.GoodsRecievedNoteLineId);
 
             if (batch.ProductId != salesOrderLine.ProductId)
@@ -334,6 +376,20 @@ namespace coderush.Controllers.Api
             SalesOrderLine salesOrderLine = _context.SalesOrderLine
                 .Where(x => x.SalesOrderLineId == (int)payload.key)
                 .FirstOrDefault();
+            SalesOrder salesOrder = _context.SalesOrder
+                               .Where(x => x.SalesOrderId == salesOrderLine.SalesOrderId)
+                               .Include(x => x.Invoice)
+                               .FirstOrDefault();
+            if (salesOrder.Invoice != null)
+            {
+                Err err = new Err
+                {
+                    message = "This oder is already Invoiced",
+                };
+                string errMsg = JsonConvert.SerializeObject(err);
+
+                return BadRequest(err);
+            }
             _context.SalesOrderLine.Remove(salesOrderLine);
             _context.SaveChanges();
             this.UpdateSalesOrder(salesOrderLine.SalesOrderId);

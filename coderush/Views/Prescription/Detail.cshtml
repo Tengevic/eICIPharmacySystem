@@ -50,9 +50,29 @@
                                     <dd>
                                         @Html.DisplayFor(model => model.presciptionDate)
                                     </dd>
+                                    <dt>
+                                        @Html.DisplayNameFor(model => model.Approved)
+                                    </dt>
+                                    <dd>
+                                        <input type="checkbox" id="Approved" />
+                                        <p id="ApproveP" style="color: green">Submiting... </p>
+                                    </dd>
+                                    <dt>
+                                        Drug Sale Number
+                                    </dt>
+                                    <dd>
+                                        @if (Model.SalesOrder != null)
+                                        {
+                                        <a href="/SalesOrder/Detail/@Model.SalesOrder.SalesOrderId" >@Html.DisplayFor(model => model.SalesOrder.SalesOrderName)</a> 
+                                        }
+                                        else
+                                        {
+                                            <button id="btnSale" type="button" onclick="MakeSale()"> Make sale</button>
+                                        }
+                                    </dd>
                                 </dl>
                             </div>
-
+                           
                         </div>
 
                     </div>
@@ -95,7 +115,7 @@
                                 <td>
                                     <label id="instock" name="instock"></label>
                                 </td>
-                                
+
                                 <td>
                                     Selling price
                                 </td>
@@ -162,10 +182,48 @@
     <script type="text/javascript">
         var Drugs;
         var productId;
+        // Make sale order
+        function MakeSale() {
+            data = {
+                BranchId: 1,
+                CustomerId: @Model.CustomerId,
+                CurrencyId: 1,
+                PatientRefNumber: "@Model.Customer.EiciRefNumber",
+                PrescriptionId: @Model.PrescriptionId,
+                SalesTypeId: 1,
+                Remarks: "",
+                Amount: 0,
+                SubTotal: 0,
+                Discount: 0,
+                Tax: 0,
+                Freight: 0,
+                Total: 0,
+
+            }
+            $.ajax({
+                type: "POST",
+                contentType: "application/json;charset=utf-8",
+                data: JSON.stringify(data),
+                url: "/api/SalesOrder/AddByPrescription",
+                beforeSend: function () {
+  
+                },
+                success: function (result) {
+                    SalesOrderId = result.SalesOrderId;
+                    window.location = "/SalesOrder/Detail/" + SalesOrderId;
+                },
+                error: function (result) {
+                    var s = ej.parseJSON(result.responseText)
+                    toastr.warning(s.message, "Cannot make sale");
+                 
+                }
+            });
+        }
         function NewAmount(x) {
             Amount = x * Drugs.DefaultSellingPrice;
             $("#Cost").text(Amount);
         }
+        // Add prescription from prescription table
         function AddPrescription() {
             Quantity = $("#Quantity").val();
             if (Quantity == "") {
@@ -199,16 +257,50 @@
                         location.reload();
                     },
                     error: function (result) {
+                        $("#sendp").hide();
                         var s = ej.parseJSON(result.responseText)
                         toastr.warning(s.message, "Cannot make sale");
                         $("#btnsubmit").prop('disabled', false);
                     }
                 });
             }
-           
+
         }
         $(function () {
             $("#sendp").hide();
+            $("#ApproveP").hide();
+            // Approve button
+            $("#Approved").ejCheckBox({
+                checked: '@(Model.Approved)' === '@true',
+                change: function (args) {
+                    data = {
+                        PrescriptionId: @Model.PrescriptionId,
+                        PrescriptionName: "@Model.PrescriptionName",
+                        CustomerId:@Model.CustomerId,
+                       
+                        Approved: args.isChecked
+                    }
+                    $.ajax({
+                        type: "POST",
+                        contentType: "application/json;charset=utf-8",
+                        data: JSON.stringify(data),
+                        url: "/api/Prescription/Approve",
+                        beforeSend: function () {
+                            $("#ApproveP").show();
+                        },
+                        success: function (result) {
+                            $("#ApproveP").hide();
+                            
+                            toastr.success("Success");
+                        },
+                        error: function (result) {
+                            $("#ApproveP").hide();
+                            var s = ej.parseJSON(result.responseText)
+                            toastr.warning(s.message, "Cannot make sale");
+                        }
+                    });
+                }
+            });
 
             var dataManager = ej.DataManager({
                 url: "/api/PrescriptionLines",
@@ -226,7 +318,7 @@
                 url: "/api/Prescription",
                 adaptor: new ej.WebApiAdaptor()
             });
-            
+
             $('#ProductId').ejDropDownList({
                 dataSource: dataManagerProduct,
                 fields: { id: 'ProductId', text: 'ProductName', value: 'ProductId' },
@@ -238,7 +330,7 @@
                         success: function (data) {
                             Drugs = data;
                             $("#UnitsofMeasure").text(Drugs.UnitOfMeasure.UnitOfMeasureName);
-                            $("#instock").text(Drugs.InStock); 
+                            $("#instock").text(Drugs.InStock);
                             $("#sellPrice").text(Drugs.DefaultSellingPrice);
                             NewAmount(0);
                         }
@@ -271,7 +363,8 @@
                     { field: "PrescriptionLinesId", headerText: 'Line Id', isPrimaryKey: true, isIdentity: true, visible: false },
                     { field: "PrescriptionId", headerText: 'PS#', defaultValue: @Model.PrescriptionId, foreignKeyField: "PrescriptionId", foreignKeyValue: "PrescriptionName", dataSource: dataManagerPrescription, visible: false },
                     { field: "ProductId", headerText: 'Drug', foreignKeyField: "ProductId", foreignKeyValue: "ProductName", dataSource: dataManagerProduct },
-                    { field: "Quantity", headerText: 'units/batch', defaultValue: 1, editType: "numericedit"},
+                    { field: "prescription", headerText: 'Prescription number' },
+                    { field: "Quantity", headerText: 'Quantity', defaultValue: 1, editType: "numericedit" },
                     { field: "remainder", headerText: 'Units sold', defaultValue: 0, editType: "numericedit", allowEditing: false, visible: false  },
 
                 ],

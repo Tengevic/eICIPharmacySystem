@@ -36,12 +36,7 @@
                         <div class="content-container-fluid" style="height: 150px;">
                             <div class="row">
                                 <dl class="dl-horizontal">
-                                    <dt>
-                                        Drug Sale ID
-                                    </dt>
-                                    <dd>
-                                        @Html.DisplayFor(model => model.SalesOrderId)
-                                    </dd>
+
                                     <dt>
                                         Drug Sale Number
                                     </dt>
@@ -72,6 +67,21 @@
                                     <dd>
                                         @Html.DisplayFor(model => model.SaleDate)
                                     </dd>
+                                    <dt>
+                                        Invoice
+                                    </dt>
+                                    @if (Model.Invoice != null)
+                                    {
+                                        <dd>
+                                            @Html.DisplayFor(model => model.Invoice.InvoiceName)
+                                        </dd>
+                                    }
+                                    else
+                                    {
+                                        <dd>
+                                            <button id="Invoice" onclick="Invoice()"> Create Invoice</button>
+                                        </dd>
+                                    }
                                 </dl>
                             </div>
 
@@ -80,45 +90,96 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-6">
-                <div class="box" style="height:250px">
-                    <div class="box-header with-border">
-                        <h3 class="box-title text-primary"><i class="fa fa-pie-chart"></i> Prescriptions</h3>
-                        <div class="box-tools pull-right">
-                            <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
-                                    title="Collapse">
-                                <i class="fa fa-minus"></i>
-                            </button>
-                            <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
-                                <i class="fa fa-times"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="box-body">
-                        <div class="Prescription">
-                            <div class="table-wrapper-scroll-y my-custom-scrollbar">
-                                <table id="Prescription" align="center" class="table-condensed table-bordered table-striped mb-0" style="width:100%">
-                                    <thead>
-                                        <tr>
-                                            <th> # </th>
-                                            <th>product Name</th>
-                                            <th>Units of Measure</th>
-                                            <th>Quantity</th>
-                                            <th>Cost per unit</th>
-                                            <th>Add</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                        </tr>
-                                    </tbody>
-                                </table>
+            @if (Model.Invoice == null)
+            {
+                <div class="col-lg-6">
+                    <div class="box" style="height:250px">
+                        <div class="box-header with-border">
+                            <h3 class="box-title text-primary"><i class="fa fa-pie-chart"></i> Prescriptions</h3>
+                            <div class="box-tools pull-right">
+                                <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
+                                        title="Collapse">
+                                    <i class="fa fa-minus"></i>
+                                </button>
+                                <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
+                                    <i class="fa fa-times"></i>
+                                </button>
                             </div>
+                        </div>
+                        <div class="box-body">
+                            <div class="Prescription">
+                                <div class="table-wrapper-scroll-y my-custom-scrollbar">
+                                    <table id="Prescription" align="center" class="table-condensed table-bordered table-striped mb-0" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th> # </th>
+                                                <th>product Name</th>
+                                                <th>Units of Measure</th>
+                                                <th>Quantity</th>
+                                                <th>Cost per unit</th>
+                                                <th>Add</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
 
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            }
+            else
+            {
+                <div class="col-lg-6">
+                    <div class="box" style="height:250px">
+                        <div class="box-header with-border ">
+                            <h3 class="box-title text-primary"><i class="fa fa-pie-chart"></i> @Model.Invoice.InvoiceName</h3>
+                            @if (!Model.Invoice.fullyPaid)
+                                {
+                                     <button id="Payment" onclick="MakePayment()">Make payment</button>
+                                }
+                            
+                            <div class="box-tools pull-right">
+                                <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
+                                        title="Collapse">
+                                    <i class="fa fa-minus"></i>
+                                </button>
+                                <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
+                                    <i class="fa fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="box-body">
+                            <div class="payment">
+                                <div class="table-wrapper-scroll-y my-custom-scrollbar">
+                                    <table id="payment" align="center" class="table-condensed table-bordered table-striped mb-0" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th> # </th>
+                                                <th>Payment Name</th>
+                                                <th>Invoice Name</th>
+                                                <th>payment Date</th>
+                                                <th>Payment type</th>
+                                                <th>Upload</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
         </div>
 
         <!-- /.box -->
@@ -269,111 +330,349 @@
     </table>
 
 </div>
+<div id="dialogInvoice">
+    <table class="table">
+        <tr>
+            <td>
+                Drug Sell number
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.SalesOrderName)
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Invoice Due date
+            </td>
+            <td>
+                <input id="InvoiceDuedate" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <button id="btnInvoiceSubmit" onclick="InvoiceSubmit()">Submit</button>
+            </td>
+            <td>
+                <p id="sendInvoice" style="color: green">Submiting... </p>
+            </td>
+        </tr>
+    </table>
+</div>
+<div id="dialogPayment">
+    <table>
+        <tr>
+            <td>
+                Invoice
+            </td>
+            <td>
+                @if (Model.Invoice != null)
+                {
+                    @Model.Invoice.InvoiceName
+                    <input id="invoiceId" value="@Model.Invoice.InvoiceId" style="display:none" />
+                }
+            </td>
+            <td>
+                Full payment
+            </td>
+            <td>
+                <input type="checkbox" id="fullpayment" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Payment date
+            </td>
+            <td>
+                <input id="Paymentdate" />
+            </td>
+            <td>
+                Payment Type
+            </td>
+            <td>
+                <input id="PaymentTypeId" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Payment Amount
+            </td>
+            <td>
+                <input type="number" id="payAmount" />
+            </td>
+            <td>
+                <p style="display: none;" id="uploadp">Upload Files</p>
+            </td>
+            <td>
+                <div style="display: none;" id="uploadDiv">
+                    <div id="UploadDefault"></div>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <button id="submitPay" onclick="Payment()">Submit</button>
+            </td>
+            <td>
+                <p id="sendpay" style="color: green">Submiting... </p>
+            </td>
+        </tr>
+    </table>
+</div>
+
 @section Styles{
 
 }
 @section Scripts{
     <script type="text/javascript">
 
-            var Item;
-            var Batch;
-            var GoodsRecievedNoteLineId;
-            function myFunction(item) {
-                Item = item;
-                $.ajax({
-                    type: 'GET',
-                    url: '/api/GoodsRecievedNoteLines/GetByProductId/' + item.Product.ProductId,
-                    success: function (data) {
-                        Batch = data;
-                        $('#GoodsRecievedNoteLineId').ejDropDownList({
-                            dataSource: Batch,
-                            fields: { id: 'GoodsRecievedNoteLineId', text: 'BatchID', value: 'GoodsRecievedNoteLineId' },
-                            change: function (args) {
-                                for (let i = 0; i < Batch.length; i++) {
-                                    if (Batch[i].GoodsRecievedNoteLineId == args.value) {
-                                        $("#instock").text(Batch[i].InStock);
-                                        GoodsRecievedNoteLineId =  args.value;
-                                    }
-                                }
-                            }
-                        });
+        var Item;
+        var Batch;
+        var GoodsRecievedNoteLineId;
+        var InvoiceDuedate;
+        var fullpay = false;
+        var Paymentdate;
+        var PaymentTypeId;
+        var paymentType;
+        var InvoiceId;
 
+        function Payment() {
+            var amount = $("#payAmount").val();
+            var InvoiceId = $("#invoiceId").val();
+            data = {
+                InvoiceId: InvoiceId,
+                PaymentDate: Paymentdate,
+                PaymentTypeId: PaymentTypeId,
+                PaymentAmount: parseInt(amount),
+                IsFullPayment: fullpay
+            }
+            if (data.PaymentTypeId == null) {
+                toastr.warning("Select a payment method");
+            } else if (data.PaymentDate == null) {
+                toastr.warning("Select a date");
+            } else {
+                $.ajax({
+                    type: "POST",
+                    contentType: "application/json;charset=utf-8",
+                    data: JSON.stringify(data),
+                    url: "/api/PaymentReceive/Add",
+                    beforeSend: function () {
+                        $("#sendpay").show();
+                        $("#submitPay").prop('disabled', true);
+                    },
+                    success: function (result) {
+                        $("#sendpay").hide();
+                        $("#submitPay").prop('disabled', false);
+                        toastr.success("Success");
+                        for (let i = 0; i < paymentType.length; i++) {
+                            if (paymentType[i].PaymentTypeId == result.PaymentTypeId) {
+                                if (paymentType[i].RequireUpload) {
+                                    $("#uploadp").show();
+                                    $("#uploadDiv").show();
+                                    $("#UploadDefault").ejUploadbox({
+                                        saveUrl: "/api/UploadFiles",
+                                        allowDraggable: true,
+                                        multipleFilesSelection: true,
+                                        success: function (args) {
+                                            toastr.success("Success");
+                                        },
+                                        beforeSend: function (args) {
+                                            args.xhr.setRequestHeader("test", result.PaymentReceiveId );
+                                        }
+                                    });
+                                 }
+                            }
+                        }
+                    },
+                    error: function (result) {
+                        $("#sendpay").hide();
+                        var s = ej.parseJSON(result.responseText)
+                        toastr.warning(s.message, "Cannot make sale");
+                        $("#submitPay").prop('disabled', false);
                     }
                 });
-
-                $("#dialog").ejDialog("open");
-                $("#sendp").hide();
-                $("#DrugName").text(Item.Product.ProductName);
-                $("#UnitsofMeasure").text(Item.Product.UnitOfMeasure.UnitOfMeasureName);
-                $("#Quantity").val(Item.Quantity);
-                $("#Cost").text(Item.Product.DefaultSellingPrice);
-                Amount = Item.Quantity * Item.Product.DefaultSellingPrice;
-                $("#CostAmount").text(Amount);
-                $("#DiscAmount").val();
-                $("#TaxPer").val();
             }
-            function NewAmount(x) {
-                Amount = x * Item.Product.DefaultSellingPrice;
-                $("#CostAmount").text(Amount);
-            }
-            function Submit() {
-                DiscountPercentage = $("#Disc").val();
-                TaxPercentage = $("#TaxPer").val();
-                Quantity = $("#Quantity").val();
-                if (DiscountPercentage == "") {
-                    DiscountPercentage = "0";
-                }
-                if (TaxPercentage == "") {
-                    TaxPercentage = "0";
-                }
-                if (Quantity == "") {
-                    Quantity = "0";
-                }
-                var data = {
-                    "SalesOrderId": @Model.SalesOrderId,
-                    "Total": 0,
-                    "TaxAmount":0 ,
-                    "TaxPercentage": parseInt(TaxPercentage),
-                    "SubTotal": 0,
-                    "DiscountAmount": 0,
-                    "DiscountPercentage": parseInt(DiscountPercentage),
-                    "Amount": 0,
-                    "Price": 0,
-                    "GoodsRecievedNoteLineId": GoodsRecievedNoteLineId,
-                    "Quantity": parseInt(Quantity),
-                    "ProductId": Item.Product.ProductId,
-                }
+        }
+        function MakePayment() {
 
-                if (data.GoodsRecievedNoteLineId == null) {
-                    toastr.warning("Select Batch number", "Cannot make sale");
-                } else if (data.Quantity < 1) {
-                    toastr.warning("Quantity can not be less than 1", "Cannot make sale");
-                }
-                else {
-                    $.ajax({
-                        type: "POST",
-                        contentType: "application/json;charset=utf-8",
-                        data: JSON.stringify(data),
-                        url: "/api/SalesOrderLine/Add",
-                        beforeSend: function () {
-                            $("#sendp").show();
-                            $("#btnsubmit").prop('disabled', true);
-                        },
-                        success: function (result) {
-                            $("#sendp").hide();
-                            $("#btnsubmit").prop('disabled', false);
-                            toastr.success("Success");
-                        },
-                        error: function (result) {
-                            var s = ej.parseJSON(result.responseText)
-                            toastr.warning(s.message, "Cannot make sale");
-                            $("#btnsubmit").prop('disabled', false);
+            $.ajax({
+                type: 'GET',
+                url: "/api/PaymentType",
+                success: function (data) {
+                    paymentType = data.Items;
+                    $('#PaymentTypeId').ejDropDownList({
+                        dataSource: paymentType,
+                        fields: { id: 'PaymentTypeId', text: 'PaymentTypeName', value: 'PaymentTypeId' },
+                        change: function (args) {
+                            PaymentTypeId = args.value;
                         }
                     });
                 }
+            });
+
+            $("#dialogPayment").ejDialog("open");
+            $("#sendpay").hide();
+            $("#fullpayment").ejCheckBox({
+                change: function (args) {
+                    fullpay = args.isChecked;
+                }
+            });
+            $("#Paymentdate").ejDatePicker({
+                width: "75%",
+                change: function (args) {
+                    Paymentdate = args.value;
+                }
+            });
+        }
+        function Invoice() {
+            $("#dialogInvoice").ejDialog("open");
+            $("#sendInvoice").hide();
+            $("#InvoiceDuedate").ejDatePicker({
+                width: "75%",
+                change: function (args) {
+                    InvoiceDuedate = args.value;
+                }
+            });
+        }
+        function InvoiceSubmit() {
+            data = {
+                SalesOrderId: @Model.SalesOrderId,
+                InvoiceDueDate: InvoiceDuedate,
+                InvoiceTypeId: 1
             }
-        $(function () {
+            if (data.InvoiceDueDate == null) {
+                toastr.warning("Select a date")
+            }
+            else {
+                $.ajax({
+                    type: "POST",
+                    contentType: "application/json;charset=utf-8",
+                    data: JSON.stringify(data),
+                    url: "/api/Invoice/Add",
+                    beforeSend: function () {
+                        $("#sendInvoice").show();
+                        $("#btnInvoiceSubmit").prop('disabled', true);
+                    },
+                    success: function (result) {
+                        $("#sendInvoice").hide();
+                        $("#btnInvoiceSubmit").prop('disabled', false);
+                        toastr.success("Success");
+                        InvoiceId = result.InvoiceId;
+
+                    },
+                    error: function (result) {
+                        $("#sendInvoice").hide();
+                        var s = ej.parseJSON(result.responseText)
+                        toastr.warning(s.message, "Cannot make sale");
+                        $("#btnInvoiceSubmit").prop('disabled', false);
+                    }
+                });
+            }
+
+        }
+        function myFunction(item) {
+            Item = item;
             $.ajax({
+                type: 'GET',
+                url: '/api/GoodsRecievedNoteLines/GetByProductId/' + item.Product.ProductId,
+                success: function (data) {
+                    Batch = data;
+                    $('#GoodsRecievedNoteLineId').ejDropDownList({
+                        dataSource: Batch,
+                        fields: { id: 'GoodsRecievedNoteLineId', text: 'BatchID', value: 'GoodsRecievedNoteLineId' },
+                        change: function (args) {
+                            for (let i = 0; i < Batch.length; i++) {
+                                if (Batch[i].GoodsRecievedNoteLineId == args.value) {
+                                    $("#instock").text(Batch[i].InStock);
+                                    GoodsRecievedNoteLineId =  args.value;
+                                }
+                            }
+                        }
+                    });
+
+                }
+            });
+
+            $("#dialog").ejDialog("open");
+            $("#sendp").hide();
+            $("#DrugName").text(Item.Product.ProductName);
+            $("#UnitsofMeasure").text(Item.Product.UnitOfMeasure.UnitOfMeasureName);
+            $("#Quantity").val(Item.Quantity);
+            $("#Cost").text(Item.Product.DefaultSellingPrice);
+            Amount = Item.Quantity * Item.Product.DefaultSellingPrice;
+            $("#CostAmount").text(Amount);
+            $("#DiscAmount").val();
+            $("#TaxPer").val();
+        }
+        function NewAmount(x) {
+            amount = x * Item.Product.DefaultSellingPrice;
+            $("#CostAmount").text(amount);
+        }
+        function Submit() {
+            DiscountPercentage = $("#Disc").val();
+            TaxPercentage = $("#TaxPer").val();
+            Quantity = $("#Quantity").val();
+            if (DiscountPercentage == "") {
+                DiscountPercentage = "0";
+            }
+            if (TaxPercentage == "") {
+                TaxPercentage = "0";
+            }
+            if (Quantity == "") {
+                Quantity = "0";
+            }
+            var data = {
+                "SalesOrderId": @Model.SalesOrderId,
+                "Total": 0,
+                "TaxAmount":0 ,
+                "TaxPercentage": parseInt(TaxPercentage),
+                "SubTotal": 0,
+                "DiscountAmount": 0,
+                "DiscountPercentage": parseInt(DiscountPercentage),
+                "Amount": 0,
+                "Price": 0,
+                "GoodsRecievedNoteLineId": GoodsRecievedNoteLineId,
+                "Quantity": parseInt(Quantity),
+                "ProductId": Item.Product.ProductId,
+            }
+
+            if (data.GoodsRecievedNoteLineId == null) {
+                toastr.warning("Select Batch number", "Cannot make sale");
+            } else if (data.Quantity < 1) {
+                toastr.warning("Quantity can not be less than 1", "Cannot make sale");
+            }
+            else {
+                $.ajax({
+                    type: "POST",
+                    contentType: "application/json;charset=utf-8",
+                    data: JSON.stringify(data),
+                    url: "/api/SalesOrderLine/Add",
+                    beforeSend: function () {
+                        $("#sendp").show();
+                        $("#btnsubmit").prop('disabled', true);
+                    },
+                    success: function (result) {
+                        $("#sendp").hide();
+                        $("#btnsubmit").prop('disabled', false);
+                        toastr.success("Success");
+                        onInit();
+                        $('#Amount').text(result.SalesOrder.Amount);
+                        $('#SubTotal').text(result.SalesOrder.SubTotal);
+                        $('#Discount').text(result.SalesOrder.Discount);
+                        $('#Tax').text(result.SalesOrder.Tax);
+                        $('#Freight').text(result.SalesOrder.Freight);
+                        $('#Total').text(result.SalesOrder.Total);
+                    },
+                    error: function (result) {
+                        $("#sendp").hide();
+                        var s = ej.parseJSON(result.responseText)
+                        toastr.warning(s.message, "Cannot make sale");
+                        $("#btnsubmit").prop('disabled', false);
+                    }
+                });
+            }
+        }
+        function PrescriptionLines() {
+             $.ajax({
                 type: 'GET',
                 url: '/api/PrescriptionLines/GetByPrescriptionId/' +@Model.PrescriptionId ,
                 success: function (data) {
@@ -396,15 +695,71 @@
                     }
                 }
             });
+        }
+
+        function PaymentsList(InvoiceId) {
+               $.ajax({
+                type: 'GET',
+                   url: '/api/PaymentReceive/GetbyInvoiceId/' + InvoiceId,
+                   success: function (data) {
+                       if (data.Count == 0) {
+                           $("div.payment").replaceWith("<h4>No payment Available</h4>");
+                       } else {
+                           var table = document.getElementById("payment");
+                           item = data.Items;
+                           d = 0;
+                           for (let i = 0; i < item.length; i++) {
+                               var row = table.insertRow(-1)
+                               row.insertCell(0).innerHTML = i + 1;
+                               row.insertCell(1).innerHTML = item[i].PaymentReceiveName;
+                               row.insertCell(2).innerHTML = item[i].Invoice.InvoiceName;
+                               row.insertCell(3).innerHTML = item[i].PaymentDate;
+                               row.insertCell(4).innerHTML = item[i].PaymentType.PaymentTypeName;
+                               row.insertCell(5).innerHTML = "<a href='/PaymentReceive/Detail/" + item[i].PaymentReceiveId +"'>Uploads</a>";
+                              
+                           }
+                       }
+                }
+            });
+        }
+
+        $(function () {
+            var InvoiceId = $("#invoiceId").val();
+            if (InvoiceId == null) {
+                PrescriptionLines();
+            } else {
+                PaymentsList(InvoiceId)
+            }
+
             $('#dialog').ejDialog({
                 title: "Sale Record",
                 showOnInit: false,
                 height: 400,
                 width: 600,
+
+            });
+            $('#dialogInvoice').ejDialog({
+                title: "Invoice",
+                showOnInit: false,
                 close: function (args) {
                     location.reload();
                 }
+
             });
+            $('#dialogPayment').ejDialog({
+                title: "Payment",
+                width: 500,
+                height: 400,
+                showOnInit: false,
+                close: function (args) {
+
+                }
+
+            });
+
+            onInit();
+        });
+        function onInit() {
             var dataManager = ej.DataManager({
                 url: "/api/SalesOrderLine",
                 adaptor: new ej.WebApiAdaptor(),
@@ -487,10 +842,14 @@
                         var s = ej.parseJSON(args.error.responseText)
                         toastr.warning(s.message, "Cannot make sale");
                     }
+                    if (args.requestType == 'delete') {
+                        var s = ej.parseJSON(args.error.error.responseText)
+                        toastr.warning(s.message,"Cannot delete");
+                    }
                 }
             });
             });
-        });
+        }
         function complete(args) {
 
             if (args.requestType == 'beginedit') {

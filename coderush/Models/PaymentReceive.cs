@@ -13,6 +13,7 @@ namespace coderush.Models
         public string PaymentReceiveName { get; set; }
         [Display(Name = "Invoice")]
         public int InvoiceId { get; set; }
+        public Invoice Invoice { get; set; }
         public DateTimeOffset PaymentDate { get; set; }
         [Display(Name = "Payment Type")]
         public int PaymentTypeId { get; set; }

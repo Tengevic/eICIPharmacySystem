@@ -7,39 +7,6 @@
     <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="Migrations\20220314092909_purchaseorder.cs" />
-    <Compile Remove="Migrations\20220314092909_purchaseorder.Designer.cs" />
-    <Compile Remove="Migrations\20220314100431_salesOrder.cs" />
-    <Compile Remove="Migrations\20220314100431_salesOrder.Designer.cs" />
-    <Compile Remove="Migrations\20220314131844_purchaseorder2.cs" />
-    <Compile Remove="Migrations\20220314131844_purchaseorder2.Designer.cs" />
-    <Compile Remove="Migrations\20220315062437__second.cs" />
-    <Compile Remove="Migrations\20220315062437__second.Designer.cs" />
-    <Compile Remove="Migrations\20220315065202__second2.cs" />
-    <Compile Remove="Migrations\20220315065202__second2.Designer.cs" />
-    <Compile Remove="Migrations\20220315092050_goodsrecievednotesline.cs" />
-    <Compile Remove="Migrations\20220315092050_goodsrecievednotesline.Designer.cs" />
-    <Compile Remove="Migrations\20220317102225_stockDeficit.cs" />
-    <Compile Remove="Migrations\20220317102225_stockDeficit.Designer.cs" />
-    <Compile Remove="Migrations\20220324153839_test.cs" />
-    <Compile Remove="Migrations\20220324153839_test.Designer.cs" />
-    <Compile Remove="Migrations\20220328095016_clinicalTrials.cs" />
-    <Compile Remove="Migrations\20220328095016_clinicalTrials.Designer.cs" />
-    <Compile Remove="Migrations\20220331053110_newStock.cs" />
-    <Compile Remove="Migrations\20220331053110_newStock.Designer.cs" />
-    <Compile Remove="Migrations\20220408064246_generictype.cs" />
-    <Compile Remove="Migrations\20220408064246_generictype.Designer.cs" />
-    <Compile Remove="Migrations\20220412052646_shipmentRemove.cs" />
-    <Compile Remove="Migrations\20220412052646_shipmentRemove.Designer.cs" />
-    <Compile Remove="Migrations\20220414065946_clinicaltrialreturn.cs" />
-    <Compile Remove="Migrations\20220414065946_clinicaltrialreturn.Designer.cs" />
-    <Compile Remove="Migrations\20220414070328_clinicaltrialreturn.cs" />
-    <Compile Remove="Migrations\20220414070328_clinicaltrialreturn.Designer.cs" />
-    <Compile Remove="Migrations\20220414082142_clinicalTrialsreturn.cs" />
-    <Compile Remove="Migrations\20220414082142_clinicalTrialsreturn.Designer.cs" />
-  </ItemGroup>
-
 
   <ItemGroup>
     <PackageReference Include="Grpc.Core" Version="2.45.0" />

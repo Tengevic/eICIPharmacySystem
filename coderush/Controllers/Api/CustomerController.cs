@@ -32,6 +32,31 @@ namespace coderush.Controllers.Api
             int Count = Items.Count();
             return Ok(new { Items, Count });
         }
+        [HttpGet("[action]/{id}")]
+        public async Task<IActionResult> GetbyId([FromRoute] int id)
+        {
+            Customer Items = await _context.Customer
+                .Where(x => x.CustomerId == id)
+                .FirstOrDefaultAsync();
+
+            return Ok(Items);
+        }
+        [HttpGet("[action]/{name}")]
+        public async Task<IActionResult> GetByName([FromRoute] string name)
+        {
+            var Customer = from p in _context.Customer
+                           select p;
+
+            if (!String.IsNullOrEmpty(name))
+            {
+                Customer = Customer.Where(x => x.CustomerName.Contains(name));
+            }
+
+            List<Customer> Items = await Customer.ToListAsync();
+
+            return Ok(new { Items });
+        }
+
 
 
         [HttpPost("[action]")]

@@ -93,6 +93,33 @@ namespace coderush.Controllers.Api
             _context.SaveChanges();
             return Ok(invoice);
         }
+        //api/Invoice/Add
+        [HttpPost("[action]")]
+        public IActionResult Add([FromBody] Invoice payload)
+        {
+            Invoice invoice = payload;
+
+            DateTime current = DateTime.Now;
+
+            double Totaldays = (invoice.InvoiceDueDate - current).TotalDays;
+
+            if (!(Totaldays < 90))
+            {
+                Err err = new Err
+                {
+                    message = "Invoice should not be more than  90 days"
+                };
+                string errMsg = JsonConvert.SerializeObject(err);
+
+                return BadRequest(err);
+
+            }
+            invoice.InvoiceDate = current;
+            invoice.InvoiceName = _numberSequence.GetNumberSequence("INV");
+            _context.Invoice.Add(invoice);
+            _context.SaveChanges();
+            return Ok(invoice);
+        }
 
         [HttpPost("[action]")]
         public IActionResult Update([FromBody]CrudViewModel<Invoice> payload)

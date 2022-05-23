@@ -10,6 +10,7 @@ using coderush.Models;
 using coderush.Services;
 using coderush.Models.SyncfusionViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Newtonsoft.Json;
 
 namespace coderush.Controllers.Api
 {
@@ -141,9 +142,21 @@ namespace coderush.Controllers.Api
         {
             SalesOrder salesOrder = payload.value;
             salesOrder.SalesOrderName = _numberSequence.GetNumberSequence("SO");
-            if (salesOrder.PrescriptionId == null)
+
+            if(salesOrder.PrescriptionId > 0)
             {
-                salesOrder.PrescriptionId = 0;
+                Prescription prescription = _context.Prescription.Find(salesOrder.PrescriptionId);
+
+                if (!prescription.Approved)
+                {
+                    Err err = new Err
+                    {
+                        message = "Prescription is not approved"
+                    };
+                    string errMsg = JsonConvert.SerializeObject(err);
+
+                    return BadRequest(err);
+                }
             }
             _context.SalesOrder.Add(salesOrder);
             _context.SaveChanges();
@@ -160,11 +173,64 @@ namespace coderush.Controllers.Api
             {
                 salesOrder.PrescriptionId = 0;
             }
+            else
+            {
+                Prescription prescription = _context.Prescription.Find(salesOrder.PrescriptionId);
+
+                if (!prescription.Approved)
+                {
+                    Err err = new Err
+                    {
+                        message = "Prescription is not approved"
+                    };
+                    string errMsg = JsonConvert.SerializeObject(err);
+
+                    return BadRequest(err);
+                }
+            }
             _context.SalesOrder.Add(salesOrder);
             _context.SaveChanges();
             this.UpdateSalesOrder(salesOrder.SalesOrderId);
             return Ok(salesOrder);
         }
+        [HttpPost("[action]")]
+        public IActionResult AddByPrescription([FromBody] SalesOrder payload)
+        {
+            SalesOrder salesOrder = payload;
+
+            Prescription prescription = _context.Prescription.Find(salesOrder.PrescriptionId);
+
+            if (!prescription.Approved)
+            {
+                Err err = new Err
+                {
+                    message = "Prescription is not approved"
+                };
+                string errMsg = JsonConvert.SerializeObject(err);
+
+                return BadRequest(err);
+            }
+
+            SalesOrder order = _context.SalesOrder
+                .Where(x => x.PrescriptionId == salesOrder.PrescriptionId)
+                .FirstOrDefault();
+
+            if(order == null)
+            {
+                salesOrder.SaleDate = DateTime.Now;
+                salesOrder.SalesOrderName = _numberSequence.GetNumberSequence("SO");
+                _context.SalesOrder.Add(salesOrder);
+                _context.SaveChanges();
+                this.UpdateSalesOrder(salesOrder.SalesOrderId);
+            }
+            else
+            {
+                salesOrder = order;
+            }
+           
+            return Ok(salesOrder);
+        }
+
 
 
         [HttpPost("[action]")]

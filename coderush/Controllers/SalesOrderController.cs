@@ -29,6 +29,7 @@ namespace coderush.Controllers
         {
             SalesOrder salesOrder = _context.SalesOrder
                 .Include(x =>x.Prescription)
+                .Include(x => x.Invoice)
                 .SingleOrDefault(x => x.SalesOrderId.Equals(id));
             
             if (salesOrder == null)

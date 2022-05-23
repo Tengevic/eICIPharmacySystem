@@ -13,6 +13,7 @@ namespace coderush.Models
         public Customer Customer { get; set; }
         public DateTime presciptionDate { get; set; }
         public bool Approved { get; set; } = false;
+        public SalesOrder SalesOrder { get; set; }
         public ICollection<PrescriptionLines> prescriptionLines { get; set; }
     }
 }

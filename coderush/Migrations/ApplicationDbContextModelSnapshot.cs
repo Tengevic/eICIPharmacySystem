@@ -381,14 +381,14 @@ namespace coderush.Migrations
 
                     b.Property<string>("City");
 
-                    b.Property<string>("ContactPerson");
-
                     b.Property<string>("Country");
 
                     b.Property<string>("CustomerName")
                         .IsRequired();
 
                     b.Property<int>("CustomerTypeId");
+
+                    b.Property<string>("EiciRefNumber");
 
                     b.Property<string>("Email");
 
@@ -489,7 +489,12 @@ namespace coderush.Migrations
 
                     b.Property<int>("SalesOrderId");
 
+                    b.Property<bool>("fullyPaid");
+
                     b.HasKey("InvoiceId");
+
+                    b.HasIndex("SalesOrderId")
+                        .IsUnique();
 
                     b.ToTable("Invoice");
                 });
@@ -548,6 +553,8 @@ namespace coderush.Migrations
                     b.Property<int>("PaymentTypeId");
 
                     b.HasKey("PaymentReceiveId");
+
+                    b.HasIndex("InvoiceId");
 
                     b.HasIndex("PaymentTypeId");
 
@@ -620,6 +627,8 @@ namespace coderush.Migrations
                     b.Property<int>("PrescriptionLinesId")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<int>("OderId");
+
                     b.Property<int>("PrescriptionId");
 
                     b.Property<string>("PrescriptionLinesName");
@@ -628,7 +637,7 @@ namespace coderush.Migrations
 
                     b.Property<int>("Quantity");
 
-                    b.Property<int>("remainder");
+                    b.Property<string>("prescription");
 
                     b.HasKey("PrescriptionLinesId");
 
@@ -829,7 +838,9 @@ namespace coderush.Migrations
 
                     b.HasKey("SalesOrderId");
 
-                    b.HasIndex("PrescriptionId");
+                    b.HasIndex("PrescriptionId")
+                        .IsUnique()
+                        .HasFilter("[PrescriptionId] IS NOT NULL");
 
                     b.ToTable("SalesOrder");
                 });
@@ -1213,8 +1224,21 @@ namespace coderush.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("coderush.Models.Invoice", b =>
+                {
+                    b.HasOne("coderush.Models.SalesOrder", "SalesOrder")
+                        .WithOne("Invoice")
+                        .HasForeignKey("coderush.Models.Invoice", "SalesOrderId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("coderush.Models.PaymentReceive", b =>
                 {
+                    b.HasOne("coderush.Models.Invoice", "Invoice")
+                        .WithMany()
+                        .HasForeignKey("InvoiceId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("coderush.Models.PaymentType", "PaymentType")
                         .WithMany()
                         .HasForeignKey("PaymentTypeId")
@@ -1271,8 +1295,8 @@ namespace coderush.Migrations
             modelBuilder.Entity("coderush.Models.SalesOrder", b =>
                 {
                     b.HasOne("coderush.Models.Prescription", "Prescription")
-                        .WithMany()
-                        .HasForeignKey("PrescriptionId");
+                        .WithOne("SalesOrder")
+                        .HasForeignKey("coderush.Models.SalesOrder", "PrescriptionId");
                 });
 
             modelBuilder.Entity("coderush.Models.SalesOrderLine", b =>

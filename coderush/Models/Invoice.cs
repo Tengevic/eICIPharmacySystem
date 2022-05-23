@@ -15,10 +15,12 @@ namespace coderush.Models
         //  public int ShipmentId { get; set; }
         public int SalesOrderId { get; set; }
         [Display(Name = "Invoice Date")]
+        public SalesOrder SalesOrder { get; set; }
         public DateTimeOffset InvoiceDate { get; set; }
         [Display(Name = "Invoice Due Date")]
         public DateTimeOffset InvoiceDueDate { get; set; }
         [Display(Name = "Invoice Type")]
         public int InvoiceTypeId { get; set; }
+        public bool fullyPaid { get; set; } = false;
     }
 }
