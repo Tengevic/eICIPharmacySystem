@@ -32,7 +32,7 @@ namespace coderush.Controllers.Api
         [HttpGet]
         public async Task<IActionResult> GetPaymentVoucher()
         {
-            List<PaymentVoucher> Items = await _context.PaymentVoucher.ToListAsync();
+            List<PaymentVoucher> Items = await _context.PaymentVoucher.OrderByDescending(x => x.PaymentvoucherId).ToListAsync();
             int Count = Items.Count();
             return Ok(new { Items, Count });
         }

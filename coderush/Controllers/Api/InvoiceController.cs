@@ -114,6 +114,17 @@ namespace coderush.Controllers.Api
                 return BadRequest(err);
 
             }
+            SalesOrder sales = _context.SalesOrder.Where(x =>x.SalesOrderId == invoice.SalesOrderId).Include(x => x.SalesOrderLines).FirstOrDefault();
+            if(sales.SalesOrderLines.Count == 0)
+            {
+                Err err = new Err
+                {
+                    message = "Add drugs to continue"
+                };
+                string errMsg = JsonConvert.SerializeObject(err);
+
+                return BadRequest(err);
+            }
             invoice.InvoiceDate = current;
             invoice.InvoiceName = _numberSequence.GetNumberSequence("INV");
             _context.Invoice.Add(invoice);

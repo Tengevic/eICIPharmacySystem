@@ -5,6 +5,7 @@
 <style>
     .my-custom-scrollbar {
         position: relative;
+        height: 175px;
         overflow: auto;
     }
 
@@ -156,14 +157,13 @@
                         <div class="box-body">
                             <div class="payment">
                                 <div class="table-wrapper-scroll-y my-custom-scrollbar">
-                                    <table id="payment" align="center" class="table-condensed table-bordered table-striped mb-0" style="width:100%">
+                                    <table id="payment" align="center" class="table table-bordered table-striped mb-0" style="width:100%">
                                         <thead>
                                             <tr>
                                                 <th> # </th>
                                                 <th>Payment Name</th>
-                                                <th>Invoice Name</th>
-                                                <th>payment Date</th>
                                                 <th>Payment type</th>
+                                                <th>Amount</th>
                                                 <th>Upload</th>
                                             </tr>
                                         </thead>
@@ -173,7 +173,6 @@
                                         </tbody>
                                     </table>
                                 </div>
-
                             </div>
                         </div>
                     </div>
@@ -267,6 +266,20 @@
         </tr>
         <tr>
             <td>
+                Generic type
+            </td>
+            <td>
+                <label id="genericType" name="genericType"></label>
+            </td>
+            <td>
+                Cost per unit:
+            </td>
+            <td>
+                <label id="Cost" name="Cost"></label>
+            </td>
+        </tr>
+        <tr>
+            <td>
                 batch No
             </td>
             <td>
@@ -286,14 +299,6 @@
             <td>
                 <input id="Quantity" type="number" onchange="NewAmount(this.value)" />
             </td>
-            <td>
-                Cost per unit:
-            </td>
-            <td>
-                <label id="Cost" name="Cost"></label>
-            </td>
-        </tr>
-        <tr>
             <td>
                 Amount
             </td>
@@ -463,6 +468,7 @@
                         $("#sendpay").hide();
                         $("#submitPay").prop('disabled', false);
                         toastr.success("Success");
+                        PaymentsList(result.InvoiceId);
                         for (let i = 0; i < paymentType.length; i++) {
                             if (paymentType[i].PaymentTypeId == result.PaymentTypeId) {
                                 if (paymentType[i].RequireUpload) {
@@ -482,6 +488,7 @@
                                  }
                             }
                         }
+                        
                     },
                     error: function (result) {
                         $("#sendpay").hide();
@@ -596,6 +603,7 @@
             $("#sendp").hide();
             $("#DrugName").text(Item.Product.ProductName);
             $("#UnitsofMeasure").text(Item.Product.UnitOfMeasure.UnitOfMeasureName);
+            $("#genericType").text(Item.Product.ProductType.ProductTypeName);
             $("#Quantity").val(Item.Quantity);
             $("#Cost").text(Item.Product.DefaultSellingPrice);
             Amount = Item.Quantity * Item.Product.DefaultSellingPrice;
@@ -696,7 +704,6 @@
                 }
             });
         }
-
         function PaymentsList(InvoiceId) {
                $.ajax({
                 type: 'GET',
@@ -712,17 +719,15 @@
                                var row = table.insertRow(-1)
                                row.insertCell(0).innerHTML = i + 1;
                                row.insertCell(1).innerHTML = item[i].PaymentReceiveName;
-                               row.insertCell(2).innerHTML = item[i].Invoice.InvoiceName;
-                               row.insertCell(3).innerHTML = item[i].PaymentDate;
-                               row.insertCell(4).innerHTML = item[i].PaymentType.PaymentTypeName;
-                               row.insertCell(5).innerHTML = "<a href='/PaymentReceive/Detail/" + item[i].PaymentReceiveId +"'>Uploads</a>";
+                               row.insertCell(2).innerHTML = item[i].PaymentType.PaymentTypeName;
+                               row.insertCell(3).innerHTML = item[i].PaymentAmount;
+                               row.insertCell(4).innerHTML = "<a href='/PaymentReceive/Detail/" + item[i].PaymentReceiveId +"'>Uploads</a>";
                               
                            }
                        }
                 }
             });
         }
-
         $(function () {
             var InvoiceId = $("#invoiceId").val();
             if (InvoiceId == null) {
@@ -752,7 +757,7 @@
                 height: 400,
                 showOnInit: false,
                 close: function (args) {
-
+                    location.reload();
                 }
 
             });

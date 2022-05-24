@@ -10,6 +10,7 @@ using coderush.Models;
 using coderush.Services;
 using coderush.Models.SyncfusionViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Newtonsoft.Json;
 
 namespace coderush.Controllers.Api
 {
@@ -52,8 +53,8 @@ namespace coderush.Controllers.Api
         public async Task<IActionResult> GetByPrescriptionId([FromRoute] int id)
         {
             List<PrescriptionLines> Items = await _context.PrescriptionLines
-                    .Include(x => x.Product)
-                        .ThenInclude(x => x.UnitOfMeasure)
+                    .Include(x => x.Product.UnitOfMeasure)
+                    .Include(x => x.Product.ProductType)
                     .Where(x => x.PrescriptionId == id)
                     .ToListAsync();
             int Count = Items.Count();
@@ -63,6 +64,20 @@ namespace coderush.Controllers.Api
         public IActionResult Insert([FromBody] CrudViewModel<PrescriptionLines> payload)
         {
             PrescriptionLines prescriptionLines = payload.value;
+            Prescription prescription = _context.Prescription
+                .Where(x => x.PrescriptionId == prescriptionLines.PrescriptionId)
+                .Include(x => x.SalesOrder)
+                .FirstOrDefault();
+            if(prescription.SalesOrder != null)
+            {
+                Err err = new Err
+                {
+                    message = "This prescription is already sold"
+                };
+                string errMsg = JsonConvert.SerializeObject(err);
+
+                return BadRequest(err);
+            }
             prescriptionLines.OderId = 0;
             prescriptionLines.PrescriptionLinesName = _numberSequence.GetNumberSequence("PSL");
             _context.PrescriptionLines.Add(prescriptionLines);
@@ -75,6 +90,20 @@ namespace coderush.Controllers.Api
         {
             PrescriptionLines prescriptionLines = payload;
             prescriptionLines.OderId = 0;
+            Prescription prescription = _context.Prescription
+               .Where(x => x.PrescriptionId == prescriptionLines.PrescriptionId)
+               .Include(x => x.SalesOrder)
+               .FirstOrDefault();
+            if (prescription.SalesOrder != null)
+            {
+                Err err = new Err
+                {
+                    message = "This prescription is already sold"
+                };
+                string errMsg = JsonConvert.SerializeObject(err);
+
+                return BadRequest(err);
+            }
             prescriptionLines.PrescriptionLinesName = _numberSequence.GetNumberSequence("PSL");
             _context.PrescriptionLines.Add(prescriptionLines);
             _context.SaveChanges();
@@ -84,6 +113,20 @@ namespace coderush.Controllers.Api
         public IActionResult Update([FromBody] CrudViewModel<PrescriptionLines> payload)
         {
             PrescriptionLines prescriptionLines = payload.value;
+            Prescription prescription = _context.Prescription
+               .Where(x => x.PrescriptionId == prescriptionLines.PrescriptionId)
+               .Include(x => x.SalesOrder)
+               .FirstOrDefault();
+            if (prescription.SalesOrder != null)
+            {
+                Err err = new Err
+                {
+                    message = "This prescription is already sold"
+                };
+                string errMsg = JsonConvert.SerializeObject(err);
+
+                return BadRequest(err);
+            }
             _context.PrescriptionLines.Update(prescriptionLines);
             _context.SaveChanges();
             return Ok(prescriptionLines);
@@ -92,6 +135,20 @@ namespace coderush.Controllers.Api
         public IActionResult Put([FromBody] PrescriptionLines payload)
         {
             PrescriptionLines prescriptionLines = payload;
+            Prescription prescription = _context.Prescription
+               .Where(x => x.PrescriptionId == prescriptionLines.PrescriptionId)
+               .Include(x => x.SalesOrder)
+               .FirstOrDefault();
+            if (prescription.SalesOrder != null)
+            {
+                Err err = new Err
+                {
+                    message = "This prescription is already sold"
+                };
+                string errMsg = JsonConvert.SerializeObject(err);
+
+                return BadRequest(err);
+            }
             _context.PrescriptionLines.Update(prescriptionLines);
             _context.SaveChanges();
             return Ok(prescriptionLines);

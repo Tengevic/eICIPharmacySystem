@@ -99,13 +99,21 @@
                                     Drug Name
                                 </td>
                                 <td>
-                                    <input id="ProductId" />
+                                    <label id="ProductId" name="ProductId"></label>
                                 </td>
                                 <td>
                                     Units of Measure:
                                 </td>
                                 <td>
                                     <label id="UnitsofMeasure" name="UnitsofMeasure"></label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Generic type
+                                </td>
+                                <td>
+                                    <label id="genericType" name="genericType"></label>
                                 </td>
                             </tr>
                             <tr>
@@ -128,21 +136,13 @@
                                     Quantity:
                                 </td>
                                 <td>
-                                    <input id="Quantity" type="number" onchange="NewAmount(this.value)" />
+                                    <label id="Quantity" name="Quantity"></label>
                                 </td>
                                 <td>
                                     Total Cost:
                                 </td>
                                 <td>
                                     <label id="Cost" name="cost"></label>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <button id="btnsubmit" type="button" onclick="AddPrescription()">Submit</button>
-                                </td>
-                                <td>
-                                    <p id="sendp" style="color: green">Submiting... </p>
                                 </td>
                             </tr>
                         </table>
@@ -180,8 +180,7 @@
 }
 @section Scripts{
     <script type="text/javascript">
-        var Drugs;
-        var productId;
+
         // Make sale order
         function MakeSale() {
             data = {
@@ -206,7 +205,7 @@
                 data: JSON.stringify(data),
                 url: "/api/SalesOrder/AddByPrescription",
                 beforeSend: function () {
-  
+
                 },
                 success: function (result) {
                     SalesOrderId = result.SalesOrderId;
@@ -215,7 +214,7 @@
                 error: function (result) {
                     var s = ej.parseJSON(result.responseText)
                     toastr.warning(s.message, "Cannot make sale");
-                 
+
                 }
             });
         }
@@ -224,60 +223,21 @@
             $("#Cost").text(Amount);
         }
         // Add prescription from prescription table
-        function AddPrescription() {
-            Quantity = $("#Quantity").val();
-            if (Quantity == "") {
-                Quantity = "0";
-            }
-            data = {
-                PrescriptionId:  @Model.PrescriptionId,
-                ProductId: productId,
-                Quantity: parseInt(Quantity),
-                remainder: 0
-            }
-            if (data.ProductId == null) {
-                toastr.warning("Please select a drug")
-            } else if (data.Quantity < 1) {
-                toastr.warning("Quantity can not be less than 1")
-            }
-            else {
-                $.ajax({
-                    type: "POST",
-                    contentType: "application/json;charset=utf-8",
-                    data: JSON.stringify(data),
-                    url: "/api/PrescriptionLines/Add",
-                    beforeSend: function () {
-                        $("#sendp").show();
-                        $("#btnsubmit").prop('disabled', true);
-                    },
-                    success: function (result) {
-                        $("#sendp").hide();
-                        $("#btnsubmit").prop('disabled', false);
-                        toastr.success("Success");
-                        location.reload();
-                    },
-                    error: function (result) {
-                        $("#sendp").hide();
-                        var s = ej.parseJSON(result.responseText)
-                        toastr.warning(s.message, "Cannot make sale");
-                        $("#btnsubmit").prop('disabled', false);
-                    }
-                });
-            }
-
-        }
         $(function () {
-            $("#sendp").hide();
+            var Drugs;
             $("#ApproveP").hide();
             // Approve button
             $("#Approved").ejCheckBox({
                 checked: '@(Model.Approved)' === '@true',
                 change: function (args) {
+                    var check = args.isChecked;
+                    console.log(args);
+                    
                     data = {
                         PrescriptionId: @Model.PrescriptionId,
                         PrescriptionName: "@Model.PrescriptionName",
                         CustomerId:@Model.CustomerId,
-                       
+
                         Approved: args.isChecked
                     }
                     $.ajax({
@@ -290,13 +250,17 @@
                         },
                         success: function (result) {
                             $("#ApproveP").hide();
-                            
-                            toastr.success("Success");
+                            if (result.Approved) {
+                                toastr.success("Approved");
+                            } else {
+                                toastr.success("Success");
+                            }
+
                         },
                         error: function (result) {
                             $("#ApproveP").hide();
                             var s = ej.parseJSON(result.responseText)
-                            toastr.warning(s.message, "Cannot make sale");
+                            toastr.warning(s.message);
                         }
                     });
                 }
@@ -318,27 +282,6 @@
                 url: "/api/Prescription",
                 adaptor: new ej.WebApiAdaptor()
             });
-
-            $('#ProductId').ejDropDownList({
-                dataSource: dataManagerProduct,
-                fields: { id: 'ProductId', text: 'ProductName', value: 'ProductId' },
-                change: function (args) {
-                    productId = args.value;
-                    $.ajax({
-                        type: 'GET',
-                        url: '/api/Product/GetProductbyId/' + productId,
-                        success: function (data) {
-                            Drugs = data;
-                            $("#UnitsofMeasure").text(Drugs.UnitOfMeasure.UnitOfMeasureName);
-                            $("#instock").text(Drugs.InStock);
-                            $("#sellPrice").text(Drugs.DefaultSellingPrice);
-                            NewAmount(0);
-                        }
-                    });
-                }
-            });
-
-
             dataManager.ready.done(function (e) {
             $("#Grid").ejGrid({
                 dataSource: ej.DataManager({
@@ -363,11 +306,22 @@
                     { field: "PrescriptionLinesId", headerText: 'Line Id', isPrimaryKey: true, isIdentity: true, visible: false },
                     { field: "PrescriptionId", headerText: 'PS#', defaultValue: @Model.PrescriptionId, foreignKeyField: "PrescriptionId", foreignKeyValue: "PrescriptionName", dataSource: dataManagerPrescription, visible: false },
                     { field: "ProductId", headerText: 'Drug', foreignKeyField: "ProductId", foreignKeyValue: "ProductName", dataSource: dataManagerProduct },
-                    { field: "prescription", headerText: 'Prescription number' },
+                    { field: "prescription", headerText: 'Prescription' },
                     { field: "Quantity", headerText: 'Quantity', defaultValue: 1, editType: "numericedit" },
                     { field: "remainder", headerText: 'Units sold', defaultValue: 0, editType: "numericedit", allowEditing: false, visible: false  },
 
                 ],
+                actionFailure: function (args) {
+                    if (args.requestType == "save") {
+                        var s = ej.parseJSON(args.error.responseText)
+                        toastr.warning(s.message);
+                    }
+                    if (args.requestType == 'delete') {
+                        var s = ej.parseJSON(args.error.error.responseText)
+                        toastr.warning(s.message);
+                    }
+                },
+                actionComplete: "complete",
 
 
             });
@@ -376,6 +330,32 @@
 
         });
 
-
+        function complete(args) {
+            if (args.requestType == 'beginedit' || args.requestType == 'add') {
+                $('#GridProductId').ejDropDownList({
+                    change: function (args) {
+                        $.ajax({
+                            type: 'GET',
+                            url: '/api/Product/GetProductbyId/' + args.value,
+                            success: function (data) {
+                                Drugs = data;
+                                $("#genericType").text(data.ProductType.ProductTypeName);
+                                $("#ProductId").text(data.ProductName);
+                                $("#UnitsofMeasure").text(data.UnitOfMeasure.UnitOfMeasureName);
+                                $("#instock").text(data.InStock);
+                                $("#sellPrice").text(data.DefaultSellingPrice);
+                                NewAmount(0);
+                            }
+                        });
+                    }
+                });
+                $("#GridQuantity").ejNumericTextbox({
+                    change: function (args) {
+                        $("#Quantity").text(args.value)
+                        NewAmount(args.value);
+                    }
+                });
+            }
+        }
     </script>
 }

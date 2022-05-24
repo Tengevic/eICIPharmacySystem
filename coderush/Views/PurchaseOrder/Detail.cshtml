@@ -90,7 +90,7 @@
             <div class="col-lg-6">
                 <div class="box">
                     <div class="box-header with-border">
-                        <h3 class="box-title text-primary"><i class="fa fa-pie-chart"></i> Add order</h3>
+                        <h3 class="box-title text-primary"><i class="fa fa-pie-chart"></i> order Details</h3>
                         <div class="box-tools pull-right">
                             <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
                                     title="Collapse">
@@ -102,13 +102,13 @@
                         </div>
                     </div>
                     <div class="box-body">
-                        <table class="table-condensed table-bordered table-striped mb-0" >
+                        <table class="table table-bordered table-striped mb-0" >
                             <tr>
                                 <td>
                                     Drug Name
                                 </td>
                                 <td>
-                                    <input id="ProductId" />
+                                    <label id="ProductId" name="ProductId"></label>
                                 </td>
                                 <td>
                                     Units of Measure:
@@ -119,10 +119,18 @@
                             </tr>
                             <tr>
                                 <td>
+                                    Generic type
+                                </td>
+                                <td>
+                                    <label id="genericType" name="genericType"></label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
                                     Quantity:
                                 </td>
                                 <td>
-                                    <input id="Quantity" type="number" onchange="NewAmount(this.value)" />
+                                    <label id="Quantity" name="Quantity"></label>
                                 </td>
 
                                 <td>
@@ -141,29 +149,7 @@
                                     <label id="Cost" name="cost"></label>
                                 </td>
                             </tr>
-                            <tr>
-                                <td>
-                                    Discount Percentage
-                                </td>
-                                <td>
-                                    <input id="Disc" type="number" value=0 />
-                                </td>
-                                <td>
-                                    Tax Percentage
-                                </td>
-                                <td>
-                                    <input id="TaxPer" type="number" value=0 />
-                                </td>
-
-                            </tr>
-                            <tr>
-                                <td>
-                                    <button id="btnsubmit" type="button" onclick="Submit()">Submit</button>
-                                </td>
-                                <td>
-                                    <p id="sendp" style="color: green">Submiting... </p>
-                                </td>
-                            </tr>
+                           
                         </table>
                     </div>
                 </div>
@@ -250,61 +236,6 @@
             Amount = x * Drugs.DefaultBuyingPrice;
             $("#Cost").text(Amount);
         }
-        function Submit() {
-            DiscountPercentage = $("#Disc").val();
-            TaxPercentage = $("#TaxPer").val();
-            Quantity = $("#Quantity").val();
-            if (DiscountPercentage == "") {
-                DiscountPercentage = "0";
-            }
-            if (TaxPercentage == "") {
-                TaxPercentage = "0";
-            }
-            if (Quantity == "") {
-                Quantity = "0";
-            }
-            var data = {
-                "PurchaseOrderId": @Model.PurchaseOrderId,
-                "Total": 0,
-                "TaxAmount": 0,
-                "TaxPercentage": parseInt(TaxPercentage),
-                "SubTotal": 0,
-                "DiscountAmount": 0,
-                "DiscountPercentage": parseInt(DiscountPercentage),
-                "Amount": 0,
-                Price: 0,
-                Quantity: parseInt(Quantity),
-                ProductId: Drugs.ProductId,
-            }
-            if (data.ProductId == null) {
-                toastr.warning("Please select a drug");
-            } else if (data.Quantity < 1) {
-                toastr.warning("Quantity can not be less than 1");
-            }
-            else {
-                $.ajax({
-                    type: "POST",
-                    contentType: "application/json;charset=utf-8",
-                    data: JSON.stringify(data),
-                    url: "/api/PurchaseOrderLine/Add",
-                    beforeSend: function () {
-                        $("#sendp").show();
-                        $("#btnsubmit").prop('disabled', true);
-                    },
-                    success: function (result) {
-                        $("#sendp").hide();
-                        $("#btnsubmit").prop('disabled', false);
-                        toastr.success("Success");
-                        location.reload();
-                    },
-                    error: function (result) {
-                        var s = ej.parseJSON(result.responseText)
-                        toastr.warning(s.message, "Cannot Add Drug");
-                        $("#btnsubmit").prop('disabled', false);
-                    }
-                });
-            }
-        }
         $(function () {
             $("#sendp").hide();
             var dataManager = ej.DataManager({
@@ -354,10 +285,7 @@
                         url: '/api/Product/GetProductbyId/' + productId,
                         success: function (data) {
                             Drugs = data;
-                            $("#UnitsofMeasure").text(Drugs.UnitOfMeasure.UnitOfMeasureName);
-                            $("#instock").text(Drugs.InStock);
-                            $("#buyingPrice").text(Drugs.DefaultBuyingPrice);
-
+                         
                         }
                     });
                 }
@@ -434,10 +362,6 @@
             });
 
         });
-        $('#GridProductId').on('change',function () {
-            alert("Handler for .change() called.");
-        });
-
         function complete(args) {
 
             if (args.requestType == 'beginedit') {
@@ -453,9 +377,22 @@
                             type: 'GET',
                             url: '/api/Product/GetProductbyId/' + args.value,
                             success: function (data) {
+                                Drugs = data;
                                 $('#GridPrice').ejNumericTextbox({ value: data.DefaultBuyingPrice });
+                                $("#genericType").text(data.ProductType.ProductTypeName);
+                                $("#ProductId").text(data.ProductName);
+                                $("#UnitsofMeasure").text(data.UnitOfMeasure.UnitOfMeasureName);
+                                $("#instock").text(data.InStock);
+                                $("#buyingPrice").text(data.DefaultBuyingPrice);
+                                $("#Quantity").text(0);
                             }
                         });
+                    }
+                });
+                $('#GridQuantity').ejNumericTextbox({
+                    change: function (args) {
+                        $("#Quantity").text(args.value)
+                        NewAmount(args.value);
                     }
                 });
             }

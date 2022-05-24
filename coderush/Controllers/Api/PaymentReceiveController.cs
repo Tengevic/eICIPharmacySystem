@@ -32,7 +32,7 @@ namespace coderush.Controllers.Api
         [HttpGet]
         public async Task<IActionResult> GetPaymentReceive()
         {
-            List<PaymentReceive> Items = await _context.PaymentReceive.ToListAsync();
+            List<PaymentReceive> Items = await _context.PaymentReceive.OrderByDescending(x =>x.InvoiceId).ToListAsync();
             int Count = Items.Count();
             return Ok(new { Items, Count });
         }
@@ -88,7 +88,7 @@ namespace coderush.Controllers.Api
             PaymentReceive paymentReceive = payload.value;
             if (paymentReceive.IsFullPayment)
             {
-                Invoice invoice = _context.Invoice.Find(paymentReceive.Invoice);
+                Invoice invoice = _context.Invoice.Find(paymentReceive.InvoiceId);
                 invoice.fullyPaid = paymentReceive.IsFullPayment;
                 _context.Invoice.Update(invoice);
                 _context.SaveChanges();
@@ -104,6 +104,13 @@ namespace coderush.Controllers.Api
             PaymentReceive paymentReceive = _context.PaymentReceive
                 .Where(x => x.PaymentReceiveId == (int)payload.key)
                 .FirstOrDefault();
+            if (paymentReceive.IsFullPayment)
+            {
+                Invoice invoice = _context.Invoice.Find(paymentReceive.InvoiceId);
+                invoice.fullyPaid = !paymentReceive.IsFullPayment;
+                _context.Invoice.Update(invoice);
+                _context.SaveChanges();
+            }
             _context.PaymentReceive.Remove(paymentReceive);
             _context.SaveChanges();
             return Ok(paymentReceive);

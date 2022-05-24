@@ -32,7 +32,7 @@ namespace coderush.Controllers.Api
         [HttpGet]
         public async Task<IActionResult> GetPrescription()
         {
-            List<Prescription> Items = await _context.Prescription.ToListAsync();
+            List<Prescription> Items = await _context.Prescription.OrderByDescending(x => x.PrescriptionId).ToListAsync();
             int Count = Items.Count();
             return Ok(new { Items, Count });
         }
@@ -78,6 +78,7 @@ namespace coderush.Controllers.Api
         public IActionResult Insert([FromBody] CrudViewModel<Prescription> payload)
         {
             Prescription prescription = payload.value;
+            prescription.Approved = false;
             prescription.PrescriptionName = _numberSequence.GetNumberSequence("PS");
             _context.Prescription.Add(prescription);
             _context.SaveChanges();        
@@ -147,7 +148,38 @@ namespace coderush.Controllers.Api
         public IActionResult Update([FromBody] CrudViewModel<Prescription> payload)
         {
             Prescription prescription = payload.value;
-            _context.Prescription.Update(prescription);
+            Prescription Update = _context.Prescription
+             .Include(x => x.prescriptionLines)
+             .Include(x => x.SalesOrder)
+             .Where(x => x.PrescriptionId == prescription.PrescriptionId)
+             .FirstOrDefault();
+            if (prescription.Approved)
+            {
+                if (Update.prescriptionLines == null)
+                {
+                    Err err = new Err
+                    {
+                        message = "Prescriptions is empty"
+                    };
+                    string errMsg = JsonConvert.SerializeObject(err);
+
+                    return BadRequest(err);
+                }
+            }
+            if (!prescription.Approved)
+            {
+                if(Update.SalesOrder != null)
+                {
+                    Err err = new Err
+                    {
+                        message = "Prescription is sold"
+                    };
+                    string errMsg = JsonConvert.SerializeObject(err);
+
+                    return BadRequest(err);
+                }
+            }
+            _context.Prescription.Update(Update);
             _context.SaveChanges();
             return Ok(prescription);
         }
@@ -155,7 +187,25 @@ namespace coderush.Controllers.Api
         public IActionResult Put([FromBody] Prescription payload)
         {
             Prescription prescription = payload;
-            _context.Prescription.Update(prescription);
+            Prescription Update = _context.Prescription
+            .Include(x => x.prescriptionLines)
+            .Where(x => x.PrescriptionId == prescription.PrescriptionId)
+            .FirstOrDefault();
+            if (prescription.Approved)
+            {
+             
+                if (Update.prescriptionLines == null)
+                {
+                    Err err = new Err
+                    {
+                        message = "Prescriptions is empty"
+                    };
+                    string errMsg = JsonConvert.SerializeObject(err);
+
+                    return BadRequest(err);
+                }
+            }
+            _context.Prescription.Update(Update);
             _context.SaveChanges();
             return Ok(prescription);
         }
@@ -163,7 +213,36 @@ namespace coderush.Controllers.Api
         public IActionResult Approve([FromBody] Prescription payload)
         {
             Prescription prescription = payload;
-            Prescription Update = _context.Prescription.Find(prescription.PrescriptionId);
+            Prescription Update = _context.Prescription
+                            .Include(x => x.prescriptionLines)
+                            .Include(x => x.SalesOrder)
+                           .SingleOrDefault(x => x.PrescriptionId.Equals(prescription.PrescriptionId));
+            if (prescription.Approved) {
+                if (Update.prescriptionLines.Count == 0)
+                {
+                    Err err = new Err
+                    {
+                        message = "Prescriptions is empty"
+                    };
+                    string errMsg = JsonConvert.SerializeObject(err);
+
+                    return BadRequest(err);
+                }
+            }
+            if (!prescription.Approved)
+            {
+                if (Update.SalesOrder != null)
+                {
+                    Err err = new Err
+                    {
+                        message = "Prescription is sold"
+                    };
+                    string errMsg = JsonConvert.SerializeObject(err);
+
+                    return BadRequest(err);
+                }
+            }
+
             Update.Approved = prescription.Approved;
             _context.Prescription.Update(Update);
             _context.SaveChanges();

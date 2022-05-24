@@ -36,6 +36,7 @@ namespace coderush.Controllers.Api
         {
             Product Items = await _context.Product
                 .Include(x => x.UnitOfMeasure)
+                .Include(x =>x.ProductType)
                 .Where(x => x.ProductId == id)
                 .FirstOrDefaultAsync();
            
