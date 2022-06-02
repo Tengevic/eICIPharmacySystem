@@ -15,6 +15,46 @@ namespace coderush.Pages
             public const string ControllerName = "Notifications";
             public const string ActionName = "Index";
         }
+         public static class RFPDrugRecieve
+        {
+            public const string PageName = "RFPDrugRecieve";
+            public const string RoleName = "RFPDrugRecieve";
+            public const string Path = "/RFPDrugRecieve/Index";
+            public const string ControllerName = "RFPDrugRecieve";
+            public const string ActionName = "Index";
+        }
+        public static class RFPCustomer
+        {
+            public const string PageName = "RFPCustomer";
+            public const string RoleName = "RFPCustomer";
+            public const string Path = "/RFPCustomer/Index";
+            public const string ControllerName = "RFPCustomer";
+            public const string ActionName = "Index";
+        }
+        public static class RFPinvoice
+        {
+            public const string PageName = "RFPinvoice";
+            public const string RoleName = "RFPinvoice";
+            public const string Path = "/RFPinvoice/Index";
+            public const string ControllerName = "RFPinvoice";
+            public const string ActionName = "Index";
+        }
+        public static class RFPpaymentRecieved
+        {
+            public const string PageName = "RFPpaymentRecieved";
+            public const string RoleName = "RFPpaymentRecieved";
+            public const string Path = "/RFPpaymentRecieved/Index";
+            public const string ControllerName = "RFPpaymentRecieved";
+            public const string ActionName = "Index";
+        }
+        public static class RFPSaleorder
+        {
+            public const string PageName = "RFPSaleorder";
+            public const string RoleName = "RFPSaleorder";
+            public const string Path = "/RFPSaleorder/Index";
+            public const string ControllerName = "RFPSaleorder";
+            public const string ActionName = "Index";
+        }
         public static class Customer
         {
             public const string PageName = "Customer";

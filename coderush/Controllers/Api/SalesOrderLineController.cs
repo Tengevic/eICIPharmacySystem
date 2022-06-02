@@ -30,14 +30,24 @@ namespace coderush.Controllers.Api
         public async Task<IActionResult> GetSalesOrderLine()
         {
             var headers = Request.Headers["SalesOrderId"];
+            var headersRFP = Request.Headers["RFPSaleorderId"];
             var headersProduct = Request.Headers["ProductId"];
             int salesOrderId = Convert.ToInt32(headers);
             int productId = Convert.ToInt32(headersProduct);
+            int RFPSaleorderId = Convert.ToInt32(headersRFP); ;
 
             if (productId != 0)
             {
                 List<SalesOrderLine> Items = await _context.SalesOrderLine
                 .Where(x => x.ProductId.Equals(productId))
+                .ToListAsync();
+                int Count = Items.Count();
+                return Ok(new { Items, Count });
+            } 
+            else if (RFPSaleorderId != 0)
+            {
+                List<SalesOrderLine> Items = await _context.SalesOrderLine
+                .Where(x => x.RFPSaleorderId.Equals(RFPSaleorderId))
                 .ToListAsync();
                 int Count = Items.Count();
                 return Ok(new { Items, Count });
@@ -157,39 +167,43 @@ namespace coderush.Controllers.Api
             return salesOrderLine;
         }
 
-        private void UpdateSalesOrder(int salesOrderId)
+        private void UpdateSalesOrder(SalesOrderLine salesOrderLine)
         {
-            try
+            if(salesOrderLine.SalesOrder != null)
             {
-                SalesOrder salesOrder = new SalesOrder();
-                salesOrder = _context.SalesOrder
-                    .Where(x => x.SalesOrderId.Equals(salesOrderId))
-                    .FirstOrDefault();
-
-                if (salesOrder != null)
+                try
                 {
-                    List<SalesOrderLine> lines = new List<SalesOrderLine>();
-                    lines = _context.SalesOrderLine.Where(x => x.SalesOrderId.Equals(salesOrderId)).ToList();
-                    
-                    //update master data by its lines
-                    salesOrder.Amount = lines.Sum(x => x.Amount);
-                    salesOrder.SubTotal = lines.Sum(x => x.SubTotal);
+                    SalesOrder salesOrder = new SalesOrder();
+                    salesOrder = _context.SalesOrder
+                        .Where(x => x.SalesOrderId.Equals(salesOrderLine.SalesOrderId))
+                        .FirstOrDefault();
 
-                    salesOrder.Discount = lines.Sum(x => x.DiscountAmount);
-                    salesOrder.Tax = lines.Sum(x => x.TaxAmount);
+                    if (salesOrder != null)
+                    {
+                        List<SalesOrderLine> lines = new List<SalesOrderLine>();
+                        lines = _context.SalesOrderLine.Where(x => x.SalesOrderId.Equals(salesOrderLine.SalesOrderId)).ToList();
 
-                    salesOrder.Total = salesOrder.Freight + lines.Sum(x => x.Total);
+                        //update master data by its lines
+                        salesOrder.Amount = lines.Sum(x => x.Amount);
+                        salesOrder.SubTotal = lines.Sum(x => x.SubTotal);
 
-                    _context.Update(salesOrder);
+                        salesOrder.Discount = lines.Sum(x => x.DiscountAmount);
+                        salesOrder.Tax = lines.Sum(x => x.TaxAmount);
 
-                    _context.SaveChanges();
+                        salesOrder.Total = salesOrder.Freight + lines.Sum(x => x.Total);
+
+                        _context.Update(salesOrder);
+
+                        _context.SaveChanges();
+                    }
+                }
+                catch (Exception)
+                {
+
+                    throw;
                 }
             }
-            catch (Exception)
-            {
-
-                throw;
-            }
+            
         }
         private void UpdateBatch(int batchId)
         {
@@ -220,50 +234,100 @@ namespace coderush.Controllers.Api
         public IActionResult Insert([FromBody]CrudViewModel<SalesOrderLine> payload)
         {
             SalesOrderLine salesOrderLine = payload.value;
-            SalesOrder salesOrder = _context.SalesOrder
+
+            if(salesOrderLine.SalesOrderId != null)
+            {
+                SalesOrder salesOrder = _context.SalesOrder
                                 .Where(x => x.SalesOrderId == salesOrderLine.SalesOrderId)
                                 .Include(x => x.Invoice)
                                 .FirstOrDefault();
-            if(salesOrder.Invoice != null)
-            {
-                Err err = new Err
+                if (salesOrder.Invoice != null)
                 {
-                    message = "This oder is already Invoiced",
-                };
-                string errMsg = JsonConvert.SerializeObject(err);
+                    Err err = new Err
+                    {
+                        message = "This oder is already Invoiced",
+                    };
+                    string errMsg = JsonConvert.SerializeObject(err);
 
-                return BadRequest(err);
+                    return BadRequest(err);
+                }
             }
-            GoodsRecievedNoteLine batch = _context.GoodsRecievedNoteLine.Find(salesOrderLine.GoodsRecievedNoteLineId);
-            
-            if( batch.ProductId != salesOrderLine.ProductId )
+            if (salesOrderLine.RFPSaleorderId != null)
             {
-                Err err = new Err
+                RFPSaleorder salesOrder = _context.RFPSaleorder
+                                .Where(x => x.RFPSaleorderId == salesOrderLine.RFPSaleorderId)
+                                .Include(x => x.RFPinvoice)
+                                .FirstOrDefault();
+                if (salesOrder.RFPinvoice != null)
                 {
-                    message = "Product doesn't have the batchId"
-                };
-                string errMsg = JsonConvert.SerializeObject(err);
+                    Err err = new Err
+                    {
+                        message = "This oder is already Invoiced",
+                    };
+                    string errMsg = JsonConvert.SerializeObject(err);
 
-                return BadRequest(err);
+                    return BadRequest(err);
+                }
             }
-            if (batch.InStock < salesOrderLine.Quantity)
-            {
-                Err err = new Err
-                {
-                    message = $"Stock available for this Batch is {batch.InStock} ",
-                };
-                string errMsg = JsonConvert.SerializeObject(err);
 
-                return BadRequest(err);
-            }
             Product product = _context.Product.Find(salesOrderLine.ProductId);
-            salesOrderLine.Price = product.DefaultSellingPrice;  
-            salesOrderLine = this.Recalculate(salesOrderLine);
-            _context.SalesOrderLine.Add(salesOrderLine);
-            _context.SaveChanges();
-            this.UpdateSalesOrder(salesOrderLine.SalesOrderId);
-            this.UpdateStock(salesOrderLine.ProductId);
-            this.UpdateBatch(salesOrderLine.GoodsRecievedNoteLineId);
+            if (product.InStock < salesOrderLine.Quantity)
+            {
+                Err err = new Err
+                {
+                    message = "Drug in instock is " + product.InStock ,
+                };
+                string errMsg = JsonConvert.SerializeObject(err);
+
+                return BadRequest(err);
+            }
+            double Quantity = salesOrderLine.Quantity;
+            double remain = salesOrderLine.Quantity;
+            do {
+                double sold;
+                
+                GoodsRecievedNoteLine batch = _context.GoodsRecievedNoteLine
+                  .Where(x => x.ProductId == salesOrderLine.ProductId)
+                  .Where(x => x.InStock > 0)
+                  .OrderBy(x => x.ExpiryDate)
+                  .First();
+
+                if (batch.InStock > Quantity)
+                {
+                    sold = remain;
+                    Quantity = Quantity - sold;
+                }
+                else
+                {
+                    sold = batch.InStock;
+                    Quantity = Quantity - sold;
+                    remain = Quantity;
+                }
+                SalesOrderLine orderLine = new SalesOrderLine
+                {
+                    ProductId = salesOrderLine.ProductId,
+                    SalesOrderId = salesOrderLine.SalesOrderId,
+                    RFPSaleorderId = salesOrderLine.RFPSaleorderId,
+                    Quantity = salesOrderLine.Quantity,
+                    Amount = salesOrderLine.Amount,
+                    Description = salesOrderLine.Description,
+                    DiscountPercentage = salesOrderLine.DiscountPercentage,
+                    GoodsRecievedNoteLineId = salesOrderLine.GoodsRecievedNoteLineId,
+                    TaxPercentage = salesOrderLine.TaxPercentage,
+                    Price = salesOrderLine.Price,
+                    
+                };
+                orderLine.Quantity = sold;
+                orderLine.GoodsRecievedNoteLineId = batch.GoodsRecievedNoteLineId;
+                orderLine = this.Recalculate(orderLine);
+                _context.SalesOrderLine.Add(orderLine);
+                _context.SaveChanges();
+                salesOrderLine = orderLine;
+                this.UpdateSalesOrder(salesOrderLine);
+                this.UpdateStock(salesOrderLine.ProductId);
+                this.UpdateBatch(salesOrderLine.GoodsRecievedNoteLineId);
+                
+            } while (Quantity > 0);
             return Ok(salesOrderLine);
 
         }
@@ -312,7 +376,7 @@ namespace coderush.Controllers.Api
             salesOrderLine = this.Recalculate(salesOrderLine);
             _context.SalesOrderLine.Add(salesOrderLine);
             _context.SaveChanges();
-            this.UpdateSalesOrder(salesOrderLine.SalesOrderId);
+            this.UpdateSalesOrder(salesOrderLine);
             this.UpdateStock(salesOrderLine.ProductId);
             this.UpdateBatch(salesOrderLine.GoodsRecievedNoteLineId);
             return Ok(salesOrderLine);
@@ -337,34 +401,29 @@ namespace coderush.Controllers.Api
 
                 return BadRequest(err);
             }
-            GoodsRecievedNoteLine batch = _context.GoodsRecievedNoteLine.Find(salesOrderLine.GoodsRecievedNoteLineId);
+            GoodsRecievedNoteLine batch = _context.GoodsRecievedNoteLine
+                .Where(x => x.ProductId == salesOrderLine.ProductId)
+                .Where(x => x.InStock > 1)
+                .OrderBy(x => x.ExpiryDate)
+                .First();
 
-            if (batch.ProductId != salesOrderLine.ProductId)
+            if(batch.InStock < salesOrderLine.Quantity)
             {
                 Err err = new Err
                 {
-                    message = "Product doesn't have the batchId"
+                    message = "Error",
                 };
                 string errMsg = JsonConvert.SerializeObject(err);
 
                 return BadRequest(err);
             }
-            if (batch.InStock < salesOrderLine.Quantity)
-            {
-                Err err = new Err
-                {
-                    message = $"Stock available for this Batch is {batch.InStock} ",
-                };
-                string errMsg = JsonConvert.SerializeObject(err);
-
-                return BadRequest(err);
-            }
+            salesOrderLine.GoodsRecievedNoteLineId = batch.GoodsRecievedNoteLineId;
             Product product = _context.Product.Find(salesOrderLine.ProductId);
             salesOrderLine.Price = product.DefaultSellingPrice;
             salesOrderLine = this.Recalculate(salesOrderLine);
             _context.SalesOrderLine.Update(salesOrderLine);
             _context.SaveChanges();
-            this.UpdateSalesOrder(salesOrderLine.SalesOrderId);
+            this.UpdateSalesOrder(salesOrderLine);
             this.UpdateStock(salesOrderLine.ProductId);
             this.UpdateBatch(salesOrderLine.GoodsRecievedNoteLineId);
             return Ok(salesOrderLine);
@@ -392,7 +451,7 @@ namespace coderush.Controllers.Api
             }
             _context.SalesOrderLine.Remove(salesOrderLine);
             _context.SaveChanges();
-            this.UpdateSalesOrder(salesOrderLine.SalesOrderId);
+            this.UpdateSalesOrder(salesOrderLine);
             this.UpdateStock(salesOrderLine.ProductId);
             this.UpdateBatch(salesOrderLine.GoodsRecievedNoteLineId);
             return Ok(salesOrderLine);

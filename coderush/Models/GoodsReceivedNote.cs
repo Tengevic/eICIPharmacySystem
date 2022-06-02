@@ -23,6 +23,7 @@ namespace coderush.Models
         public int WarehouseId { get; set; }
         [Display(Name = "Full Receive")]
         public bool IsFullReceive { get; set; } = true;
+        public Bill Bill { get; set; }
         public List<GoodsRecievedNoteLine> goodsRecievedNoteLines { get; set; } = new List<GoodsRecievedNoteLine>();
     }
 }

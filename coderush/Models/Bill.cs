@@ -23,5 +23,7 @@ namespace coderush.Models
         public DateTimeOffset BillDueDate { get; set; }
         [Display(Name = "Bill Type")]
         public int BillTypeId { get; set; }
+        public PaymentVoucher PaymentVoucher { get; set; }
+        public bool fullPaid { get; set; } = false;
     }
 }

@@ -28,12 +28,14 @@ namespace coderush.Controllers.Api
         [HttpGet]
         public async Task<IActionResult> GetGoodsRecievedNoteLines()
         {
+            var headersRFP = Request.Headers["RFPDrugRecieveId"];
             var headers = Request.Headers["GoodsReceivedNoteId"];
             var monthsHeaders = Request.Headers["months"];
             var headersProduct = Request.Headers["ProductId"];
             int GoodsReceivedNoteId = Convert.ToInt32(headers);
             int productId = Convert.ToInt32(headersProduct);
             int months = Convert.ToInt32(monthsHeaders);
+            int RFPDrugRecieveId = Convert.ToInt32(headersRFP);
 
             if (months != 0)
             {
@@ -71,6 +73,14 @@ namespace coderush.Controllers.Api
                 .ToListAsync();
                 int Count = Items.Count();
                 return Ok(new { Items, Count });
+            } 
+            else if (RFPDrugRecieveId != 0)
+            {
+                List<GoodsRecievedNoteLine> Items = await _context.GoodsRecievedNoteLine
+                .Where(x => x.RFPDrugRecieveId.Equals(RFPDrugRecieveId))
+                .ToListAsync();
+                int Count = Items.Count();
+                return Ok(new { Items, Count });
             }
             else
             {
@@ -94,8 +104,12 @@ namespace coderush.Controllers.Api
                     List<GoodsRecievedNoteLine> lines = new List<GoodsRecievedNoteLine>();
                     lines = _context.GoodsRecievedNoteLine.Where(x => x.ProductId.Equals(goodsRecievedNoteLine.ProductId)).ToList();
 
+                    List<SalesOrderLine> line = _context.SalesOrderLine.Where(x => x.ProductId.Equals(goodsRecievedNoteLine.ProductId)).ToList();
+
                     stock.TotalRecieved = lines.Sum(x => x.Quantity);
                     stock.ExpiredStock = lines.Sum(x => x.Expired);
+
+                    stock.TotalSales = line.Sum(x => x.Quantity);
                    
                     if (stock.TotalRecieved < stock.TotalSales)
                     {
@@ -154,9 +168,27 @@ namespace coderush.Controllers.Api
         public IActionResult Insert([FromBody] CrudViewModel<GoodsRecievedNoteLine> payload)
         {
             GoodsRecievedNoteLine goodsRecievedNoteLine = payload.value;
+
+            if(goodsRecievedNoteLine.GoodsReceivedNoteId != null)
+            {
+                GoodsReceivedNote goodsReceivedNote = _context.GoodsReceivedNote
+                .Where(x => x.GoodsReceivedNoteId == goodsRecievedNoteLine.GoodsReceivedNoteId)
+                .Include(x => x.Bill)
+                .FirstOrDefault();
+                if (goodsReceivedNote.Bill != null)
+                {
+                    Err err = new Err
+                    {
+                        message = "Record already billed"
+                    };
+                    string errMsg = JsonConvert.SerializeObject(err);
+
+                    return BadRequest(err);
+                }
+            }
+           
             DateTime current = DateTime.Now;
             double totaldays = (goodsRecievedNoteLine.ExpiryDate - current).TotalDays;
-
             if (goodsRecievedNoteLine.ManufareDate > current)
             {
                 Err err = new Err

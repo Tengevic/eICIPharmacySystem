@@ -272,24 +272,20 @@
                 <label id="genericType" name="genericType"></label>
             </td>
             <td>
-                Cost per unit:
-            </td>
-            <td>
-                <label id="Cost" name="Cost"></label>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                batch No
-            </td>
-            <td>
-                <input id="GoodsRecievedNoteLineId" />
-            </td>
-            <td>
                 InStock
             </td>
             <td>
                 <label id="instock" name="instock"></label>
+            </td>
+
+        </tr>
+        <tr>
+
+            <td>
+                Cost per unit:
+            </td>
+            <td>
+                <input id="Cost" type="number" value=0 onchange="NewCost(this.value)" />
             </td>
         </tr>
         <tr>
@@ -488,7 +484,7 @@
                                  }
                             }
                         }
-                        
+
                     },
                     error: function (result) {
                         $("#sendpay").hide();
@@ -578,44 +574,28 @@
         }
         function myFunction(item) {
             Item = item;
-            $.ajax({
-                type: 'GET',
-                url: '/api/GoodsRecievedNoteLines/GetByProductId/' + item.Product.ProductId,
-                success: function (data) {
-                    Batch = data;
-                    $('#GoodsRecievedNoteLineId').ejDropDownList({
-                        dataSource: Batch,
-                        fields: { id: 'GoodsRecievedNoteLineId', text: 'BatchID', value: 'GoodsRecievedNoteLineId' },
-                        change: function (args) {
-                            for (let i = 0; i < Batch.length; i++) {
-                                if (Batch[i].GoodsRecievedNoteLineId == args.value) {
-                                    $("#instock").text(Batch[i].InStock);
-                                    GoodsRecievedNoteLineId =  args.value;
-                                }
-                            }
-                        }
-                    });
-
-                }
-            });
-
             $("#dialog").ejDialog("open");
             $("#sendp").hide();
             $("#DrugName").text(Item.Product.ProductName);
             $("#UnitsofMeasure").text(Item.Product.UnitOfMeasure.UnitOfMeasureName);
-            $("#genericType").text(Item.Product.ProductType.ProductTypeName);
+            $("#genericType").text(Item.Product.ProductType.ProductTypeName); 
+            $("#instock").text(Item.Product.InStock);
             $("#Quantity").val(Item.Quantity);
-            $("#Cost").text(Item.Product.DefaultSellingPrice);
             Amount = Item.Quantity * Item.Product.DefaultSellingPrice;
             $("#CostAmount").text(Amount);
             $("#DiscAmount").val();
             $("#TaxPer").val();
         }
         function NewAmount(x) {
-            amount = x * Item.Product.DefaultSellingPrice;
+            amount = x * parseInt($("#Cost").val());
+            $("#CostAmount").text(amount);
+        }
+        function NewCost(x) {
+            amount = x * parseInt($("#Quantity").val());
             $("#CostAmount").text(amount);
         }
         function Submit() {
+            Price = $("#Cost").val();
             DiscountPercentage = $("#Disc").val();
             TaxPercentage = $("#TaxPer").val();
             Quantity = $("#Quantity").val();
@@ -628,6 +608,9 @@
             if (Quantity == "") {
                 Quantity = "0";
             }
+            if (Price == "") {
+                Price = "0";
+            }
             var data = {
                 "SalesOrderId": @Model.SalesOrderId,
                 "Total": 0,
@@ -637,46 +620,16 @@
                 "DiscountAmount": 0,
                 "DiscountPercentage": parseInt(DiscountPercentage),
                 "Amount": 0,
-                "Price": 0,
-                "GoodsRecievedNoteLineId": GoodsRecievedNoteLineId,
+                "Price": parseInt(Price),
                 "Quantity": parseInt(Quantity),
                 "ProductId": Item.Product.ProductId,
             }
 
-            if (data.GoodsRecievedNoteLineId == null) {
-                toastr.warning("Select Batch number", "Cannot make sale");
-            } else if (data.Quantity < 1) {
+            if (data.Quantity < 1) {
                 toastr.warning("Quantity can not be less than 1", "Cannot make sale");
             }
             else {
-                $.ajax({
-                    type: "POST",
-                    contentType: "application/json;charset=utf-8",
-                    data: JSON.stringify(data),
-                    url: "/api/SalesOrderLine/Add",
-                    beforeSend: function () {
-                        $("#sendp").show();
-                        $("#btnsubmit").prop('disabled', true);
-                    },
-                    success: function (result) {
-                        $("#sendp").hide();
-                        $("#btnsubmit").prop('disabled', false);
-                        toastr.success("Success");
-                        onInit();
-                        $('#Amount').text(result.SalesOrder.Amount);
-                        $('#SubTotal').text(result.SalesOrder.SubTotal);
-                        $('#Discount').text(result.SalesOrder.Discount);
-                        $('#Tax').text(result.SalesOrder.Tax);
-                        $('#Freight').text(result.SalesOrder.Freight);
-                        $('#Total').text(result.SalesOrder.Total);
-                    },
-                    error: function (result) {
-                        $("#sendp").hide();
-                        var s = ej.parseJSON(result.responseText)
-                        toastr.warning(s.message, "Cannot make sale");
-                        $("#btnsubmit").prop('disabled', false);
-                    }
-                });
+                $("#Grid").ejGrid("addRecord", data);
             }
         }
         function PrescriptionLines() {
@@ -722,7 +675,7 @@
                                row.insertCell(2).innerHTML = item[i].PaymentType.PaymentTypeName;
                                row.insertCell(3).innerHTML = item[i].PaymentAmount;
                                row.insertCell(4).innerHTML = "<a href='/PaymentReceive/Detail/" + item[i].PaymentReceiveId +"'>Uploads</a>";
-                              
+
                            }
                        }
                 }
@@ -739,7 +692,7 @@
             $('#dialog').ejDialog({
                 title: "Sale Record",
                 showOnInit: false,
-                height: 400,
+                height: 500,
                 width: 600,
 
             });
@@ -761,10 +714,6 @@
                 }
 
             });
-
-            onInit();
-        });
-        function onInit() {
             var dataManager = ej.DataManager({
                 url: "/api/SalesOrderLine",
                 adaptor: new ej.WebApiAdaptor(),
@@ -829,10 +778,10 @@
                     { field: "SalesOrderLineId", headerText: 'Line Id', isPrimaryKey: true, isIdentity: true, visible: false },
                     { field: "SalesOrderId", headerText: 'SO#', defaultValue: @Model.SalesOrderId, foreignKeyField: "SalesOrderId", foreignKeyValue: "SalesOrderName", dataSource: dataManagerSalesOrder, visible: false },
                     { field: "ProductId", headerText: 'Product', foreignKeyField: "ProductId", foreignKeyValue: "ProductName", dataSource: dataManagerProduct, validationRules: { required: true }  },
-                    { field: "GoodsRecievedNoteLineId", headerText: 'BatchID', foreignKeyField: "GoodsRecievedNoteLineId", foreignKeyValue: "BatchID", dataSource: dataManagerGoodsRecievedNoteLines, validationRules: { required: true } },
+                    { field: "GoodsRecievedNoteLineId", headerText: 'BatchID', foreignKeyField: "GoodsRecievedNoteLineId", foreignKeyValue: "BatchID", dataSource: dataManagerGoodsRecievedNoteLines, allowEditing: false },
                     { field: "Description", headerText: 'Description', visible: false },
                     { field: "Quantity", headerText: 'Qty', defaultValue: 1, editType: "numericedit" },
-                    { field: "Price", headerText: 'Cost per unit', defaultValue: 0, allowEditing: false, editType: "numericedit", format: "{0:n2}" },
+                    { field: "Price", headerText: 'Cost per unit', defaultValue: 0, editType: "numericedit", format: "{0:n2}" },
                     { field: "Amount", headerText: 'Amount', defaultValue: 0, allowEditing: false, editType: "numericedit", format: "{0:n2}" },
                     { field: "DiscountPercentage", headerText: 'Disc %', defaultValue: 0, editType: "numericedit", format: "{0:n2}" },
                     { field: "DiscountAmount", headerText: 'Disc Amt', defaultValue: 0, visible: false, editType: "numericedit", format: "{0:n2}" },
@@ -854,50 +803,37 @@
                 }
             });
             });
-        }
+        });
         function complete(args) {
 
             if (args.requestType == 'beginedit') {
                 $("#" + this._id + "_dialogEdit").ejDialog({ title: "Edit Record" });
             }
+            if (args.requestType == 'save') {
+                UpdateGrid();
+            }
             if (args.requestType == 'save' || args.requestType == 'delete') {
                 RewriteTotal(args.data.SalesOrderId);
             }
-            if (args.requestType == 'beginedit' || args.requestType == 'add') {
-                $('#GridProductId').ejDropDownList({
-                    change: function (args) {
-                        $.ajax({
-                            type: 'GET',
-                            url: '/api/GoodsRecievedNoteLines/GetByProductId/' + args.value,
-                            success: function (data) {
-                                $("#GridGoodsRecievedNoteLineId").ejDropDownList({
-                                    dataSource: data,
-                                    fields: { id: 'GoodsRecievedNoteLineId', text: 'BatchID', value: 'GoodsRecievedNoteLineId' },
-                                });
-                            }
-                        });
-                        $.ajax({
-                            type: 'GET',
-                            url: '/api/Product/GetProductbyId/' + args.value,
-                            success: function (data) {
-                                $('#GridPrice').ejNumericTextbox({ value: data.DefaultSellingPrice });
-                            }
-                        });
-                    }
-                });
-                $('#GridGoodsRecievedNoteLineId').ejDropDownList({
-                    change: function (args) {
-                        $.ajax({
-                            type: 'GET',
-                            url: '/api/GoodsRecievedNoteLines/GetById/' + args.value,
-                            success: function (data) {
-                                str = data.BatchID + " Has " + data.InStock + " Drugs in stock"
-                                toastr.info(str);
-                            }
-                        });
-                    }
-                });
-            }
+        }
+        function UpdateGrid() {
+            var dataManager = ej.DataManager({
+                url: "/api/SalesOrderLine",
+                adaptor: new ej.WebApiAdaptor(),
+                headers: [{ "SalesOrderId": @Model.SalesOrderId}],
+                offline: true
+            });
+            dataManager.ready.done(function (e) {
+                $("#Grid").ejGrid("dataSource", ej.DataManager({
+                    json: e.result,
+                    adaptor: new ej.remoteSaveAdaptor(),
+                    insertUrl: "/api/SalesOrderLine/Insert",
+                    updateUrl: "/api/SalesOrderLine/Update",
+                    removeUrl: "/api/SalesOrderLine/Remove",
+                }));
+            });
+            
+           
         }
         function RewriteTotal(salesOrderId) {
             $.ajax({

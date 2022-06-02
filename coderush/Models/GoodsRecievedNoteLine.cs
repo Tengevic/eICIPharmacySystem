@@ -10,9 +10,10 @@ namespace coderush.Models
     {
         public int GoodsRecievedNoteLineId { get; set; }
         [Display(Name = "GoodsReceivedNotedD")]
-        public int GoodsReceivedNoteId { get; set; }
+        public int? GoodsReceivedNoteId { get; set; }
         [Display(Name = "GoodsReceivedNote ")]
         public GoodsReceivedNote GoodsReceivedNote { get; set; }
+        public int? RFPDrugRecieveId { get; set; }
         [Display(Name = "Product Item")]
         public int ProductId { get; set; }
         public Product Product { get; set; }

@@ -90,7 +90,12 @@ namespace coderush.Migrations
 
                     b.Property<string>("VendorInvoiceNumber");
 
+                    b.Property<bool>("fullPaid");
+
                     b.HasKey("BillId");
+
+                    b.HasIndex("GoodsReceivedNoteId")
+                        .IsUnique();
 
                     b.ToTable("Bill");
                 });
@@ -435,6 +440,9 @@ namespace coderush.Migrations
 
                     b.HasKey("GoodsReceivedNoteId");
 
+                    b.HasIndex("PurchaseOrderId")
+                        .IsUnique();
+
                     b.ToTable("GoodsReceivedNote");
                 });
 
@@ -453,7 +461,7 @@ namespace coderush.Migrations
 
                     b.Property<DateTime>("ExpiryDate");
 
-                    b.Property<int>("GoodsReceivedNoteId");
+                    b.Property<int?>("GoodsReceivedNoteId");
 
                     b.Property<double>("InStock");
 
@@ -463,6 +471,8 @@ namespace coderush.Migrations
 
                     b.Property<double>("Quantity");
 
+                    b.Property<int?>("RFPDrugRecieveId");
+
                     b.Property<double>("Sold");
 
                     b.HasKey("GoodsRecievedNoteLineId");
@@ -470,6 +480,8 @@ namespace coderush.Migrations
                     b.HasIndex("GoodsReceivedNoteId");
 
                     b.HasIndex("ProductId");
+
+                    b.HasIndex("RFPDrugRecieveId");
 
                     b.ToTable("GoodsRecievedNoteLine");
                 });
@@ -554,7 +566,8 @@ namespace coderush.Migrations
 
                     b.HasKey("PaymentReceiveId");
 
-                    b.HasIndex("InvoiceId");
+                    b.HasIndex("InvoiceId")
+                        .IsUnique();
 
                     b.HasIndex("PaymentTypeId");
 
@@ -598,6 +611,11 @@ namespace coderush.Migrations
                     b.Property<string>("PaymentVoucherName");
 
                     b.HasKey("PaymentvoucherId");
+
+                    b.HasIndex("BillId")
+                        .IsUnique();
+
+                    b.HasIndex("PaymentTypeId");
 
                     b.ToTable("PaymentVoucher");
                 });
@@ -801,6 +819,135 @@ namespace coderush.Migrations
                     b.ToTable("PurchaseType");
                 });
 
+            modelBuilder.Entity("coderush.Models.RFPCustomer", b =>
+                {
+                    b.Property<int>("RFPCustomerId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Address");
+
+                    b.Property<string>("City");
+
+                    b.Property<string>("Country");
+
+                    b.Property<int>("CustomerTypeId");
+
+                    b.Property<string>("Email");
+
+                    b.Property<string>("Phone");
+
+                    b.Property<string>("RFPCustomerName")
+                        .IsRequired();
+
+                    b.HasKey("RFPCustomerId");
+
+                    b.ToTable("RFPCustomer");
+                });
+
+            modelBuilder.Entity("coderush.Models.RFPDrugRecieve", b =>
+                {
+                    b.Property<int>("RFPDrugRecieveId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTimeOffset>("GRNDate");
+
+                    b.Property<bool>("IsFullReceive");
+
+                    b.Property<string>("RFPDrugRecieveName");
+
+                    b.Property<int>("RFPpaymentRecievedId");
+
+                    b.HasKey("RFPDrugRecieveId");
+
+                    b.ToTable("RFPDrugRecieve");
+                });
+
+            modelBuilder.Entity("coderush.Models.RFPinvoice", b =>
+                {
+                    b.Property<int>("RFPinvoiceId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTimeOffset>("InvoiceDate");
+
+                    b.Property<DateTimeOffset>("InvoiceDueDate");
+
+                    b.Property<int>("InvoiceTypeId");
+
+                    b.Property<int>("RFPSaleorderId");
+
+                    b.Property<string>("RFPinvoiceName");
+
+                    b.Property<bool>("fullyPaid");
+
+                    b.HasKey("RFPinvoiceId");
+
+                    b.HasIndex("RFPSaleorderId");
+
+                    b.ToTable("RFPinvoice");
+                });
+
+            modelBuilder.Entity("coderush.Models.RFPpaymentRecieved", b =>
+                {
+                    b.Property<int>("RFPpaymentRecievedId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<bool>("IsFullPayment");
+
+                    b.Property<double>("PaymentAmount");
+
+                    b.Property<DateTimeOffset>("PaymentDate");
+
+                    b.Property<int>("PaymentTypeId");
+
+                    b.Property<int>("RFPinvoiceId");
+
+                    b.Property<string>("RFPpaymentRecievedName");
+
+                    b.HasKey("RFPpaymentRecievedId");
+
+                    b.HasIndex("PaymentTypeId");
+
+                    b.HasIndex("RFPinvoiceId");
+
+                    b.ToTable("RFPpaymentRecieved");
+                });
+
+            modelBuilder.Entity("coderush.Models.RFPSaleorder", b =>
+                {
+                    b.Property<int>("RFPSaleorderId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<double>("Amount");
+
+                    b.Property<int>("BranchId");
+
+                    b.Property<int>("CurrencyId");
+
+                    b.Property<double>("Discount");
+
+                    b.Property<double>("Freight");
+
+                    b.Property<int>("RFPCustomerId");
+
+                    b.Property<string>("RFPSaleorderName");
+
+                    b.Property<string>("Remarks");
+
+                    b.Property<DateTimeOffset>("SaleDate");
+
+                    b.Property<int>("SalesTypeId");
+
+                    b.Property<double>("SubTotal");
+
+                    b.Property<double>("Tax");
+
+                    b.Property<double>("Total");
+
+                    b.HasKey("RFPSaleorderId");
+
+                    b.ToTable("RFPSaleorder");
+                });
+
             modelBuilder.Entity("coderush.Models.SalesOrder", b =>
                 {
                     b.Property<int>("SalesOrderId")
@@ -866,7 +1013,9 @@ namespace coderush.Migrations
 
                     b.Property<double>("Quantity");
 
-                    b.Property<int>("SalesOrderId");
+                    b.Property<int?>("RFPSaleorderId");
+
+                    b.Property<int?>("SalesOrderId");
 
                     b.Property<double>("SubTotal");
 
@@ -877,6 +1026,8 @@ namespace coderush.Migrations
                     b.Property<double>("Total");
 
                     b.HasKey("SalesOrderLineId");
+
+                    b.HasIndex("RFPSaleorderId");
 
                     b.HasIndex("SalesOrderId");
 
@@ -1161,6 +1312,14 @@ namespace coderush.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("coderush.Models.Bill", b =>
+                {
+                    b.HasOne("coderush.Models.GoodsReceivedNote")
+                        .WithOne("Bill")
+                        .HasForeignKey("coderush.Models.Bill", "GoodsReceivedNoteId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("coderush.Models.ClinicalTrialsDonation", b =>
                 {
                     b.HasOne("coderush.Models.Vendor", "Vendor")
@@ -1211,17 +1370,28 @@ namespace coderush.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("coderush.Models.GoodsReceivedNote", b =>
+                {
+                    b.HasOne("coderush.Models.PurchaseOrder")
+                        .WithOne("GoodsReceivedNote")
+                        .HasForeignKey("coderush.Models.GoodsReceivedNote", "PurchaseOrderId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("coderush.Models.GoodsRecievedNoteLine", b =>
                 {
                     b.HasOne("coderush.Models.GoodsReceivedNote", "GoodsReceivedNote")
                         .WithMany("goodsRecievedNoteLines")
-                        .HasForeignKey("GoodsReceivedNoteId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("GoodsReceivedNoteId");
 
                     b.HasOne("coderush.Models.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("coderush.Models.RFPDrugRecieve")
+                        .WithMany("goodsRecievedNoteLines")
+                        .HasForeignKey("RFPDrugRecieveId");
                 });
 
             modelBuilder.Entity("coderush.Models.Invoice", b =>
@@ -1235,8 +1405,21 @@ namespace coderush.Migrations
             modelBuilder.Entity("coderush.Models.PaymentReceive", b =>
                 {
                     b.HasOne("coderush.Models.Invoice", "Invoice")
+                        .WithOne("PaymentReceive")
+                        .HasForeignKey("coderush.Models.PaymentReceive", "InvoiceId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("coderush.Models.PaymentType", "PaymentType")
                         .WithMany()
-                        .HasForeignKey("InvoiceId")
+                        .HasForeignKey("PaymentTypeId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("coderush.Models.PaymentVoucher", b =>
+                {
+                    b.HasOne("coderush.Models.Bill", "Bill")
+                        .WithOne("PaymentVoucher")
+                        .HasForeignKey("coderush.Models.PaymentVoucher", "BillId")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("coderush.Models.PaymentType", "PaymentType")
@@ -1292,6 +1475,27 @@ namespace coderush.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("coderush.Models.RFPinvoice", b =>
+                {
+                    b.HasOne("coderush.Models.RFPSaleorder", "RFPSaleorder")
+                        .WithMany()
+                        .HasForeignKey("RFPSaleorderId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("coderush.Models.RFPpaymentRecieved", b =>
+                {
+                    b.HasOne("coderush.Models.PaymentType", "PaymentType")
+                        .WithMany()
+                        .HasForeignKey("PaymentTypeId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("coderush.Models.RFPinvoice", "RFPinvoice")
+                        .WithMany()
+                        .HasForeignKey("RFPinvoiceId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("coderush.Models.SalesOrder", b =>
                 {
                     b.HasOne("coderush.Models.Prescription", "Prescription")
@@ -1301,10 +1505,13 @@ namespace coderush.Migrations
 
             modelBuilder.Entity("coderush.Models.SalesOrderLine", b =>
                 {
+                    b.HasOne("coderush.Models.RFPSaleorder")
+                        .WithMany("SalesOrderLines")
+                        .HasForeignKey("RFPSaleorderId");
+
                     b.HasOne("coderush.Models.SalesOrder", "SalesOrder")
                         .WithMany("SalesOrderLines")
-                        .HasForeignKey("SalesOrderId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("SalesOrderId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

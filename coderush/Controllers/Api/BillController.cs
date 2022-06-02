@@ -89,6 +89,31 @@ namespace coderush.Controllers.Api
             _context.SaveChanges();
             return Ok(bill);
         }
+        [HttpPost("[action]")]
+        public IActionResult Add([FromBody] Bill payload)
+        {
+            Bill bill = payload;
+
+            DateTime current = DateTime.Now;
+            double Totaldays = (bill.BillDueDate - current).TotalDays;
+
+            if (!(Totaldays > 60 && Totaldays < 90))
+            {
+                Err err = new Err
+                {
+                    message = "Invoice due date should be between 60 and 90 days"
+                };
+                string errMsg = JsonConvert.SerializeObject(err);
+
+                return BadRequest(err);
+
+            }
+            bill.BillDate = current;
+            bill.BillName = _numberSequence.GetNumberSequence("BILL");
+            _context.Bill.Add(bill);
+            _context.SaveChanges();
+            return Ok(bill);
+        }
 
         [HttpPost("[action]")]
         public IActionResult Update([FromBody]CrudViewModel<Bill> payload)
@@ -118,7 +143,18 @@ namespace coderush.Controllers.Api
         {
             Bill bill = _context.Bill
                 .Where(x => x.BillId == (int)payload.key)
+                .Include(x => x.PaymentVoucher)
                 .FirstOrDefault();
+            if (bill.PaymentVoucher != null)
+            {
+                Err err = new Err
+                {
+                    message = "This order has payment records"
+                };
+                string errMsg = JsonConvert.SerializeObject(err);
+
+                return BadRequest(err);
+            }
             _context.Bill.Remove(bill);
             _context.SaveChanges();
             return Ok(bill);

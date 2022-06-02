@@ -263,7 +263,18 @@ namespace coderush.Controllers.Api
         {
             SalesOrder salesOrder = _context.SalesOrder
                 .Where(x => x.SalesOrderId == (int)payload.key)
+                .Include(x => x.SalesOrderLines)
                 .FirstOrDefault();
+            if (salesOrder.SalesOrderLines.Count > 0)
+            {
+                Err err = new Err
+                {
+                    message = "Record has Orders"
+                };
+                string errMsg = JsonConvert.SerializeObject(err);
+
+                return BadRequest(err);
+            }
 
             _context.SalesOrder.Remove(salesOrder);
             _context.SaveChanges();
@@ -275,7 +286,18 @@ namespace coderush.Controllers.Api
         {
             SalesOrder salesOrder = _context.SalesOrder
                 .Where(x => x.SalesOrderId == id)
+                .Include(x => x.SalesOrderLines)
                 .FirstOrDefault();
+            if (salesOrder.SalesOrderLines.Count > 0)
+            {
+                Err err = new Err
+                {
+                    message = "Record has Orders"
+                };
+                string errMsg = JsonConvert.SerializeObject(err);
+
+                return BadRequest(err);
+            }
             _context.SalesOrder.Remove(salesOrder);
             _context.SaveChanges();
             return Ok(salesOrder);

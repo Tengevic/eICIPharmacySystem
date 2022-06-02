@@ -13,9 +13,11 @@ namespace coderush.Models
         public string PaymentVoucherName { get; set; }
         [Display(Name = "Bill")]
         public int BillId { get; set; }
+        public Bill Bill { get; set; }
         public DateTimeOffset PaymentDate { get; set; }
         [Display(Name = "Payment Type")]
         public int PaymentTypeId { get; set; }
+        public PaymentType PaymentType { get; set; }
         public double PaymentAmount { get; set; }
         [Display(Name = "Payment Source")]
         public int CashBankId { get; set; }

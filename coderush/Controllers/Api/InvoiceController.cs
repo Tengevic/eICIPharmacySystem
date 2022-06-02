@@ -146,7 +146,18 @@ namespace coderush.Controllers.Api
         {
             Invoice invoice = _context.Invoice
                 .Where(x => x.InvoiceId == (int)payload.key)
+                .Include(x => x.PaymentReceive)
                 .FirstOrDefault();
+            if (invoice.PaymentReceive != null)
+            {
+                Err err = new Err
+                {
+                    message = "This order has payment records"
+                };
+                string errMsg = JsonConvert.SerializeObject(err);
+
+                return BadRequest(err);
+            }
             _context.Invoice.Remove(invoice);
             _context.SaveChanges();
             return Ok(invoice);

@@ -10,6 +10,7 @@ using coderush.Models;
 using coderush.Services;
 using coderush.Models.SyncfusionViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Newtonsoft.Json;
 
 namespace coderush.Controllers.Api
 {
@@ -137,7 +138,18 @@ namespace coderush.Controllers.Api
         {
             PurchaseOrder purchaseOrder = _context.PurchaseOrder
                 .Where(x => x.PurchaseOrderId == (int)payload.key)
+                .Include(x => x.PurchaseOrderLines)
                 .FirstOrDefault();
+            if(purchaseOrder.PurchaseOrderLines.Count > 0)
+            {
+                Err err = new Err
+                {
+                    message = "Record has orders"
+                };
+                string errMsg = JsonConvert.SerializeObject(err);
+
+                return BadRequest(err);
+            }
             _context.PurchaseOrder.Remove(purchaseOrder);
             _context.SaveChanges();
             this.UpdatePurchaseOrder(purchaseOrder.PurchaseOrderId);

@@ -9,6 +9,7 @@ using coderush.Data;
 using coderush.Models;
 using coderush.Models.SyncfusionViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Newtonsoft.Json;
 
 namespace coderush.Controllers.Api
 {
@@ -97,8 +98,21 @@ namespace coderush.Controllers.Api
         public IActionResult Insert([FromBody]CrudViewModel<PurchaseOrderLine> payload)
         {
             PurchaseOrderLine purchaseOrderLine = payload.value;
+            PurchaseOrder purchaseOrder = _context.PurchaseOrder
+                .Where(x => x.PurchaseOrderId == purchaseOrderLine.PurchaseOrderId)
+                .Include(x => x.GoodsReceivedNote)
+                .FirstOrDefault();
+            if(purchaseOrder.GoodsReceivedNote != null)
+            {
+                Err err = new Err
+                {
+                    message = "Order already Recieved"
+                };
+                string errMsg = JsonConvert.SerializeObject(err);
+
+                return BadRequest(err);
+            }
             Product product = _context.Product.Find(purchaseOrderLine.ProductId);
-            purchaseOrderLine.Price = product.DefaultBuyingPrice;
             purchaseOrderLine = this.Recalculate(purchaseOrderLine);
             _context.PurchaseOrderLine.Add(purchaseOrderLine);
             _context.SaveChanges();
@@ -109,8 +123,21 @@ namespace coderush.Controllers.Api
         public IActionResult Add([FromBody] PurchaseOrderLine payload)
         {
             PurchaseOrderLine purchaseOrderLine = payload;
+            PurchaseOrder purchaseOrder = _context.PurchaseOrder
+               .Where(x => x.PurchaseOrderId == purchaseOrderLine.PurchaseOrderId)
+               .Include(x => x.GoodsReceivedNote)
+               .FirstOrDefault();
+            if (purchaseOrder.GoodsReceivedNote != null)
+            {
+                Err err = new Err
+                {
+                    message = "Order already Recieved"
+                };
+                string errMsg = JsonConvert.SerializeObject(err);
+
+                return BadRequest(err);
+            }
             Product product = _context.Product.Find(purchaseOrderLine.ProductId);
-            purchaseOrderLine.Price = product.DefaultBuyingPrice;
             purchaseOrderLine = this.Recalculate(purchaseOrderLine);
             _context.PurchaseOrderLine.Add(purchaseOrderLine);
             _context.SaveChanges();
@@ -122,8 +149,21 @@ namespace coderush.Controllers.Api
         public IActionResult Update([FromBody]CrudViewModel<PurchaseOrderLine> payload)
         {
             PurchaseOrderLine purchaseOrderLine = payload.value;
+            PurchaseOrder purchaseOrder = _context.PurchaseOrder
+               .Where(x => x.PurchaseOrderId == purchaseOrderLine.PurchaseOrderId)
+               .Include(x => x.GoodsReceivedNote)
+               .FirstOrDefault();
+            if (purchaseOrder.GoodsReceivedNote != null)
+            {
+                Err err = new Err
+                {
+                    message = "Order already Recieved"
+                };
+                string errMsg = JsonConvert.SerializeObject(err);
+
+                return BadRequest(err);
+            }
             Product product = _context.Product.Find(purchaseOrderLine.ProductId);
-            purchaseOrderLine.Price = product.DefaultBuyingPrice;
             purchaseOrderLine = this.Recalculate(purchaseOrderLine);
             _context.PurchaseOrderLine.Update(purchaseOrderLine);
             _context.SaveChanges();
@@ -137,6 +177,20 @@ namespace coderush.Controllers.Api
             PurchaseOrderLine purchaseOrderLine = _context.PurchaseOrderLine
                 .Where(x => x.PurchaseOrderLineId == (int)payload.key)
                 .FirstOrDefault();
+            PurchaseOrder purchaseOrder = _context.PurchaseOrder
+               .Where(x => x.PurchaseOrderId == purchaseOrderLine.PurchaseOrderId)
+               .Include(x => x.GoodsReceivedNote)
+               .FirstOrDefault();
+            if (purchaseOrder.GoodsReceivedNote != null)
+            {
+                Err err = new Err
+                {
+                    message = "Order already Recieved"
+                };
+                string errMsg = JsonConvert.SerializeObject(err);
+
+                return BadRequest(err);
+            }
             _context.PurchaseOrderLine.Remove(purchaseOrderLine);
             _context.SaveChanges();
             this.UpdatePurchaseOrder(purchaseOrderLine.PurchaseOrderId);

@@ -232,8 +232,9 @@
 
     <script type="text/javascript">
         var Drugs;
+        var Quantity;
         function NewAmount(x) {
-            Amount = x * Drugs.DefaultBuyingPrice;
+            Amount = x * Quantity;
             $("#Cost").text(Amount);
         }
         $(function () {
@@ -285,7 +286,7 @@
                         url: '/api/Product/GetProductbyId/' + productId,
                         success: function (data) {
                             Drugs = data;
-                         
+
                         }
                     });
                 }
@@ -347,7 +348,7 @@
                     { field: "ProductId", headerText: 'Drug', foreignKeyField: "ProductId", foreignKeyValue: "ProductName", dataSource: dataManagerProduct },
                     { field: "Description", headerText: 'Description' , visible: false},
                     { field: "Quantity", headerText: 'units', defaultValue: 1, editType: "numericedit"},
-                    { field: "Price", headerText: 'Price', defaultValue: 0, editType: "numericedit", format: "{0:n2}", allowEditing: false },
+                    { field: "Price", headerText: 'Price', defaultValue: 0, editType: "numericedit", format: "{0:n2}" },
                     { field: "Amount", headerText: 'Amount', defaultValue: 0, allowEditing: false, editType: "numericedit", format: "{0:n2}" },
                     { field: "DiscountPercentage", headerText: 'Disc %', defaultValue: 0, editType: "numericedit", format: "{0:n2}" },
                     { field: "DiscountAmount", headerText: 'Disc Amt', defaultValue: 0, visible: false, editType: "numericedit", format: "{0:n2}" },
@@ -357,6 +358,16 @@
                     { field: "Total", headerText: 'Total', defaultValue: 0, allowEditing: false, editType: "numericedit", format: "{0:n2}" },
                 ],
                 actionComplete: "complete",
+                actionFailure: function (args) {
+                    if (args.requestType == "save") {
+                        var s = ej.parseJSON(args.error.responseText)
+                        toastr.warning(s.message, "Cannot Order");
+                    }
+                    if (args.requestType == 'delete') {
+                        var s = ej.parseJSON(args.error.error.responseText)
+                        toastr.warning(s.message, "Cannot delete");
+                    }
+                }
             });
 
             });
@@ -368,6 +379,7 @@
                 $("#" + this._id + "_dialogEdit").ejDialog({ title: "Edit Record" });
             }
             if (args.requestType == 'save' || args.requestType == 'delete') {
+                UpdateGrid()
                 RewriteTotal(args.data.PurchaseOrderId);
             }
             if (args.requestType == 'beginedit' || args.requestType == 'add') {
@@ -392,12 +404,17 @@
                 $('#GridQuantity').ejNumericTextbox({
                     change: function (args) {
                         $("#Quantity").text(args.value)
+                        Quantity = args.value;
+                    }
+                });
+                $('#GridPrice').ejNumericTextbox({
+                    change: function (args) {
+                        $("#buyingPrice").text(args.value)
                         NewAmount(args.value);
                     }
                 });
             }
         }
-
         function RewriteTotal(purchaseOrderId) {
             $.ajax({
                 type: 'GET',

@@ -67,7 +67,20 @@
                                     <dd>
                                         @Html.DisplayFor(model => model.VendorInvoiceNumber)
                                     </dd>
-
+                                    <dt>
+                                        Bill Invoice name
+                                    </dt>
+                                    <dd>
+                                        @if (Model.Bill == null)
+                                        {
+                                            <button id="btnBill" onclick="CreateBill()">Create Bill Invoice</button>
+                                        }
+                                        else
+                                        {
+                                            @Html.DisplayFor(model => model.Bill.BillName)
+                                            <input id="BillId" value="@Model.Bill.BillId" style="display:none" />
+                                        }
+                                    </dd>
                                 </dl>
                             </div>
 
@@ -76,43 +89,93 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-6">
-                <div class="box" style="height:250px">
-                    <div class="box-header with-border">
-                        <h3 class="box-title text-primary"><i class="fa fa-pie-chart"></i> Purchase order</h3>
-                        <div class="box-tools pull-right">
-                            <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
-                                    title="Collapse">
-                                <i class="fa fa-minus"></i>
-                            </button>
-                            <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
-                                <i class="fa fa-times"></i>
-                            </button>
+            @if (Model.Bill == null)
+            {
+                <div class="col-lg-6">
+                    <div class="box" style="height:250px">
+                        <div class="box-header with-border">
+                            <h3 class="box-title text-primary"><i class="fa fa-pie-chart"></i> Purchase order</h3>
+                            <div class="box-tools pull-right">
+                                <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
+                                        title="Collapse">
+                                    <i class="fa fa-minus"></i>
+                                </button>
+                                <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
+                                    <i class="fa fa-times"></i>
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                    <div class="box-body">
-                        <div class="PurchaseOrder">
-                            <div class="table-wrapper-scroll-y my-custom-scrollbar">
-                                <table id="Prescription" align="center" class="table table-bordered table-striped mb-0">
-                                    <thead>
-                                        <tr>
-                                            <th> # </th>
-                                            <th>product Name</th>
-                                            <th>Units of Measure</th>
-                                            <th>Quantity</th>
-                                            <th>Add</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                        <div class="box-body">
+                            <div class="PurchaseOrder">
+                                <div class="table-wrapper-scroll-y my-custom-scrollbar">
+                                    <table id="Prescription" align="center" class="table table-bordered table-striped mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th> # </th>
+                                                <th>product Name</th>
+                                                <th>Units of Measure</th>
+                                                <th>Quantity</th>
+                                                <th>Add</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            }
+            else
+            {
+
+
+<div class="col-lg-6">
+                    <div class="box" style="height:250px">
+                        <div class="box-header with-border">
+                            <h3 class="box-title text-primary"><i class="fa fa-pie-chart"></i> Payment</h3>
+                            @if (!Model.Bill.fullPaid)
+                            {
+                                <button id="Payment" onclick="MakePayment()">Make payment</button>
+                            }
+                          <div class="box-tools pull-right">
+                                <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
+                                        title="Collapse">
+                                    <i class="fa fa-minus"></i>
+                                </button>
+                                <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
+                                    <i class="fa fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="box-body">
+                            <div class="payment">
+                                <div class="table-wrapper-scroll-y my-custom-scrollbar">
+                                    <table id="payment" align="center" class="table table-bordered table-striped mb-0" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th> # </th>
+                                                <th>Payment Name</th>
+                                                <th>Payment type</th>
+                                                <th>Amount</th>
+                                                
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
         </div>
         <!-- /.box -->
         <div class="box">
@@ -122,7 +185,7 @@
                         <div id="Grid"></div>
                     </div>
                 </div>
-     
+
             </div>
         </div>
 
@@ -149,7 +212,7 @@
 
         <tr>
             <td>
-               Purchase Quantity:
+                Purchase Quantity:
             </td>
             <td>
                 <label id="Quantity" name="Quantity"></label>
@@ -180,7 +243,7 @@
                 Manufacture Date
             </td>
             <td>
-                <input id="ManufareDate"  />
+                <input id="ManufareDate" />
             </td>
             <td>
                 Expiry Date
@@ -201,6 +264,107 @@
     </table>
 
 </div>
+<div id="dialogBill">
+    <table class="table">
+        <tr>
+            <td>
+                Receive number
+            </td>
+            <td>
+                <b> @Model.GoodsReceivedNoteName</b>
+            </td>
+            <td>
+                Vendor delivery Order
+            </td>
+            <td>
+                <b>@Model.VendorDONumber</b>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Vendor Invoice
+            </td>
+            <td>
+                <b> @Model.VendorInvoiceNumber</b>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Bill Due date
+            </td>
+            <td>
+                <input id="BillDuedate" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <button id="btnBillSubmit" onclick="BillSubmit()">Submit</button>
+            </td>
+            <td>
+                <p id="sendBill" style="color: green">Submiting... </p>
+            </td>
+        </tr>
+    </table>
+</div>
+<div id="dialogPayment">
+    <table class="table-condensed">
+        <tr>
+            <td>
+                Billl
+            </td>
+            <td>
+                @if (Model.Bill != null)
+                {
+                <b>@Model.Bill.BillName</b> 
+                }
+            </td>
+            <td>
+                Full payment
+            </td>
+            <td>
+                <input type="checkbox" id="fullpayment" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Payment date
+            </td>
+            <td>
+                <input id="Paymentdate" />
+            </td>
+            <td>
+                Payment Type
+            </td>
+            <td>
+                <input id="PaymentTypeId" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Payment Amount
+            </td>
+            <td>
+                <input type="number" id="payAmount" />
+            </td>
+            <td>
+                <p style="display: none;" id="uploadp">Upload Files</p>
+            </td>
+            <td>
+                <div style="display: none;" id="uploadDiv">
+                    <div id="UploadDefault"></div>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <button id="submitPay" onclick="Payment()">Submit</button>
+            </td>
+            <td>
+                <p id="sendpay" style="color: green">Submiting... </p>
+            </td>
+        </tr>
+    </table>
+</div>
 
 @section Styles{
 }
@@ -210,14 +374,138 @@
         var Drug;
         var ExpiryDate;
         var ManufareDate;
+        var BillDuedate;
+        var fullpay = false;
+        var Paymentdate;
+        var PaymentTypeId;
+        var paymentType;
+
+        function Payment() {
+            var amount = $("#payAmount").val();
+            BillId = $("#BillId").val();
+            data = {
+                BillId: parseInt(BillId),
+                PaymentDate: Paymentdate,
+                PaymentTypeId: PaymentTypeId,
+                PaymentAmount: parseInt(amount),
+                IsFullPayment: fullpay,
+                CashBankId: 1
+            }
+            if (data.PaymentTypeId == null) {
+                toastr.warning("Select a payment method");
+            } else if (data.PaymentDate == null) {
+                toastr.warning("Select a date");
+            } else {
+                console.log(data);
+                $.ajax({
+                    type: "POST",
+                    contentType: "application/json;charset=utf-8",
+                    data: JSON.stringify(data),
+                    url: "/api/PaymentVoucher/Add",
+                    beforeSend: function () {
+                        $("#sendpay").show();
+                        $("#submitPay").prop('disabled', true);
+                    },
+                    success: function (result) {
+                        $("#sendpay").hide();
+                        $("#submitPay").prop('disabled', false);
+                        toastr.success("Success");
+                    },
+                    error: function (result) {
+                        $("#sendpay").hide();
+                        var s = ej.parseJSON(result.responseText)
+                        toastr.warning(s.message, "Cannot make sale");
+                        $("#submitPay").prop('disabled', false);
+                    }
+                });
+            }
+        }
+        function MakePayment() {
+
+            $.ajax({
+                type: 'GET',
+                url: "/api/PaymentType",
+                success: function (data) {
+                    paymentType = data.Items;
+                    $('#PaymentTypeId').ejDropDownList({
+                        dataSource: paymentType,
+                        fields: { id: 'PaymentTypeId', text: 'PaymentTypeName', value: 'PaymentTypeId' },
+                        change: function (args) {
+                            PaymentTypeId = args.value;
+                        }
+                    });
+                }
+            });
+
+            $("#dialogPayment").ejDialog("open");
+            $("#sendpay").hide();
+            $("#fullpayment").ejCheckBox({
+                change: function (args) {
+                    fullpay = args.isChecked;
+                }
+            });
+            $("#Paymentdate").ejDatePicker({
+                width: "75%",
+                change: function (args) {
+                    Paymentdate = args.value;
+                }
+            });
+        }
+
+        function BillSubmit() {
+            data = {
+                GoodsReceivedNoteId: @Model.GoodsReceivedNoteId,
+                VendorDONumber: "@Model.VendorDONumber",
+                VendorInvoiceNumber:  "@Model.VendorInvoiceNumber",
+                BillDueDate: BillDuedate,
+                BillTypeId: 1
+            }
+            if (data.BillDueDate == null) {
+                toastr.warning("please select a date")
+            } else {
+                $.ajax({
+                    type: "POST",
+                    contentType: "application/json;charset=utf-8",
+                    data: JSON.stringify(data),
+                    url: "/api/Bill/Add",
+                    beforeSend: function () {
+                        $("#sendBill").show();
+                        $("#btnBillSubmit").prop('disabled', true);
+                    },
+                    success: function (result) {
+                        $("#sendBill").hide();
+                        $("#btnBillSubmit").prop('disabled', false);
+                        toastr.success("Success");
+                    },
+                    error: function (result) {
+                        $("#sendBill").hide();
+                        $("#btnBillSubmit").prop('disabled', false);
+                        var s = ej.parseJSON(result.responseText)
+                        toastr.warning(s.message, "Cannot add drug");
+                    }
+                });
+            }
+        }
+
+        function CreateBill() {
+            $("#dialogBill").ejDialog("open");
+            $("#sendBill").hide();
+            $("#BillDuedate").ejDatePicker({
+                width: "75%",
+                change: function (args) {
+                    BillDuedate = args.value;
+                }
+            });
+        }
+
         function myFunction(Item) {
-       
+
             Drug = Item;
             $("#dialog").ejDialog("open");
             $("#sendp").hide();
             $("#DrugName").text(Item.Product.ProductName);
             $("#UnitsofMeasure").text(Item.Product.UnitOfMeasure.UnitOfMeasureName);
-            $("#Quantity").text(Item.Quantity); 
+            $("#Quantity").text(Item.Quantity);
             $("#Cost").text(Item.Product.DefaultBuyingPrice);
             $("#ManufareDate").ejDatePicker({
                 width: "100%",
@@ -261,61 +549,98 @@
                 toastr.warning("Please enter Expiry date")
             }
             else {
-                $.ajax({
-                    type: "POST",
-                    contentType: "application/json;charset=utf-8",
-                    data: JSON.stringify(data),
-                    url: "/api/GoodsRecievedNoteLines/Add",
-                    beforeSend: function () {
-                        $("#sendp").show();
-                        $("#btnsubmit").prop('disabled', true);
-                    },
-                    success: function (result) {
-                        $("#sendp").hide();
-                        $("#btnsubmit").prop('disabled', false);
-                        toastr.success("Success");
-                    },
-                    error: function (result) {
-                        $("#sendp").hide();
-                        $("#btnsubmit").prop('disabled', false);
-                        var s = ej.parseJSON(result.responseText)
-                        toastr.warning(s.message, "Cannot add drug");
-                    }
-                });
+                $("#Grid").ejGrid("addRecord", data);
             }
         }
-        $(function () {
-              $.ajax({
-                        type: 'GET',
-                        url: '/api/PurchaseOrderLine/GetByPurchaseOrderId/' +@Model.PurchaseOrderId ,
-                        success: function (data) {
-                            if (data.Count == 0) {
-                                $("div.Prescription").replaceWith("<h4>No Purchase order Available</h4>");
-                                } else {
-                                var table = document.getElementById("Prescription");
-                                item = data.Items;
-                                for (let i = 0; i < item.length; i++) {
-                                    var row = table.insertRow(-1);
-                                    row.insertCell(0).innerHTML = i+1;
-                                    row.insertCell(1).innerHTML = item[i].Product.ProductName;
-                                    row.insertCell(2).innerHTML = item[i].Product.UnitOfMeasure.UnitOfMeasureName;
-                                    row.insertCell(3).innerHTML = item[i].Quantity;
-                                    row.insertCell(4).innerHTML = "<Input onclick='myFunction(item[" + i + "])' type='button' value = 'Add'>";
 
-                                 }
+        function PurchaseOrderlines() {
+            $.ajax({
+                type: 'GET',
+                url: '/api/PurchaseOrderLine/GetByPurchaseOrderId/' +@Model.PurchaseOrderId ,
+                success: function (data) {
+                    if (data.Count == 0) {
+                        $("div.Prescription").replaceWith("<h4>No Purchase order Available</h4>");
+                        } else {
+                        var table = document.getElementById("Prescription");
+                        item = data.Items;
+                        for (let i = 0; i < item.length; i++) {
+                            var row = table.insertRow(-1);
+                            row.insertCell(0).innerHTML = i+1;
+                            row.insertCell(1).innerHTML = item[i].Product.ProductName;
+                            row.insertCell(2).innerHTML = item[i].Product.UnitOfMeasure.UnitOfMeasureName;
+                            row.insertCell(3).innerHTML = item[i].Quantity;
+                            row.insertCell(4).innerHTML = "<Input onclick='myFunction(item[" + i + "])' type='button' value = 'Add'>";
+
+                        }
                     }
                 }
               });
+        }
+
+        function PaymentsList(BillId) {
+            $.ajax({
+                type: 'GET',
+                url: '/api/PaymentVoucher/GetbyBillId/' + BillId,
+                success: function (data) {
+                    if (data.Count == 0) {
+                        $("div.payment").replaceWith("<h4>No payment Available</h4>");
+                    } else {
+                        var table = document.getElementById("payment");
+                        item = data.Items;
+                        d = 0;
+                        for (let i = 0; i < item.length; i++) {
+                            var row = table.insertRow(-1)
+                            row.insertCell(0).innerHTML = i + 1;
+                            row.insertCell(1).innerHTML = item[i].PaymentVoucherName;
+                            row.insertCell(2).innerHTML = item[i].PaymentType.PaymentTypeName;
+                            row.insertCell(3).innerHTML = item[i].PaymentAmount;
+
+                        }
+                    }
+                }
+            });
+        }
+        $(function () {
+            BillId = $("#BillId").val();
+            if (BillId == null) {
+                PurchaseOrderlines();
+            } else {
+                PaymentsList(BillId);
+            }
             $('#dialog').ejDialog({
                 title: "Recieved",
                 showOnInit: false,
                 height: 400,
                 width: 600,
                 close: function (args) {
+                }
+            });
+            $('#dialogBill').ejDialog({
+                title: "Bill Invoice",
+                showOnInit: false,
+                width: 600,
+                close: function (args) {
                     location.reload();
                 }
             });
+            $('#dialogPayment').ejDialog({
+                title: "Payment",
+                showOnInit: false,
+                width: 600,
+                close: function (args) {
+                    location.reload();
+                }
+            });
+            $('#dialogPayment').ejDialog({
+                title: "Payment",
+                width: 500,
+                height: 400,
+                showOnInit: false,
+                close: function (args) {
+                    location.reload();
+                }
 
+            });
             var dataManager = ej.DataManager({
                 url: "/api/GoodsRecievedNoteLines",
                 adaptor: new ej.WebApiAdaptor(),
@@ -374,7 +699,11 @@
                 actionFailure: function (args) {
                     if (args.requestType == "save") {
                         var s = ej.parseJSON(args.error.responseText)
-                        toastr.warning(s.message, "Cannot add drug");
+                        toastr.warning(s.message, "Cannot Add drug");
+                    }
+                    if (args.requestType == 'delete') {
+                        var s = ej.parseJSON(args.error.error.responseText)
+                        toastr.warning(s.message, "Cannot delete");
                     }
                 },
                 actionComplete: function (args) {

@@ -105,10 +105,20 @@
                         { field: "BillId", headerText: 'Bill#', foreignKeyField: "BillId", foreignKeyValue: "BillName", dataSource: dataManagerBill, validationRules: { required: true } },
                         { field: "PaymentDate", headerText: 'Payment Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
                         { field: "PaymentTypeId", headerText: 'Payment Type', foreignKeyField: "PaymentTypeId", foreignKeyValue: "PaymentTypeName", dataSource: dataManagerPaymentType },
-                        { field: "CashBankId", headerText: 'Payment Source', foreignKeyField: "CashBankId", foreignKeyValue: "CashBankName", dataSource: dataManagerCashBank },
+                        { field: "CashBankId", headerText: 'Payment Source', foreignKeyField: "CashBankId", foreignKeyValue: "CashBankName", dataSource: dataManagerCashBank, defaultValue: 1, visible: false },
                         { field: "PaymentAmount", headerText: 'Payment Amount', editType: "numericedit", format: "{0:n2}", validationRules: { required: true } },
                     ],
                     actionComplete: "complete",
+                    actionFailure: function (args) {
+                        if (args.requestType == "save") {
+                            var s = ej.parseJSON(args.error.responseText)
+                            toastr.warning(s.message, "Cannot Add ");
+                        }
+                        if (args.requestType == 'delete') {
+                            var s = ej.parseJSON(args.error.error.responseText)
+                            toastr.warning(s.message, "Cannot delete");
+                        }
+                    },
                    
                 });
             });

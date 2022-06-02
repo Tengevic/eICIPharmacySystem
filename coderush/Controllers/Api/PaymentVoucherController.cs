@@ -36,13 +36,46 @@ namespace coderush.Controllers.Api
             int Count = Items.Count();
             return Ok(new { Items, Count });
         }
+        [HttpGet("[action]/{id}")]
+        public async Task<IActionResult> GetbyBillId([FromRoute] int id)
+        {
+            List<PaymentVoucher> Items = await _context.PaymentVoucher
+                .Where(x => x.BillId == id)
+                .Include(x => x.PaymentType)
+                .Include(x => x.Bill)
+                .ToListAsync();
+            int Count = Items.Count();
 
-
-
+            return Ok(new { Items, Count });
+        }
         [HttpPost("[action]")]
         public IActionResult Insert([FromBody]CrudViewModel<PaymentVoucher> payload)
         {
             PaymentVoucher paymentVoucher = payload.value;
+            if (paymentVoucher.IsFullPayment)
+            {
+                Bill bill = _context.Bill.Find(paymentVoucher.BillId);
+                bill.fullPaid = paymentVoucher.IsFullPayment;
+                _context.Bill.Update(bill);
+                _context.SaveChanges();
+            }
+            paymentVoucher.PaymentVoucherName = _numberSequence.GetNumberSequence("PAYVCH");
+            _context.PaymentVoucher.Add(paymentVoucher);
+            _context.SaveChanges();
+            return Ok(paymentVoucher);
+        }
+        [HttpPost("[action]")]
+        public IActionResult Add([FromBody] PaymentVoucher payload)
+        {
+            PaymentVoucher paymentVoucher = payload;
+            if (paymentVoucher.IsFullPayment)
+            {
+                Bill bill = _context.Bill.Find(paymentVoucher.BillId);
+                bill.fullPaid = paymentVoucher.IsFullPayment;
+                _context.Bill.Update(bill);
+                _context.SaveChanges();
+            }
+
             paymentVoucher.PaymentVoucherName = _numberSequence.GetNumberSequence("PAYVCH");
             _context.PaymentVoucher.Add(paymentVoucher);
             _context.SaveChanges();
@@ -53,6 +86,13 @@ namespace coderush.Controllers.Api
         public IActionResult Update([FromBody]CrudViewModel<PaymentVoucher> payload)
         {
             PaymentVoucher paymentVoucher = payload.value;
+            if (paymentVoucher.IsFullPayment)
+            {
+                Bill bill = _context.Bill.Find(paymentVoucher.BillId);
+                bill.fullPaid = paymentVoucher.IsFullPayment;
+                _context.Bill.Update(bill);
+                _context.SaveChanges();
+            }
             _context.PaymentVoucher.Update(paymentVoucher);
             _context.SaveChanges();
             return Ok(paymentVoucher);
@@ -64,6 +104,13 @@ namespace coderush.Controllers.Api
             PaymentVoucher paymentVoucher = _context.PaymentVoucher
                 .Where(x => x.PaymentvoucherId == (int)payload.key)
                 .FirstOrDefault();
+            if (paymentVoucher.IsFullPayment)
+            {
+                Bill bill = _context.Bill.Find(paymentVoucher.BillId);
+                bill.fullPaid = !paymentVoucher.IsFullPayment;
+                _context.Bill.Update(bill);
+                _context.SaveChanges();
+            }
             _context.PaymentVoucher.Remove(paymentVoucher);
             _context.SaveChanges();
             return Ok(paymentVoucher);

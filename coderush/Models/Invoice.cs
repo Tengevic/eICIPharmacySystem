@@ -21,6 +21,7 @@ namespace coderush.Models
         public DateTimeOffset InvoiceDueDate { get; set; }
         [Display(Name = "Invoice Type")]
         public int InvoiceTypeId { get; set; }
+        public PaymentReceive PaymentReceive { get; set; }
         public bool fullyPaid { get; set; } = false;
     }
 }

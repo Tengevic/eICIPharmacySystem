@@ -54,7 +54,7 @@ namespace coderush.Controllers.Api
             PaymentReceive paymentReceive = payload.value;
             if (paymentReceive.IsFullPayment)
             {
-                Invoice invoice = _context.Invoice.Find(paymentReceive.Invoice);
+                Invoice invoice = _context.Invoice.Find(paymentReceive.InvoiceId);
                 invoice.fullyPaid = paymentReceive.IsFullPayment;
                 _context.Invoice.Update(invoice);
                 _context.SaveChanges();
@@ -116,11 +116,6 @@ namespace coderush.Controllers.Api
             return Ok(paymentReceive);
 
         }
-        [HttpPost("[action]")]
-        public IActionResult Upload([FromBody]CrudViewModel<IFormFile> payload)
-        {
 
-            return Ok();
-       }
     }
 }

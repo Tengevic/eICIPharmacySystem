@@ -101,6 +101,11 @@ namespace coderush.Data
         public DbSet<coderush.Models.ClinicalTrialsReturnedLine> ClinicalTrialsReturnedLine { get; set; }
         public DbSet<Prescription> Prescription { get; set; }
         public DbSet<PrescriptionLines> PrescriptionLines { get; set; }
+        public DbSet<coderush.Models.RFPCustomer> RFPCustomer { get; set; }
+        public DbSet<coderush.Models.RFPpaymentRecieved> RFPpaymentRecieved { get; set; }
+        public DbSet<coderush.Models.RFPinvoice> RFPinvoice { get; set; }
+        public DbSet<coderush.Models.RFPDrugRecieve> RFPDrugRecieve { get; set; }
+        public DbSet<coderush.Models.RFPSaleorder> RFPSaleorder { get; set; }
 
     }
 }

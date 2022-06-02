@@ -10,6 +10,7 @@ using coderush.Models;
 using coderush.Services;
 using coderush.Models.SyncfusionViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Newtonsoft.Json;
 
 namespace coderush.Controllers.Api
 {
@@ -100,7 +101,18 @@ namespace coderush.Controllers.Api
         {
             GoodsReceivedNote goodsReceivedNote = _context.GoodsReceivedNote
                 .Where(x => x.GoodsReceivedNoteId == (int)payload.key)
+                .Include(x => x.goodsRecievedNoteLines)
                 .FirstOrDefault();
+            if (goodsReceivedNote.goodsRecievedNoteLines.Count > 0)
+            {
+                Err err = new Err
+                {
+                    message = "Record has recieved goods"
+                };
+                string errMsg = JsonConvert.SerializeObject(err);
+
+                return BadRequest(err);
+            }
             _context.GoodsReceivedNote.Remove(goodsReceivedNote);
             _context.SaveChanges();
             return Ok(goodsReceivedNote);

@@ -19,7 +19,6 @@ namespace coderush.Models
         public string Country { get; set; }
         public string Phone { get; set; }
         public string Email { get; set; }
-        [Display(Name = "Contact Person")]
         public string EiciRefNumber { get; set; }
     }
 }

@@ -30,6 +30,7 @@ namespace coderush.Models
         public double Tax { get; set; }
         public double Freight { get; set; }
         public double Total { get; set; }
+        public GoodsReceivedNote GoodsReceivedNote { get; set; }
         public List<PurchaseOrderLine> PurchaseOrderLines { get; set; } = new List<PurchaseOrderLine>();
         
 

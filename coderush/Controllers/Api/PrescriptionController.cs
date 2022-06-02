@@ -253,7 +253,18 @@ namespace coderush.Controllers.Api
         {
             Prescription prescription = _context.Prescription
                 .Where(x => x.PrescriptionId == (int)payload.key)
+                .Include(x => x.prescriptionLines)
                 .FirstOrDefault();
+            if (prescription.prescriptionLines.Count > 0)
+            {
+                Err err = new Err
+                {
+                    message = "Record has prescriptions"
+                };
+                string errMsg = JsonConvert.SerializeObject(err);
+
+                return BadRequest(err);
+            }
             _context.Prescription.Remove(prescription);
             _context.SaveChanges();
             return Ok(prescription);
@@ -264,7 +275,18 @@ namespace coderush.Controllers.Api
         {
             Prescription prescription = _context.Prescription
                  .Where(x => x.PrescriptionId == id)
+                 .Include(x => x.prescriptionLines)
                  .FirstOrDefault();
+            if (prescription.prescriptionLines.Count > 0)
+            {
+                Err err = new Err
+                {
+                    message = "Record has prescriptions"
+                };
+                string errMsg = JsonConvert.SerializeObject(err);
+
+                return BadRequest(err);
+            }
             _context.Prescription.Remove(prescription);
             _context.SaveChanges();
             return Ok(prescription);

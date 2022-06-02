@@ -9,6 +9,7 @@ using coderush.Data;
 using coderush.Models;
 using coderush.Services;
 using coderush.Models.SyncfusionViewModels;
+using Newtonsoft.Json;
 
 namespace coderush.Controllers.Api
 {
@@ -74,7 +75,18 @@ namespace coderush.Controllers.Api
         {
             ClinicalTrialsSales clinicalTrialsSales = _context.ClinicalTrialsSales
                 .Where(x => x.ClinicalTrialsSalesId == (int)payload.key)
+                .Include(x => x.clinicalTrialsSalesLine)
                 .FirstOrDefault();
+            if (clinicalTrialsSales.clinicalTrialsSalesLine.Count > 0)
+            {
+                Err err = new Err
+                {
+                    message = "Record has use record"
+                };
+                string errMsg = JsonConvert.SerializeObject(err);
+
+                return BadRequest(err);
+            }
             _context.ClinicalTrialsSales.Remove(clinicalTrialsSales);
             _context.SaveChanges();
             return Ok(clinicalTrialsSales);

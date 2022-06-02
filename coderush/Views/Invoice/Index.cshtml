@@ -109,9 +109,12 @@
                     actionFailure: function (args) {
                         if (args.requestType == "save") {
                             var s = ej.parseJSON(args.error.responseText)
-                            toastr.info(s.message, "Invalid due date");
+                            toastr.warning(s.message, "Due date ");
                         }
-
+                        if (args.requestType == 'delete') {
+                            var s = ej.parseJSON(args.error.error.responseText)
+                            toastr.warning(s.message, "Cannot delete");
+                        }
                     }
                 });
             });

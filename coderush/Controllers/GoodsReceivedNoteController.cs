@@ -6,6 +6,7 @@ using coderush.Data;
 using coderush.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace coderush.Controllers
 {
@@ -23,7 +24,10 @@ namespace coderush.Controllers
         }
         public IActionResult Detail(int id)
         {
-            GoodsReceivedNote goodsReceivedNote = _context.GoodsReceivedNote.SingleOrDefault(x => x.GoodsReceivedNoteId.Equals(id));
+            GoodsReceivedNote goodsReceivedNote = _context
+                .GoodsReceivedNote
+                .Include(x =>x.Bill)
+                .SingleOrDefault(x => x.GoodsReceivedNoteId.Equals(id));
 
             if (goodsReceivedNote == null)
             {

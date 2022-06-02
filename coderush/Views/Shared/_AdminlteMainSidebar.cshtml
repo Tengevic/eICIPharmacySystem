@@ -22,11 +22,11 @@
         <ul class="sidebar-menu" data-widget="tree">
             @*<li class="header">DASHBOARD</li>*@
             @*<li class="@Html.IsSelected(controller: MainMenu.Dashboard.ControllerName)">
-              <a href="@MainMenu.Dashboard.Path">
-                  <i class="fa fa-pie-chart"></i> <span>@MainMenu.Dashboard.PageName</span>
-              </a>
-            </li>*@
-            
+          <a href="@MainMenu.Dashboard.Path">
+              <i class="fa fa-pie-chart"></i> <span>@MainMenu.Dashboard.PageName</span>
+          </a>
+        </li>*@
+
             <li class="header"><p style="color:snow;"><b>SALES</b></p> </li>
             <li class="@Html.IsSelected(controller: MainMenu.CustomerType.ControllerName)">
                 <a href="@MainMenu.CustomerType.Path">
@@ -66,6 +66,37 @@
             <li class="@Html.IsSelected(controller: MainMenu.PaymentReceive.ControllerName)">
                 <a href="@MainMenu.PaymentReceive.Path">
                     <i class="fa fa-check"></i> <span>@MainMenu.PaymentReceive.PageName</span>
+                </a>
+            </li>
+            <li class="header"><p style="color:snow;"><b>RFP</b></p></li>
+            @*<li class="@Html.IsSelected(controller: MainMenu.VendorType.ControllerName)">
+            <a href="@MainMenu.VendorType.Path">
+                <i class="fa fa-gear"></i> <span>@MainMenu.VendorType.PageName</span>
+            </a>
+        </li*@>
+            <li class="@Html.IsSelected(controller: MainMenu.RFPCustomer.ControllerName)">
+                <a href="@MainMenu.RFPCustomer.Path">
+                    <i class="fa fa-building-o"></i> <span>@MainMenu.RFPCustomer.PageName</span>
+                </a>
+            </li>
+            <li class="@Html.IsSelected(controller: MainMenu.RFPSaleorder.ControllerName)">
+                <a href="@MainMenu.RFPSaleorder.Path">
+                    <i class="fa fa-bookmark"></i> <span>@MainMenu.RFPSaleorder.PageName</span>
+                </a>
+            </li>
+            <li class="@Html.IsSelected(controller: MainMenu.RFPinvoice.ControllerName)">
+                <a href="@MainMenu.RFPinvoice.Path">
+                    <i class="fa fa-briefcase"></i> <span>@MainMenu.RFPinvoice.PageName</span>
+                </a>
+            </li>
+            <li class="@Html.IsSelected(controller: MainMenu.RFPpaymentRecieved.ControllerName)">
+                <a href="@MainMenu.RFPpaymentRecieved.Path">
+                    <i class="fa fa-credit-card-alt"></i> <span>@MainMenu.RFPpaymentRecieved.PageName</span>
+                </a>
+            </li>
+            <li class="@Html.IsSelected(controller: MainMenu.RFPDrugRecieve.ControllerName)">
+                <a href="@MainMenu.RFPDrugRecieve.Path">
+                    <i class="fa fa-check"></i> <span>@MainMenu.RFPDrugRecieve.PageName</span>
                 </a>
             </li>
             <li class="header"><p style="color:snow;"><b>PURCHASE</b></p></li>
@@ -130,39 +161,6 @@
                     <i class="fa fa-gear"></i> <span>@MainMenu.UnitOfMeasure.PageName</span>
                 </a>
             </li>
-            <li class="header"><p style="color:snow;"><b>CLINICAL TRIALS</b></p></li>
-
-            <li class="@Html.IsSelected(controller: MainMenu.ClinicalTrialsNotifications.ControllerName)">
-                <a href="@MainMenu.ClinicalTrialsNotifications.Path">
-                    <i class="fa fa-pie-chart"></i> <span>@MainMenu.ClinicalTrialsNotifications.PageName</span>
-                </a>
-            </li>
-            <li class="@Html.IsSelected(controller: MainMenu.ClinicalTrialsProducts.ControllerName)">
-                <a href="@MainMenu.ClinicalTrialsProducts.Path">
-                    <i class="fa fa-apple"></i> <span>@MainMenu.ClinicalTrialsProducts.PageName</span>
-                </a>
-            </li>
-            <li class="@Html.IsSelected(controller: MainMenu.ClinicalTrialsDonations.ControllerName)">
-                <a href="@MainMenu.ClinicalTrialsDonations.Path">
-                    <i class="fa fa-briefcase"></i> <span>@MainMenu.ClinicalTrialsDonations.PageName</span>
-                </a>
-            </li>
-            <li class="@Html.IsSelected(controller: MainMenu.ClinicalTrialsSales.ControllerName)">
-                <a href="@MainMenu.ClinicalTrialsSales.Path">
-                    <i class="fa fa-copy"></i> <span>@MainMenu.ClinicalTrialsSales.PageName</span>
-                </a>
-            </li>
-            <li class="@Html.IsSelected(controller: MainMenu.ClinicalTrialsReturned.ControllerName)">
-                <a href="@MainMenu.ClinicalTrialsReturned.Path">
-                    <i class="fa fa-amazon"></i> <span>@MainMenu.ClinicalTrialsReturned.PageName</span>
-                </a>
-            </li>
-            <li class="@Html.IsSelected(controller: MainMenu.ClinicalTrialsStock.ControllerName)">
-                <a href="@MainMenu.ClinicalTrialsStock.Path">
-                    <i class="fa fa-database"></i> <span>@MainMenu.ClinicalTrialsStock.PageName</span>
-                </a>
-            </li>
-
             <li class="header"><p style="color:snow;"><b>CONFIG</b></p></li>
             @*<li class="@Html.IsSelected(controller: MainMenu.Currency.ControllerName)">
             <a href="@MainMenu.Currency.Path">
