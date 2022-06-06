@@ -55,6 +55,17 @@ namespace coderush.Controllers.Api
             _context.SaveChanges();
             return Ok(RFPDrugRecieve);
         }
+        [HttpPost("[action]")]
+        public IActionResult Add([FromBody] RFPDrugRecieve payload)
+        {
+            RFPDrugRecieve RFPDrugRecieve = payload;
+
+            RFPDrugRecieve drugRecieve = _context.RFPDrugRecieve.FirstOrDefault(x => x.RFPpaymentRecievedId == RFPDrugRecieve.RFPpaymentRecievedId);
+            RFPDrugRecieve.RFPDrugRecieveName = _numberSequence.GetNumberSequence("RDR");
+            _context.RFPDrugRecieve.Add(RFPDrugRecieve);
+            _context.SaveChanges();
+            return Ok(RFPDrugRecieve);
+        }
 
         [HttpPost("[action]")]
         public IActionResult Update([FromBody] CrudViewModel<RFPDrugRecieve> payload)

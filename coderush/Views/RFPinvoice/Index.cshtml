@@ -100,7 +100,7 @@
                     columns: [
                         { field: "RFPinvoiceId", headerText: 'Invoice', isPrimaryKey: true, isIdentity: true, visible: false },
                         { field: "RFPinvoiceName", headerText: 'Invoice Number', allowEditing: false },
-                        { field: "RFPSaleorderId", headerText: 'Drug Sell number', foreignKeyField: "SalesOrderId", foreignKeyValue: "SalesOrderName", dataSource: dataManagerSalesOrder, validationRules: { required: true } },
+                        { field: "RFPSaleorderId", headerText: 'Drug Sell number', foreignKeyField: "RFPSaleorderId", foreignKeyValue: "RFPSaleorderName", dataSource: dataManagerSalesOrder, validationRules: { required: true } },
                         { field: "InvoiceDate", headerText: 'Invoice Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
                         { field: "InvoiceDueDate", headerText: 'Invoice Due Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
                         { field: "InvoiceTypeId", headerText: 'Invoice Type', foreignKeyField: "InvoiceTypeId", foreignKeyValue: "InvoiceTypeName", dataSource: dataManagerInvoiceType, defaultValue: 1, visible: false },

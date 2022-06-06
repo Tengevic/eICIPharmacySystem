@@ -117,8 +117,8 @@
                         { field: "PaymentDate", headerText: 'Payment Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
                         { field: "PaymentTypeId", headerText: 'Payment Type', foreignKeyField: "PaymentTypeId", foreignKeyValue: "PaymentTypeName", dataSource: dataManagerPaymentType },
                         { field: "PaymentAmount", headerText: 'Payment Amount', editType: "numericedit", format: "{0:n2}", validationRules: { required: true } },
-                        { headerText: 'Uploads', template: "<a href='/PaymentReceive/Detail/{{:PaymentReceiveId}}'>Uploads</a>" },
-                    ],
+                        { field: "PaymentCode", headerText: 'Payment code' }
+                    ], 
                     actionComplete: "complete",
                     actionFailure: function (args) {
                         if (args.requestType == "save") {
@@ -152,7 +152,6 @@
                         if (args.requestType == 'beginedit') {
                             data.push({ 'InvoiceId': selectedValue, 'InvoiceName': selectedText });
                         }
-
                         $("#GridInvoiceId").ejDropDownList({
                             dataSource: data,
                             fields: { id: 'InvoiceId', text: 'InvoiceName', value: 'InvoiceId' },
@@ -162,34 +161,35 @@
                 });
 
             }
-            if (args.requestType == 'save') {
-                pay = args.data.PaymentReceiveId;
+            /// upload documents
+            //if (args.requestType == 'save') {
+            //    pay = args.data.PaymentReceiveId;
             
-                $.ajax({
-                    url: '/api/PaymentType/GetById/' + args.data.PaymentTypeId,
-                    type: 'GET',
-                    success: function (data) {
+            //    $.ajax({
+            //        url: '/api/PaymentType/GetById/' + args.data.PaymentTypeId,
+            //        type: 'GET',
+            //        success: function (data) {
 
-                        upload = data.RequireUpload;
-                        if (data.RequireUpload == true) {
-                            $("#dialog").ejDialog("open");
+            //            upload = data.RequireUpload;
+            //            if (data.RequireUpload == true) {
+            //                $("#dialog").ejDialog("open");
 
-                            $("#UploadDefault").ejUploadbox({
-                                saveUrl: "/api/UploadFiles",
-                                allowDraggable: true,
-                                multipleFilesSelection: true,
-                                success: "uploadSuccess",
-                                beforeSend: function (args) {
-                                    args.xhr.setRequestHeader("test", pay);
-                                }
-                            });
+            //                $("#UploadDefault").ejUploadbox({
+            //                    saveUrl: "/api/UploadFiles",
+            //                    allowDraggable: true,
+            //                    multipleFilesSelection: true,
+            //                    success: "uploadSuccess",
+            //                    beforeSend: function (args) {
+            //                        args.xhr.setRequestHeader("test", pay);
+            //                    }
+            //                });
 
-                        }
+            //            }
                        
-                    }
-                })
+            //        }
+            //    })
                   
-            }
+            //}
         }
 
 

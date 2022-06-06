@@ -34,6 +34,35 @@ namespace coderush.Controllers.Api
             int Count = Items.Count();
             return Ok(new { Items, Count });
         }
+        [HttpGet("[action]")]
+        public async Task<IActionResult> NotRecieved()
+        {   
+            List<RFPpaymentRecieved> Items = new List<RFPpaymentRecieved>();
+            try
+            {
+                List<RFPDrugRecieve> receives = new List<RFPDrugRecieve>();
+                receives = await _context.RFPDrugRecieve
+                        .Where(x => x.IsFullReceive == true)
+                        .ToListAsync();
+                List<int> ids = new List<int>();
+
+                foreach (var item in receives)
+                {
+                    ids.Add(item.RFPpaymentRecievedId);
+                }
+
+                Items = Items = await _context.RFPpaymentRecieved
+                    .Where(x => !ids.Contains(x.RFPpaymentRecievedId))
+                    .Where(x => x.PaymentType.PaymentTypeName == "Drug Payment")
+                    .ToListAsync();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            return Ok(Items);
+        }
         [HttpGet("[action]/{id}")]
         public async Task<IActionResult> GetbyInvoiceId([FromRoute] int id)
         {
@@ -41,6 +70,7 @@ namespace coderush.Controllers.Api
                 .Where(x => x.RFPpaymentRecievedId == id)
                 .Include(x => x.PaymentType)
                 .Include(x => x.RFPinvoice)
+                .Include(x => x.RFPDrugRecieve)
                 .ToListAsync();
             int Count = Items.Count();
 
@@ -61,6 +91,7 @@ namespace coderush.Controllers.Api
             paymentReceive.RFPpaymentRecievedName = _numberSequence.GetNumberSequence("RFPPAY");
             _context.RFPpaymentRecieved.Add(paymentReceive);
             _context.SaveChanges();
+            paymentReceive.PaymentType = _context.PaymentType.Find(paymentReceive.PaymentTypeId);
             return Ok(paymentReceive);
         }
         [HttpPost("[action]")]

@@ -62,7 +62,18 @@ namespace coderush.Controllers.Api
             }
             
         }
+        [HttpGet("[action]/{id}")]
+        public async Task<IActionResult> GetSalesOrderLineByRFPSaleOrderId([FromRoute] int id)
+        {
+            List<SalesOrderLine> Items = await _context.SalesOrderLine
+                .Where(x => x.RFPSaleorderId == id)
+                .Include(x => x.Product.UnitOfMeasure)
+                .Include(x => x.Product.ProductType)
+                .ToListAsync();
+            int Count = Items.Count();
+            return Ok(new { Items, Count });
 
+        }
         [HttpGet("[action]")]
         public async Task<IActionResult> GetSalesOrderLineByShipmentId()
         {
@@ -116,6 +127,11 @@ namespace coderush.Controllers.Api
                 {
                     List<SalesOrderLine> lines = new List<SalesOrderLine>();
                     lines = _context.SalesOrderLine.Where(x => x.ProductId.Equals(productId)).ToList();
+                    
+
+                    List<GoodsRecievedNoteLine> batch = _context.GoodsRecievedNoteLine.Where(x => x.ProductId.Equals(productId)).ToList();
+
+                    stock.TotalRecieved = batch.Sum(x => x.Quantity);
 
                     stock.TotalSales = lines.Sum(x => x.Quantity);
                     
@@ -169,7 +185,7 @@ namespace coderush.Controllers.Api
 
         private void UpdateSalesOrder(SalesOrderLine salesOrderLine)
         {
-            if(salesOrderLine.SalesOrder != null)
+            if(salesOrderLine.SalesOrderId != null)
             {
                 try
                 {
@@ -203,8 +219,41 @@ namespace coderush.Controllers.Api
                     throw;
                 }
             }
-            
-        }
+            if (salesOrderLine.RFPSaleorderId != null)
+            {
+                try
+                {
+                    RFPSaleorder salesOrder = new RFPSaleorder();
+                    salesOrder = _context.RFPSaleorder
+                        .Where(x => x.RFPSaleorderId.Equals(salesOrderLine.RFPSaleorderId))
+                        .FirstOrDefault();
+
+                    if (salesOrder != null)
+                    {
+                        List<SalesOrderLine> lines = new List<SalesOrderLine>();
+                        lines = _context.SalesOrderLine.Where(x => x.RFPSaleorderId.Equals(salesOrderLine.RFPSaleorderId)).ToList();
+
+                        //update master data by its lines
+                        salesOrder.Amount = lines.Sum(x => x.Amount);
+                        salesOrder.SubTotal = lines.Sum(x => x.SubTotal);
+
+                        salesOrder.Discount = lines.Sum(x => x.DiscountAmount);
+                        salesOrder.Tax = lines.Sum(x => x.TaxAmount);
+
+                        salesOrder.Total = salesOrder.Freight + lines.Sum(x => x.Total);
+
+                        _context.Update(salesOrder);
+
+                        _context.SaveChanges();
+                    }
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+            }
+        } 
         private void UpdateBatch(int batchId)
         {
             try
@@ -235,12 +284,13 @@ namespace coderush.Controllers.Api
         {
             SalesOrderLine salesOrderLine = payload.value;
 
-            if(salesOrderLine.SalesOrderId != null)
+            // Checks if saleOrder/rfpsaleorder has been invoices
+            if (salesOrderLine.SalesOrderId != null)
             {
                 SalesOrder salesOrder = _context.SalesOrder
-                                .Where(x => x.SalesOrderId == salesOrderLine.SalesOrderId)
-                                .Include(x => x.Invoice)
-                                .FirstOrDefault();
+                    .Where(x => x.SalesOrderId == salesOrderLine.SalesOrderId)
+                    .Include(x => x.Invoice)
+                    .FirstOrDefault();
                 if (salesOrder.Invoice != null)
                 {
                     Err err = new Err
@@ -254,11 +304,12 @@ namespace coderush.Controllers.Api
             }
             if (salesOrderLine.RFPSaleorderId != null)
             {
-                RFPSaleorder salesOrder = _context.RFPSaleorder
-                                .Where(x => x.RFPSaleorderId == salesOrderLine.RFPSaleorderId)
-                                .Include(x => x.RFPinvoice)
-                                .FirstOrDefault();
-                if (salesOrder.RFPinvoice != null)
+                RFPSaleorder saleorder = _context.RFPSaleorder
+                    .Where(x => x.RFPSaleorderId == salesOrderLine.RFPSaleorderId)
+                    .Include(x => x.RFPinvoice)
+                    .FirstOrDefault();
+                    
+                if (saleorder.RFPinvoice != null)
                 {
                     Err err = new Err
                     {
@@ -268,8 +319,10 @@ namespace coderush.Controllers.Api
 
                     return BadRequest(err);
                 }
+
             }
 
+            // check if product is in stock
             Product product = _context.Product.Find(salesOrderLine.ProductId);
             if (product.InStock < salesOrderLine.Quantity)
             {
@@ -281,6 +334,7 @@ namespace coderush.Controllers.Api
 
                 return BadRequest(err);
             }
+            // auto select batch 
             double Quantity = salesOrderLine.Quantity;
             double remain = salesOrderLine.Quantity;
             do {
@@ -332,96 +386,62 @@ namespace coderush.Controllers.Api
 
         }
         [HttpPost("[action]")]
-        public IActionResult Add([FromBody] SalesOrderLine payload)
-        {
-            SalesOrderLine salesOrderLine = payload;
-            SalesOrder salesOrder = _context.SalesOrder
-                               .Where(x => x.SalesOrderId == salesOrderLine.SalesOrderId)
-                               .Include(x => x.Invoice)
-                               .FirstOrDefault();
-            if (salesOrder.Invoice != null)
-            {
-                Err err = new Err
-                {
-                    message = "This oder is already Invoiced",
-                };
-                string errMsg = JsonConvert.SerializeObject(err);
-
-                return BadRequest(err);
-            }
-            GoodsRecievedNoteLine batch = _context.GoodsRecievedNoteLine.Find(salesOrderLine.GoodsRecievedNoteLineId);
-
-            if (batch.ProductId != salesOrderLine.ProductId)
-            {
-                Err err = new Err
-                {
-                    message = "Product doesn't have the batchId"
-                };
-                string errMsg = JsonConvert.SerializeObject(err);
-
-                return BadRequest(err);
-            }
-            if (batch.InStock < salesOrderLine.Quantity)
-            {
-                Err err = new Err
-                {
-                    message = $"Stock available for this Batch is {batch.InStock} ",
-                };
-                string errMsg = JsonConvert.SerializeObject(err);
-
-                return BadRequest(err);
-            }
-            Product product = _context.Product.Find(salesOrderLine.ProductId);
-            salesOrderLine.Price = product.DefaultSellingPrice;
-            salesOrderLine = this.Recalculate(salesOrderLine);
-            _context.SalesOrderLine.Add(salesOrderLine);
-            _context.SaveChanges();
-            this.UpdateSalesOrder(salesOrderLine);
-            this.UpdateStock(salesOrderLine.ProductId);
-            this.UpdateBatch(salesOrderLine.GoodsRecievedNoteLineId);
-            return Ok(salesOrderLine);
-
-        }
-
-        [HttpPost("[action]")]
         public IActionResult Update([FromBody]CrudViewModel<SalesOrderLine> payload)
         {
             SalesOrderLine salesOrderLine = payload.value;
-            SalesOrder salesOrder = _context.SalesOrder
-                               .Where(x => x.SalesOrderId == salesOrderLine.SalesOrderId)
-                               .Include(x => x.Invoice)
-                               .FirstOrDefault();
-            if (salesOrder.Invoice != null)
-            {
-                Err err = new Err
-                {
-                    message = "This oder is already Invoiced",
-                };
-                string errMsg = JsonConvert.SerializeObject(err);
+            SalesOrderLine OrderLine = _context.SalesOrderLine
+                .Where(x => x.SalesOrderLineId == (int)payload.key)
+                .Include(x => x.SalesOrder.Invoice)
+                .Include(x => x.RFPSaleorder.RFPinvoice)
+                .FirstOrDefault();
 
-                return BadRequest(err);
+            if(salesOrderLine.SalesOrderId != null)
+            {
+                if (OrderLine.SalesOrder.Invoice != null)
+                {
+                    Err err = new Err
+                    {
+                        message = "This oder is already Invoiced",
+                    };
+                    string errMsg = JsonConvert.SerializeObject(err);
+
+                    return BadRequest(err);
+                }
             }
-            GoodsRecievedNoteLine batch = _context.GoodsRecievedNoteLine
-                .Where(x => x.ProductId == salesOrderLine.ProductId)
-                .Where(x => x.InStock > 1)
-                .OrderBy(x => x.ExpiryDate)
-                .First();
+            if(salesOrderLine.RFPSaleorderId != null)
+            {
+                if (OrderLine.RFPSaleorder.RFPinvoice != null)
+                {
+                    Err err = new Err
+                    {
+                        message = "This oder is already Invoiced",
+                    };
+                    string errMsg = JsonConvert.SerializeObject(err);
 
-            if(batch.InStock < salesOrderLine.Quantity)
+                    return BadRequest(err);
+                }
+
+            }
+
+            GoodsRecievedNoteLine batch = _context.GoodsRecievedNoteLine
+                .Where(x => x.GoodsRecievedNoteLineId == salesOrderLine.GoodsRecievedNoteLineId)
+                .FirstOrDefault();
+
+            double instock = OrderLine.Quantity + batch.InStock;
+            if (instock < salesOrderLine.Quantity)
             {
                 Err err = new Err
                 {
-                    message = "Error",
+                    message = "Units in batch " + batch.InStock,
                 };
                 string errMsg = JsonConvert.SerializeObject(err);
 
                 return BadRequest(err);
             }
             salesOrderLine.GoodsRecievedNoteLineId = batch.GoodsRecievedNoteLineId;
-            Product product = _context.Product.Find(salesOrderLine.ProductId);
-            salesOrderLine.Price = product.DefaultSellingPrice;
             salesOrderLine = this.Recalculate(salesOrderLine);
-            _context.SalesOrderLine.Update(salesOrderLine);
+            OrderLine = salesOrderLine;
+            _context.SalesOrderLine.Update(OrderLine);
             _context.SaveChanges();
             this.UpdateSalesOrder(salesOrderLine);
             this.UpdateStock(salesOrderLine.ProductId);
@@ -435,19 +455,39 @@ namespace coderush.Controllers.Api
             SalesOrderLine salesOrderLine = _context.SalesOrderLine
                 .Where(x => x.SalesOrderLineId == (int)payload.key)
                 .FirstOrDefault();
-            SalesOrder salesOrder = _context.SalesOrder
-                               .Where(x => x.SalesOrderId == salesOrderLine.SalesOrderId)
-                               .Include(x => x.Invoice)
-                               .FirstOrDefault();
-            if (salesOrder.Invoice != null)
+            if (salesOrderLine.SalesOrderId != null)
             {
-                Err err = new Err
+                SalesOrder salesOrder = _context.SalesOrder
+                                .Where(x => x.SalesOrderId == salesOrderLine.SalesOrderId)
+                                .Include(x => x.Invoice)
+                                .FirstOrDefault();
+                if (salesOrder.Invoice != null)
                 {
-                    message = "This oder is already Invoiced",
-                };
-                string errMsg = JsonConvert.SerializeObject(err);
+                    Err err = new Err
+                    {
+                        message = "This oder is already Invoiced",
+                    };
+                    string errMsg = JsonConvert.SerializeObject(err);
 
-                return BadRequest(err);
+                    return BadRequest(err);
+                }
+            }
+            if (salesOrderLine.RFPSaleorderId != null)
+            {
+                RFPSaleorder salesOrder = _context.RFPSaleorder
+                                .Where(x => x.RFPSaleorderId == salesOrderLine.RFPSaleorderId)
+                                .Include(x => x.RFPinvoice)
+                                .FirstOrDefault();
+                if (salesOrder.RFPinvoice != null)
+                {
+                    Err err = new Err
+                    {
+                        message = "This oder is already Invoiced",
+                    };
+                    string errMsg = JsonConvert.SerializeObject(err);
+
+                    return BadRequest(err);
+                }
             }
             _context.SalesOrderLine.Remove(salesOrderLine);
             _context.SaveChanges();

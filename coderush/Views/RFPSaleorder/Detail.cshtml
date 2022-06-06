@@ -2,60 +2,234 @@
 @{
     ViewData["Title"] = "Sales Order Detail";
 }
+
+
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
     <!-- Main content -->
     <section class="content">
         <!-- Default box -->
-        <div class="box">
-            <div class="box-header with-border">
-                <h3 class="box-title"><i class="fa fa-building"></i> @ViewData["Title"]</h3>
-                <div class="box-tools pull-right">
-                    <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
-                            title="Collapse">
-                        <i class="fa fa-minus"></i>
-                    </button>
-                    <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
-                        <i class="fa fa-times"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="box-body">
-                <div class="content-container-fluid">
-                    <div class="row">
-                        <dl class="dl-horizontal">
-                            <dt>
-                                @Html.DisplayNameFor(model => model.RFPSaleorderId)
-                            </dt>
-                            <dd>
-                                @Html.DisplayFor(model => model.RFPSaleorderId)
-                            </dd>
-                            <dt>
-                                @Html.DisplayNameFor(model => model.RFPSaleorderName)
-                            </dt>
-                            <dd>
-                                @Html.DisplayFor(model => model.RFPSaleorderName)
-                            </dd>
-                            <dt>
-                                @Html.DisplayNameFor(model => model.RFPCustomerId)
-                            </dt>
-                            <dd>
-                                <input type="text" id="CustomerId" />
-                            </dd>
-                            <dt>
-                                @Html.DisplayNameFor(model => model.SaleDate)
-                            </dt>
-                            <dd>
-                                @Html.DisplayFor(model => model.SaleDate)
-                            </dd>
-                           
-                        </dl>
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="box">
+                    <div class="box-header with-border">
+                        <h3 class="box-title"><i class="fa fa-building"></i> @ViewData["Title"]</h3>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
+                                    title="Collapse">
+                                <i class="fa fa-minus"></i>
+                            </button>
+                            <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
+                                <i class="fa fa-times"></i>
+                            </button>
+                        </div>
                     </div>
-                    <button onclick="test()" >test</button>
+                    <div class="box-body">
+                        <div class="content-container-fluid">
+                            <div class="row">
+                                <dl class="dl-horizontal">
+                                    <dt>
+                                        @Html.DisplayNameFor(model => model.RFPSaleorderId)
+                                    </dt>
+                                    <dd>
+                                        @Html.DisplayFor(model => model.RFPSaleorderId)
+                                    </dd>
+                                    <dt>
+                                        @Html.DisplayNameFor(model => model.RFPSaleorderName)
+                                    </dt>
+                                    <dd>
+                                        @Html.DisplayFor(model => model.RFPSaleorderName)
+                                    </dd>
+                                    <dt>
+                                        @Html.DisplayNameFor(model => model.RFPCustomerId)
+                                    </dt>
+                                    <dd>
+                                        <input type="text" id="CustomerId" />
+                                    </dd>
+                                    <dt>
+                                        @Html.DisplayNameFor(model => model.SaleDate)
+                                    </dt>
+                                    <dd>
+                                        @Html.DisplayFor(model => model.SaleDate)
+                                    </dd>
+                                    <dt>
+                                        Invoice
+                                    </dt>
+                                    @if (Model.RFPinvoice != null)
+                                    {
+                                        <dd>
+                                            @Html.DisplayFor(model => model.RFPinvoice.RFPinvoiceName)
+                                        </dd>
+                                        <dt>
+                                            Payments
+                                        </dt>
+                                        @if (!Model.RFPinvoice.fullyPaid)
+                                        {
+
+                                            <dd>
+                                                <button id="Payment" onclick="MakePayment()">Make payment</button>
+                                            </dd>
+
+                                        }
+                                        else
+                                        {
+                                            <dd>
+                                                Fully Paid
+                                            </dd>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <dd>
+                                            <button id="Invoice" onclick="Invoice()"> Create Invoice</button>
+                                        </dd>
+                                    }
+                                </dl>
+                            </div>
+
+                        </div>
+                    </div>
+                    <!-- /.box-body -->
+                    <!-- /.box-footer-->
                 </div>
             </div>
-            <!-- /.box-body -->
-            <!-- /.box-footer-->
+            @if (Model.RFPinvoice == null)
+            {
+                <div class="col-lg-6">
+                    <div class="box" style="height:250px">
+                        <div class="box-header with-border">
+                            <h3 class="box-title text-primary"><i class="fa fa-pie-chart"></i> Order Details</h3>
+                            <div class="box-tools pull-right">
+                                <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
+                                        title="Collapse">
+                                    <i class="fa fa-minus"></i>
+                                </button>
+                                <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
+                                    <i class="fa fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="box-body">
+                            <table class="table-bordered table-striped mb-0" style="height:auto;width:100%">
+                                <tr>
+                                    <td>
+                                        Drug Name
+                                    </td>
+                                    <td>
+                                        <input type="text" id="ProductId" />
+                                    </td>
+                                    <td>
+                                        Units of Measure:
+                                    </td>
+                                    <td>
+                                        <label id="UnitsofMeasure" name="UnitsofMeasure"></label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Generic type
+                                    </td>
+                                    <td>
+                                        <label id="genericType" name="genericType"></label>
+                                    </td>
+                                    <td>
+                                        InStock
+                                    </td>
+                                    <td>
+                                        <label id="instock" name="instock"></label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Cost per unit:
+                                    </td>
+                                    <td>
+                                        <input id="Cost" type="number" value=0 onchange="NewCost(this.value)" />
+                                    </td>
+                                    <td>
+                                        Quantity:
+                                    </td>
+                                    <td>
+                                        <input id="Quantity" type="number" onchange="NewAmount(this.value)" />
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Amount
+                                    </td>
+                                    <td>
+                                        <label id="CostAmount" name="CostAmount"></label>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Discount Percentage
+                                    </td>
+                                    <td>
+                                        <input id="Disc" type="number" value=0 />
+                                    </td>
+                                    <td>
+                                        Tax Percentage
+                                    </td>
+                                    <td>
+                                        <input id="TaxPer" type="number" value=0 />
+                                    </td>
+
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <button id="btnsubmit" type="button" onclick="Submit()"> Submit</button>
+                                    </td>
+                                    <td>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="col-lg-6">
+                    <div class="box" style="height:250px">
+                        <div class="box-header with-border ">
+                            <h3 class="box-title text-primary"><i class="fa fa-pie-chart"></i> @Model.RFPinvoice.RFPinvoiceName</h3>
+                            <div class="box-tools pull-right">
+                                <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
+                                        title="Collapse">
+                                    <i class="fa fa-minus"></i>
+                                </button>
+                                <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
+                                    <i class="fa fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="box-body">
+                            <div class="payment">
+                                <div class="table-wrapper-scroll-y my-custom-scrollbar">
+                                    <table id="payment" align="center" class="table table-bordered table-striped mb-0" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th> # </th>
+                                                <th>Payment Name</th>
+                                                <th>Payment type</th>
+                                                <th>Amount</th>
+                                                <th>Recieve Drugs</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+
         </div>
         <!-- /.box -->
         <div class="box">
@@ -102,11 +276,11 @@
                                 <label id="Tax" name="Tax">@Model.Tax</label>
                             </dd>
                             @*<dt>
-                                    @Html.DisplayNameFor(model => model.Freight)
-                                </dt>
-                                <dd>
-                                    <label id="Freight" name="Freight">@Model.Freight</label>
-                                </dd>*@
+                                @Html.DisplayNameFor(model => model.Freight)
+                            </dt>
+                            <dd>
+                                <label id="Freight" name="Freight">@Model.Freight</label>
+                            </dd>*@
                             <dt>
                                 @Html.DisplayNameFor(model => model.Total)
                             </dt>
@@ -123,84 +297,465 @@
     <!-- /.content -->
 </div>
 <!-- /.content-wrapper -->
-
+<div id="dialogInvoice">
+    <table class="table">
+        <tr>
+            <td>
+                Drug Sell number
+            </td>
+            <td>
+                @Html.DisplayFor(model => model.RFPSaleorderName)
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Invoice Due date
+            </td>
+            <td>
+                <input id="InvoiceDuedate" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <button id="btnInvoiceSubmit" onclick="InvoiceSubmit()">Submit</button>
+            </td>
+            <td>
+                <p id="sendInvoice" style="color: green">Submiting... </p>
+            </td>
+        </tr>
+    </table>
+</div>
+<div id="dialogPayment">
+    <table>
+        <tr>
+            <td>
+                Invoice
+            </td>
+            <td>
+                @if (Model.RFPinvoice != null)
+                {
+                    @Model.RFPinvoice.RFPinvoiceName
+                    <input id="invoiceId" value="@Model.RFPinvoice.RFPinvoiceId" style="display:none" />
+                }
+            </td>
+            <td>
+                Full payment
+            </td>
+            <td>
+                <input type="checkbox" id="fullpayment" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Payment date
+            </td>
+            <td>
+                <input id="Paymentdate" />
+            </td>
+            <td>
+                Payment Type
+            </td>
+            <td>
+                <input id="PaymentTypeId" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Payment Amount
+            </td>
+            <td>
+                <input type="number" id="payAmount" value=0 />
+            </td>
+            <td>
+                Payment Code
+            </td>
+            <td>
+                <input type="text" id="code" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <button id="submitPay" onclick="Payment()">Submit</button>
+            </td>
+            <td>
+                <p id="sendpay" style="color: green">Submiting... </p>
+            </td>
+        </tr>
+    </table>
+</div>
+<div id="dialog">
+    <table>
+        <tr>
+            <td>
+                Payment name:
+            </td>
+            <td>
+                <label id="RFPpaymentRecievedName" name="RFPpaymentRecievedName"></label>
+            </td>
+            <td>
+                IsFullReceive
+            </td>
+            <td>
+                <input id="IsFullReceive" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Recieve date
+            </td>
+            <td>
+                <input id="Recievedate" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <button id="btnRecieve" onclick="Recieve()">Submit</button>
+            </td>
+            <td>
+                <p id="sendR" style="color: green">Submiting... </p>
+            </td>
+        </tr>
+    </table>
+</div>
 @section Styles{
 }
 @section Scripts{
     <script type="text/javascript">
-        function test() {
-             var data = {
+        var Drugs;
+        var InvoiceDuedate;
+        var InvoiceId;
+        var ProductId;
+        var Quantity = 0;
+        var sellingPrice = 0;
+        var Paymentdate;
+        var PaymentTypeId;
+        var paymentType;
+        var InvoiceId;
+        var RFPpaymentRecievedId;
+        var recievedate;
+        var IsFullReceive = false;
+
+        function Recieve() {
+            data = {
+                RFPpaymentRecievedId: RFPpaymentRecievedId,
+                IsFullReceive: IsFullReceive,
+                GRNDate: recievedate
+            }
+            if (GRNDate == null) {
+                toastr.warning("Select a date")
+            } else {
+                console.log(data);
+                $.ajax({
+                    type: "POST",
+                    contentType: "application/json;charset=utf-8",
+                    data: JSON.stringify(data),
+                    url: "/api/RFPDrugRecieves/Add",
+                    beforeSend: function () {
+                        $("#sendR").show();
+                        $("#btnSubmit").prop('disabled', true);
+                    },
+                    success: function (result) {
+                        $("#sendR").hide();
+                        $("#btnSubmit").prop('disabled', false);
+                        window.location = "/RFPDrugRecieve/Detail/" + result.RFPDrugRecieveId;
+
+                    },
+                    error: function (result) {
+                        $("#sendR").hide();
+                        var s = ej.parseJSON(result.responseText)
+                        toastr.warning(s.message);
+                        $("#btnSubmit").prop('disabled', false);
+                    }
+                });
+            }
+           
+        }
+
+        function DrugPayment(Item){
+            console.log(Item);
+            $("#dialog").ejDialog("open");
+            $("#sendR").hide();
+            RFPpaymentRecievedId = Item.RFPpaymentRecievedId;
+            $("#RFPpaymentRecievedName").text(Item.RFPpaymentRecievedName);
+            $("#Recievedate").ejDatePicker({
+                width: "75%",
+                change: function (args) {
+                    recievedate = args.value;
+                }
+            });
+            $("#IsFullReceive").ejCheckBox({
+                change: function (args) {
+                    IsFullReceive = args.isChecked;
+                }
+            });
+        }
+
+        function Payment() {
+            var amount = $("#payAmount").val();
+            if (amount == "") {
+                amount = "0";
+            }
+            var InvoiceId = $("#invoiceId").val();
+            var code = $("#code").val();
+            data = {
+                RFPinvoiceId: InvoiceId,
+                PaymentDate: Paymentdate,
+                PaymentTypeId: PaymentTypeId,
+                PaymentAmount: parseInt(amount),
+                IsFullPayment: IsFullReceive,
+                PaymentCode: code
+            }
+            if (data.PaymentTypeId == null) {
+                toastr.warning("Select a payment method");
+            } else if (data.PaymentDate == null) {
+                toastr.warning("Select a date");
+            } else {
+                console.log(data)
+                $.ajax({
+                    type: "POST",
+                    contentType: "application/json;charset=utf-8",
+                    data: JSON.stringify(data),
+                    url: "/api/RFPpaymentRecieveds/Add",
+                    beforeSend: function () {
+                        $("#sendpay").show();
+                        $("#submitPay").prop('disabled', true);
+                    },
+                    success: function (result) {
+                        $("#sendpay").hide();
+                        $("#submitPay").prop('disabled', false);
+                        toastr.success("Success");
+                        PaymentsList(result.InvoiceId)
+
+                    },
+                    error: function (result) {
+                        $("#sendpay").hide();
+                        var s = ej.parseJSON(result.responseText)
+                        toastr.warning(s.message, "Cannot make sale");
+                        $("#submitPay").prop('disabled', false);
+                    }
+                });
+            }
+        }
+        function MakePayment() {
+
+            $.ajax({
+                type: 'GET',
+                url: "/api/PaymentType",
+                success: function (data) {
+                    paymentType = data.Items;
+                    $('#PaymentTypeId').ejDropDownList({
+                        dataSource: paymentType,
+                        fields: { id: 'PaymentTypeId', text: 'PaymentTypeName', value: 'PaymentTypeId' },
+                        change: function (args) {
+                            PaymentTypeId = args.value;
+                        }
+                    });
+                }
+            });
+
+            $("#dialogPayment").ejDialog("open");
+            $("#sendpay").hide();
+            $("#fullpayment").ejCheckBox({
+                change: function (args) {
+                    fullpay = args.isChecked;
+                }
+            });
+            $("#Paymentdate").ejDatePicker({
+                width: "75%",
+                change: function (args) {
+                    Paymentdate = args.value;
+                }
+            });
+        }
+
+        function Invoice() {
+            $("#dialogInvoice").ejDialog("open");
+            $("#sendInvoice").hide();
+            $("#InvoiceDuedate").ejDatePicker({
+                width: "75%",
+                change: function (args) {
+                    InvoiceDuedate = args.value;
+                }
+            });
+        }
+        function InvoiceSubmit() {
+            data = {
+                RFPSaleorderId: @Model.RFPSaleorderId,
+                InvoiceDueDate: InvoiceDuedate,
+                InvoiceTypeId: 1
+            }
+            if (data.InvoiceDueDate == null) {
+                toastr.warning("Select a date")
+            }
+            else {
+                $.ajax({
+                    type: "POST",
+                    contentType: "application/json;charset=utf-8",
+                    data: JSON.stringify(data),
+                    url: "/api/RFPinvoices/Add",
+                    beforeSend: function () {
+                        $("#sendInvoice").show();
+                        $("#btnInvoiceSubmit").prop('disabled', true);
+                    },
+                    success: function (result) {
+                        $("#sendInvoice").hide();
+                        $("#btnInvoiceSubmit").prop('disabled', false);
+                        toastr.success("Success");
+                        InvoiceId = result.InvoiceId;
+                    },
+                    error: function (result) {
+                        $("#sendInvoice").hide();
+                        var s = ej.parseJSON(result.responseText)
+                        toastr.warning(s.message, "Cannot make sale");
+                        $("#btnInvoiceSubmit").prop('disabled', false);
+                    }
+                });
+            }
+        }
+        function NewAmount(x) {
+            amount = x * sellingPrice;
+            $("#CostAmount").text(amount);
+        }
+        function NewCost(x) {
+            amount = x * Quantity;
+            $("#CostAmount").text(amount);
+        }
+        function Submit() {
+            Price = $("#Cost").val();
+            DiscountPercentage = $("#Disc").val();
+            TaxPercentage = $("#TaxPer").val();
+            Quantity = $("#Quantity").val();
+            if (DiscountPercentage == "") {
+                DiscountPercentage = "0";
+            }
+            if (TaxPercentage == "") {
+                TaxPercentage = "0";
+            }
+            if (Quantity == "") {
+                Quantity = "0";
+            }
+            if (Price == "") {
+                Price = "0";
+            }
+            var data = {
                 "RFPSaleorderId": @Model.RFPSaleorderId,
                 "Total": 0,
                 "TaxAmount":0 ,
-                "TaxPercentage": 0,
+                "TaxPercentage": parseInt(TaxPercentage),
                 "SubTotal": 0,
                 "DiscountAmount": 0,
-                "DiscountPercentage": 0,
+                "DiscountPercentage": parseInt(DiscountPercentage),
                 "Amount": 0,
-                "Price": 10,
-                "Quantity": 10,
-                "ProductId": 1,
+                "Price": parseInt(Price),
+                "Quantity": parseInt(Quantity),
+                "ProductId": ProductId,
             }
 
-            $("#Grid").ejGrid("addRecord", data);
+            if (data.Quantity < 1) {
+                toastr.warning("Quantity can not be less than 1", "Cannot make sale");
+            }
+            else {
+                $("#Grid").ejGrid("addRecord", data);
+            }
         }
 
-        $(function () {
+        function PaymentsList(InvoiceId) {
+            $.ajax({
+                type: 'GET',
+                url: '/api/RFPpaymentRecieveds/GetbyInvoiceId/' + InvoiceId,
+                success: function (data) {
+                    console.log(data);
+                    if (data.Count == 0) {
+                        $("div.payment").replaceWith("<h4>No payment Available</h4>");
+                    } else {
+                        var table = document.getElementById("payment");
+                        item = data.Items;
+                        d = 0;
+                        for (let i = 0; i < item.length; i++) {
+                            var row = table.insertRow(-1)
+                            row.insertCell(0).innerHTML = i + 1;
+                            row.insertCell(1).innerHTML = item[i].RFPpaymentRecievedName;
+                            row.insertCell(2).innerHTML = item[i].PaymentType.PaymentTypeName;
+                            row.insertCell(3).innerHTML = item[i].PaymentAmount;
+                            if (item[i].PaymentType.PaymentTypeName == "Drug Payment") {
+                                if (item[i].RFPDrugRecieve == null) {
+                                    row.insertCell(4).innerHTML = "<Input onclick='DrugPayment(item[" + i + "])' type='button' value = 'Revieve Drugs'>";
+                                } else {
+                                    RFPDrugRecieveId = item[i].RFPDrugRecieve.RFPDrugRecieveId;
+                                    row.insertCell(4).innerHTML = "<a href='/RFPDrugRecieve/Detail/ " + RFPDrugRecieveId + "'>Detail</a>";
+                                }
+                            } else {
+                                row.insertCell(4).innerHTML = item[i].PaymentType.PaymentTypeName;
+                            }
 
+                        }
+                    }
+                }
+            });
+        }
+        $(function () {
+            var InvoiceId = $("#invoiceId").val();
+            if (InvoiceId != null) {
+                PaymentsList(InvoiceId)
+            }
+            $('#dialogPayment').ejDialog({
+                title: "Payment",
+                width: 500,
+                height: 400,
+                showOnInit: false,
+                close: function (args) {
+                    location.reload();
+                }
+            })
+            $('#dialogInvoice').ejDialog({
+                title: "Invoice",
+                showOnInit: false,
+                close: function (args) {
+                    location.reload();
+                }
+            });
+            $('#dialog').ejDialog({
+                title: "Add Record",
+                showOnInit: false,
+                close: function (args) {
+                    location.reload();
+                }
+
+            });
             var dataManager = ej.DataManager({
                 url: "/api/SalesOrderLine",
                 adaptor: new ej.WebApiAdaptor(),
                 headers: [{ "RFPSaleorderId": @Model.RFPSaleorderId}],
                 offline: true
             });
-
             var dataManagerProduct = ej.DataManager({
                 url: "/api/Product",
-                adaptor: new ej.WebApiAdaptor()
-            });
-
-            var dataManagerSalesOrder = ej.DataManager({
-                url: "/api/RFPSaleorders",
-                adaptor: new ej.WebApiAdaptor()
-            });
-
-            var dataManagerStock = ej.DataManager({
-                url: "/api/Branch",
-                adaptor: new ej.WebApiAdaptor()
-            });
-
-            var dataManagerCustomer = ej.DataManager({
-                url: "/api/RFPCustomers",
-                adaptor: new ej.WebApiAdaptor()
-            });
-
-            var dataManagerCurrency = ej.DataManager({
-                url: "/api/Currency",
-                adaptor: new ej.WebApiAdaptor()
-            });
-
-            var dataManagerSalesType = ej.DataManager({
-                url: "/api/SalesType",
                 adaptor: new ej.WebApiAdaptor()
             });
             var dataManagerGoodsRecievedNoteLines = ej.DataManager({
                 url: "/api/GoodsRecievedNoteLines",
                 adaptor: new ej.WebApiAdaptor()
             });
-
-
-
-            $('#CustomerId').ejDropDownList({
-                dataSource: dataManagerCustomer,
-                fields: { id: 'RFPCustomerId', text: 'RFPCustomerName', value: 'RFPCustomerId' },
-                value: @Model.RFPCustomerId,
-                enabled: false,
+            var dataManagerSalesOrder = ej.DataManager({
+                url: "/api/RFPSaleorders",
+                adaptor: new ej.WebApiAdaptor()
             });
-
-
-
-
+            var dataManagerStock = ej.DataManager({
+                url: "/api/Branch",
+                adaptor: new ej.WebApiAdaptor()
+            });
+            var dataManagerCustomer = ej.DataManager({
+                url: "/api/Customer",
+                adaptor: new ej.WebApiAdaptor()
+            });
+            var dataManagerCurrency = ej.DataManager({
+                url: "/api/Currency",
+                adaptor: new ej.WebApiAdaptor()
+            });
+            var dataManagerSalesType = ej.DataManager({
+                url: "/api/SalesType",
+                adaptor: new ej.WebApiAdaptor()
+            });
             dataManager.ready.done(function (e) {
             $("#Grid").ejGrid({
                 dataSource: ej.DataManager({
@@ -212,17 +767,16 @@
                 }),
                 toolbarSettings: {
                     showToolbar: true,
-                    toolbarItems: ["add", "edit", "delete", "update", "cancel"]
+                    toolbarItems: [/*"add",*/ "delete", "update", "cancel"]
                 },
                 editSettings: {
-                    allowEditing: true,
+                    allowEditing: false,
                     allowAdding: true,
                     allowDeleting: true,
                     showDeleteConfirmDialog: true,
-
                 },
                 allowPaging: true,
-                 columns: [
+                columns: [
                     { field: "SalesOrderLineId", headerText: 'Line Id', isPrimaryKey: true, isIdentity: true, visible: false },
                     { field: "RFPSaleorderId", headerText: 'SO#', defaultValue: @Model.RFPSaleorderId, foreignKeyField: "RFPSaleorderId", foreignKeyValue: "RFPSaleorderName", dataSource: dataManagerSalesOrder, visible: false },
                     { field: "ProductId", headerText: 'Product', foreignKeyField: "ProductId", foreignKeyValue: "ProductName", dataSource: dataManagerProduct, validationRules: { required: true }  },
@@ -246,30 +800,106 @@
                     }
                     if (args.requestType == 'delete') {
                         var s = ej.parseJSON(args.error.error.responseText)
-                        toastr.warning(s.message, "Cannot delete");
+                        toastr.warning(s.message,"Cannot delete");
                     }
                 }
             });
             });
+            $('#ProductId').ejDropDownList({
+                dataSource: dataManagerProduct,
+                fields: { id: 'ProductId', text: 'ProductName', value: 'ProductId' },
+                change: function (args) {
+                    ProductId = args.value;
+                    $.ajax({
+                        type: 'GET',
+                        url: '/api/Product/GetProductbyId/' + args.value,
+                        success: function (data) {
+                            Drugs = data;
+                            $("#genericType").text(data.ProductType.ProductTypeName);
+                            $("#UnitsofMeasure").text(data.UnitOfMeasure.UnitOfMeasureName);
+                            $("#instock").text(data.InStock);
+                            $("#sellPrice").text(data.DefaultSellingPrice);
+                            NewAmount(0);
+                        }
+                    });
+                }
+            });
 
-
+            $('#CustomerId').ejDropDownList({
+                dataSource: dataManagerCustomer,
+                fields: { id: 'RFPCustomerId', text: 'RFPCustomerName', value: 'RFPCustomerId' },
+                value: @Model.RFPCustomerId,
+                enabled: false,
+            });
         });
 
         function complete(args) {
-
+            if (args.requestType == 'beginedit' || args.requestType == 'add') {
+                $('#GridProductId').ejDropDownList({
+                    change: function (args) {
+                        $.ajax({
+                            type: 'GET',
+                            url: '/api/Product/GetProductbyId/' + args.value,
+                            success: function (data) {
+                                Drugs = data;
+                                $("#genericType").text(data.ProductType.ProductTypeName);
+                                $("#ProductId").text(data.ProductName);
+                                $("#UnitsofMeasure").text(data.UnitOfMeasure.UnitOfMeasureName);
+                                $("#instock").text(data.InStock);
+                                $("#sellPrice").text(data.DefaultSellingPrice);
+                                NewAmount(0);
+                            }
+                        });
+                    }
+                });
+                $("#GridQuantity").ejNumericTextbox({
+                    change: function (args) {
+                        $("#Quantity").text(args.value)
+                        Quantity = args.value;
+                        NewAmount(args.value);
+                    }
+                });
+                $("#GridPrice").ejNumericTextbox({
+                    change: function (args) {
+                        $("#sellPrice").text(args.value)
+                        sellingPrice = args.value;
+                        NewCost(args.value);
+                    }
+                });
+            }
             if (args.requestType == 'beginedit') {
                 $("#" + this._id + "_dialogEdit").ejDialog({ title: "Edit Record" });
             }
             if (args.requestType == 'save' || args.requestType == 'delete') {
                 RewriteTotal(args.data.RFPSaleorderId);
             }
+            if (args.requestType == 'save') {
+                UpdateGrid();
+            }
         }
-
+        function UpdateGrid() {
+             var dataManager = ej.DataManager({
+                url: "/api/SalesOrderLine",
+                adaptor: new ej.WebApiAdaptor(),
+                headers: [{ "RFPSaleorderId": @Model.RFPSaleorderId}],
+                offline: true
+            });
+            dataManager.ready.done(function (e) {
+                $("#Grid").ejGrid("dataSource", ej.DataManager({
+                    json: e.result,
+                    adaptor: new ej.remoteSaveAdaptor(),
+                    insertUrl: "/api/SalesOrderLine/Insert",
+                    updateUrl: "/api/SalesOrderLine/Update",
+                    removeUrl: "/api/SalesOrderLine/Remove",
+                }));
+            });
+        }
         function RewriteTotal(RFPSaleorderId) {
             $.ajax({
                 type: 'GET',
-                url: '/api/RFPSaleorderId/GetById/' + RFPSaleorderId,
+                url: '/api/RFPSaleorders/GetById/' + RFPSaleorderId,
                 success: function (data) {
+                    console.log(data);
                     $('#Amount').text(data.Amount);
                     $('#SubTotal').text(data.SubTotal);
                     $('#Discount').text(data.Discount);

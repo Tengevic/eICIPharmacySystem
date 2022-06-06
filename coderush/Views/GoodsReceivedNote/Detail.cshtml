@@ -70,17 +70,39 @@
                                     <dt>
                                         Bill Invoice name
                                     </dt>
-                                    <dd>
-                                        @if (Model.Bill == null)
-                                        {
+
+                                    @if (Model.Bill == null)
+                                    {
+                                        <dd>
                                             <button id="btnBill" onclick="CreateBill()">Create Bill Invoice</button>
+                                        </dd>
+                                    }
+                                    else
+                                    {
+                                        <dd>
+                                            @Html.DisplayFor(model => model.Bill.BillName)
+                                            <input id="BillId" value="@Model.Bill.BillId" style="display:none" />
+                                        </dd>
+                                        <dt>
+                                            Payments
+                                        </dt>
+                                        @if (!Model.Bill.fullPaid)
+                                        {
+
+                                            <dd>
+                                                <button id="Payment" onclick="MakePayment()">Make payment</button>
+                                            </dd>
+
                                         }
                                         else
                                         {
-                                            @Html.DisplayFor(model => model.Bill.BillName)
-                                            <input id="BillId" value="@Model.Bill.BillId" style="display:none" />
+                                            <dd>
+                                                Fully Paid
+                                            </dd>
                                         }
-                                    </dd>
+
+                                    }
+
                                 </dl>
                             </div>
 
@@ -133,14 +155,10 @@
             {
 
 
-<div class="col-lg-6">
+                <div class="col-lg-6">
                     <div class="box" style="height:250px">
                         <div class="box-header with-border">
                             <h3 class="box-title text-primary"><i class="fa fa-pie-chart"></i> Payment</h3>
-                            @if (!Model.Bill.fullPaid)
-                            {
-                                <button id="Payment" onclick="MakePayment()">Make payment</button>
-                            }
                           <div class="box-tools pull-right">
                                 <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
                                         title="Collapse">
@@ -672,10 +690,10 @@
                 }),
                 toolbarSettings: {
                     showToolbar: true,
-                    toolbarItems: ["add", "edit", "delete", "update", "cancel"]
+                    toolbarItems: ["add", "delete", "update", "cancel"]
                 },
                 editSettings: {
-                    allowEditing: true,
+                    allowEditing: false,
                     allowAdding: true,
                     allowDeleting: true,
                     showDeleteConfirmDialog: true,

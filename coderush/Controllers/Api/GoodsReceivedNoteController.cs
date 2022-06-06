@@ -82,6 +82,29 @@ namespace coderush.Controllers.Api
         {
             GoodsReceivedNote goodsReceivedNote = payload.value;
             goodsReceivedNote.GoodsReceivedNoteName = _numberSequence.GetNumberSequence("GRN");
+            if (goodsReceivedNote.IsFullReceive)
+            {
+                PurchaseOrder purchaseOrder = _context.PurchaseOrder.Find(goodsReceivedNote.PurchaseOrderId);
+                purchaseOrder.fullyPaid = goodsReceivedNote.IsFullReceive;
+                _context.PurchaseOrder.Update(purchaseOrder);
+                _context.SaveChanges();
+            }
+            _context.GoodsReceivedNote.Add(goodsReceivedNote);
+            _context.SaveChanges();
+            return Ok(goodsReceivedNote);
+        }
+        [HttpPost("[action]")]
+        public IActionResult Add([FromBody] GoodsReceivedNote payload)
+        {
+            GoodsReceivedNote goodsReceivedNote = payload;
+            goodsReceivedNote.GoodsReceivedNoteName = _numberSequence.GetNumberSequence("GRN");
+            if (goodsReceivedNote.IsFullReceive)
+            {
+                PurchaseOrder purchaseOrder = _context.PurchaseOrder.Find(goodsReceivedNote.PurchaseOrderId);
+                purchaseOrder.fullyPaid = goodsReceivedNote.IsFullReceive;
+                _context.PurchaseOrder.Update(purchaseOrder);
+                _context.SaveChanges();
+            }
             _context.GoodsReceivedNote.Add(goodsReceivedNote);
             _context.SaveChanges();
             return Ok(goodsReceivedNote);
@@ -91,6 +114,13 @@ namespace coderush.Controllers.Api
         public IActionResult Update([FromBody]CrudViewModel<GoodsReceivedNote> payload)
         {
             GoodsReceivedNote goodsReceivedNote = payload.value;
+            if (goodsReceivedNote.IsFullReceive)
+            {
+                PurchaseOrder purchaseOrder = _context.PurchaseOrder.Find(goodsReceivedNote.PurchaseOrderId);
+                purchaseOrder.fullyPaid = goodsReceivedNote.IsFullReceive;
+                _context.PurchaseOrder.Update(purchaseOrder);
+                _context.SaveChanges();
+            }
             _context.GoodsReceivedNote.Update(goodsReceivedNote);
             _context.SaveChanges();
             return Ok(goodsReceivedNote);
@@ -103,6 +133,13 @@ namespace coderush.Controllers.Api
                 .Where(x => x.GoodsReceivedNoteId == (int)payload.key)
                 .Include(x => x.goodsRecievedNoteLines)
                 .FirstOrDefault();
+            if (goodsReceivedNote.IsFullReceive)
+            {
+                PurchaseOrder purchaseOrder = _context.PurchaseOrder.Find(goodsReceivedNote.PurchaseOrderId);
+                purchaseOrder.fullyPaid = !goodsReceivedNote.IsFullReceive;
+                _context.PurchaseOrder.Update(purchaseOrder);
+                _context.SaveChanges();
+            }
             if (goodsReceivedNote.goodsRecievedNoteLines.Count > 0)
             {
                 Err err = new Err

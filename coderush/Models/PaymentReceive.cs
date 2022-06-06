@@ -19,6 +19,7 @@ namespace coderush.Models
         public int PaymentTypeId { get; set; }
         public PaymentType PaymentType { get; set; }
         public double PaymentAmount { get; set; }
+        public string PaymentCode { get; set; }
         [Display(Name = "Full Payment")]
         public bool IsFullPayment { get; set; } = true;
     }

@@ -120,24 +120,25 @@
             }
 
             if (args.requestType == 'beginedit' || args.requestType == 'add') {
-                //var selected = $('#GridRFPpaymentRecievedId').data('ejDropDownList');
-                //var selectedValue = parseInt(selected.option('value'));
-                //var selectedText = selected.option('text');
-                //$.ajax({
-                //    type: 'GET',
-                //    url: '/api/RFPpaymentRecieveds',
-                //    success: function (data) {
-                //        if (args.requestType == 'beginedit') {
-                //            data.push({ 'RFPpaymentRecievedId': selectedValue, 'RFPpaymentRecievedName': selectedText });
-                //        }
+                var selected = $('#GridRFPpaymentRecievedId').data('ejDropDownList');
+                var selectedValue = parseInt(selected.option('value'));
+                var selectedText = selected.option('text');
+                $.ajax({
+                    type: 'GET',
+                    url: '/api/RFPpaymentRecieveds/NotRecieved',
+                    success: function (data) {
+                        console.log(data);
+                        if (args.requestType == 'beginedit') {
+                            data.push({ 'RFPpaymentRecievedId': selectedValue, 'RFPpaymentRecievedName': selectedText });
+                        }
 
-                //        $("#GridRFPpaymentRecievedId").ejDropDownList({
-                //            dataSource: data,
-                //            fields: { id: 'RFPpaymentRecievedId', text: 'RFPpaymentRecievedName', value: 'RFPpaymentRecievedId' },
-                //            value: selectedValue
-                //        });
-                //    }
-                //});
+                        $("#GridRFPpaymentRecievedId").ejDropDownList({
+                            dataSource: data,
+                            fields: { id: 'RFPpaymentRecievedId', text: 'RFPpaymentRecievedName', value: 'RFPpaymentRecievedId' },
+                            value: selectedValue
+                        });
+                    }
+                });
 
             }
 

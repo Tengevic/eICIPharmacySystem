@@ -26,6 +26,7 @@ namespace coderush.Controllers
         public IActionResult Detail(int id)
         {
             RFPSaleorder salesOrder = _context.RFPSaleorder
+                .Include(x => x.RFPinvoice)
                 .SingleOrDefault(x => x.RFPSaleorderId.Equals(id));
 
             if (salesOrder == null)

@@ -6,6 +6,7 @@ using coderush.Data;
 using coderush.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace coderush.Controllers
 {
@@ -26,7 +27,9 @@ namespace coderush.Controllers
 
         public IActionResult Detail(int id)
         {
-            PurchaseOrder purchaseOrder = _context.PurchaseOrder.SingleOrDefault(x => x.PurchaseOrderId.Equals(id));
+            PurchaseOrder purchaseOrder = _context.PurchaseOrder
+                .Include(x => x.GoodsReceivedNote)
+                .SingleOrDefault(x => x.PurchaseOrderId.Equals(id));
 
             if (purchaseOrder == null)
             {

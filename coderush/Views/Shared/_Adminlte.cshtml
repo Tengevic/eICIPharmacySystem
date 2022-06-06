@@ -48,7 +48,17 @@
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
 
     @RenderSection("Styles", required: false)
+    <style>
+        .my-custom-scrollbar {
+            position: relative;
+            height: 175px;
+            overflow: auto;
+        }
 
+        .table-wrapper-scroll-y {
+            display: block;
+        }
+    </style>
 </head>
 <body class="hold-transition skin-blue fixed sidebar-mini">
     <div class="wrapper">
@@ -90,6 +100,7 @@
                 };
         });
     </script>
+
 
 
     @RenderSection("Scripts", required: false)

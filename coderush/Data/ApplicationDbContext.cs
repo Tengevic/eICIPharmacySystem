@@ -23,6 +23,11 @@ namespace coderush.Data
             // Add your customizations after calling base.OnModelCreating(builder);
         }
 
+        internal object Include()
+        {
+            throw new NotImplementedException();
+        }
+
         public DbSet<coderush.Models.ApplicationUser> ApplicationUser { get; set; }
 
         public DbSet<coderush.Models.Bill> Bill { get; set; }

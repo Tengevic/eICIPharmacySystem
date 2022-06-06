@@ -101,14 +101,12 @@ namespace coderush.Controllers.Api
 
                 if (stock != null)
                 {
-                    List<GoodsRecievedNoteLine> lines = new List<GoodsRecievedNoteLine>();
-                    lines = _context.GoodsRecievedNoteLine.Where(x => x.ProductId.Equals(goodsRecievedNoteLine.ProductId)).ToList();
+                    List<GoodsRecievedNoteLine> batch = new List<GoodsRecievedNoteLine>();
+                    batch = _context.GoodsRecievedNoteLine.Where(x => x.ProductId.Equals(goodsRecievedNoteLine.ProductId)).ToList();
+                    stock.TotalRecieved = batch.Sum(x => x.Quantity);
+                    stock.ExpiredStock = batch.Sum(x => x.Expired);
 
                     List<SalesOrderLine> line = _context.SalesOrderLine.Where(x => x.ProductId.Equals(goodsRecievedNoteLine.ProductId)).ToList();
-
-                    stock.TotalRecieved = lines.Sum(x => x.Quantity);
-                    stock.ExpiredStock = lines.Sum(x => x.Expired);
-
                     stock.TotalSales = line.Sum(x => x.Quantity);
                    
                     if (stock.TotalRecieved < stock.TotalSales)

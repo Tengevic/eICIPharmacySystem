@@ -14,8 +14,10 @@ namespace coderush.Models
         [Display(Name = "Sales Order")]
         public SalesOrder SalesOrder { get; set; }
         public int? RFPSaleorderId { get; set; }
+        public RFPSaleorder RFPSaleorder { get; set; }
         [Display(Name = "Product Item")]
         public int ProductId { get; set; }
+        public Product Product { get; set; }
         public int GoodsRecievedNoteLineId { get; set; }
         public string Description { get; set; }
         public double Quantity { get; set; }

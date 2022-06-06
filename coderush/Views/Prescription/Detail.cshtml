@@ -172,6 +172,7 @@
     <!-- /.content -->
 </div>
 <!-- /.content-wrapper -->
+
 <script>
 
 </script>
@@ -203,13 +204,13 @@
                 type: "POST",
                 contentType: "application/json;charset=utf-8",
                 data: JSON.stringify(data),
-                url: "/api/SalesOrder/AddByPrescription",
+                url: "/api/RFPDrugRecieves/Add",
                 beforeSend: function () {
 
                 },
                 success: function (result) {
                     SalesOrderId = result.SalesOrderId;
-                    window.location = "/SalesOrder/Detail/" + SalesOrderId;
+                    window.location = "/RFPDrugRecieves/Detail/" + SalesOrderId;
                 },
                 error: function (result) {
                     var s = ej.parseJSON(result.responseText)
@@ -293,10 +294,10 @@
                 }),
                 toolbarSettings: {
                     showToolbar: true,
-                    toolbarItems: ["add", "edit", "delete", "update", "cancel"]
+                    toolbarItems: ["add", "delete", "update", "cancel"]
                 },
                 editSettings: {
-                    allowEditing: true,
+                    allowEditing: false,
                     allowAdding: true,
                     allowDeleting: true,
                     showDeleteConfirmDialog: true,

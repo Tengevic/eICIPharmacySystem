@@ -76,6 +76,23 @@
                                         <dd>
                                             @Html.DisplayFor(model => model.Invoice.InvoiceName)
                                         </dd>
+                                        <dt>
+                                            Payments
+                                        </dt>
+                                        @if (!Model.Invoice.fullyPaid)
+                                        {
+
+                                            <dd>
+                                                <button id="Payment" onclick="MakePayment()">Make payment</button>
+                                            </dd>
+
+                                        }
+                                           else { 
+                                            <dd>
+                                                Fully Paid
+                                            </dd>
+                                        }
+
                                     }
                                     else
                                     {
@@ -83,6 +100,7 @@
                                             <button id="Invoice" onclick="Invoice()"> Create Invoice</button>
                                         </dd>
                                     }
+
                                 </dl>
                             </div>
 
@@ -139,11 +157,6 @@
                     <div class="box" style="height:250px">
                         <div class="box-header with-border ">
                             <h3 class="box-title text-primary"><i class="fa fa-pie-chart"></i> @Model.Invoice.InvoiceName</h3>
-                            @if (!Model.Invoice.fullyPaid)
-                                {
-                                     <button id="Payment" onclick="MakePayment()">Make payment</button>
-                                }
-                            
                             <div class="box-tools pull-right">
                                 <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
                                         title="Collapse">
@@ -398,15 +411,13 @@
                 Payment Amount
             </td>
             <td>
-                <input type="number" id="payAmount" />
+                <input type="number" id="payAmount" value=0/>
             </td>
             <td>
-                <p style="display: none;" id="uploadp">Upload Files</p>
+                Payment Code
             </td>
             <td>
-                <div style="display: none;" id="uploadDiv">
-                    <div id="UploadDefault"></div>
-                </div>
+                <input type="text" id="code" />
             </td>
         </tr>
         <tr>
@@ -438,13 +449,18 @@
 
         function Payment() {
             var amount = $("#payAmount").val();
+            if (amount == "") {
+                amount = "0";
+            }
             var InvoiceId = $("#invoiceId").val();
+            var code = $("#code").val();
             data = {
                 InvoiceId: InvoiceId,
                 PaymentDate: Paymentdate,
                 PaymentTypeId: PaymentTypeId,
                 PaymentAmount: parseInt(amount),
-                IsFullPayment: fullpay
+                IsFullPayment: fullpay,
+                PaymentCode: code
             }
             if (data.PaymentTypeId == null) {
                 toastr.warning("Select a payment method");
@@ -465,25 +481,25 @@
                         $("#submitPay").prop('disabled', false);
                         toastr.success("Success");
                         PaymentsList(result.InvoiceId);
-                        for (let i = 0; i < paymentType.length; i++) {
-                            if (paymentType[i].PaymentTypeId == result.PaymentTypeId) {
-                                if (paymentType[i].RequireUpload) {
-                                    $("#uploadp").show();
-                                    $("#uploadDiv").show();
-                                    $("#UploadDefault").ejUploadbox({
-                                        saveUrl: "/api/UploadFiles",
-                                        allowDraggable: true,
-                                        multipleFilesSelection: true,
-                                        success: function (args) {
-                                            toastr.success("Success");
-                                        },
-                                        beforeSend: function (args) {
-                                            args.xhr.setRequestHeader("test", result.PaymentReceiveId );
-                                        }
-                                    });
-                                 }
-                            }
-                        }
+                        //for (let i = 0; i < paymentType.length; i++) {
+                        //    if (paymentType[i].PaymentTypeId == result.PaymentTypeId) {
+                        //        if (paymentType[i].RequireUpload) {
+                        //            $("#uploadp").show();
+                        //            $("#uploadDiv").show();
+                        //            $("#UploadDefault").ejUploadbox({
+                        //                saveUrl: "/api/UploadFiles",
+                        //                allowDraggable: true,
+                        //                multipleFilesSelection: true,
+                        //                success: function (args) {
+                        //                    toastr.success("Success");
+                        //                },
+                        //                beforeSend: function (args) {
+                        //                    args.xhr.setRequestHeader("test", result.PaymentReceiveId );
+                        //                }
+                        //            });
+                        //         }
+                        //    }
+                        //}
 
                     },
                     error: function (result) {
@@ -765,10 +781,10 @@
                 }),
                 toolbarSettings: {
                     showToolbar: true,
-                    toolbarItems: ["add", "edit", "delete", "update", "cancel"]
+                    toolbarItems: ["add", "delete", "update", "cancel"]
                 },
                 editSettings: {
-                    allowEditing: true,
+                    allowEditing: false,
                     allowAdding: true,
                     allowDeleting: true,
                     showDeleteConfirmDialog: true,

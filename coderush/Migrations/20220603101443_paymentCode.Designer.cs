@@ -11,9 +11,10 @@ using System;
 namespace coderush.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220603101443_paymentCode")]
+    partial class paymentCode
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -440,7 +441,8 @@ namespace coderush.Migrations
 
                     b.HasKey("GoodsReceivedNoteId");
 
-                    b.HasIndex("PurchaseOrderId");
+                    b.HasIndex("PurchaseOrderId")
+                        .IsUnique();
 
                     b.ToTable("GoodsReceivedNote");
                 });
@@ -761,8 +763,6 @@ namespace coderush.Migrations
                     b.Property<double>("Total");
 
                     b.Property<int>("VendorId");
-
-                    b.Property<bool>("fullyPaid");
 
                     b.HasKey("PurchaseOrderId");
 
@@ -1382,8 +1382,8 @@ namespace coderush.Migrations
             modelBuilder.Entity("coderush.Models.GoodsReceivedNote", b =>
                 {
                     b.HasOne("coderush.Models.PurchaseOrder")
-                        .WithMany("GoodsReceivedNote")
-                        .HasForeignKey("PurchaseOrderId")
+                        .WithOne("GoodsReceivedNote")
+                        .HasForeignKey("coderush.Models.GoodsReceivedNote", "PurchaseOrderId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
