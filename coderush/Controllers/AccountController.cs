@@ -68,6 +68,9 @@ namespace coderush.Controllers
                 var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
+                    var user = _userManager.FindByEmailAsync(model.Email).Result;
+                    user.LastLoginDate = DateTime.Now;
+                    await _userManager.UpdateAsync(user);
                     _logger.LogInformation("User logged in.");
                     return RedirectToLocal(returnUrl);
                 }
@@ -203,8 +206,11 @@ namespace coderush.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult Lockout()
+        public async Task<IActionResult> Lockout()
         {
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            user.LastLogoutDate = DateTime.Now;
+            await _userManager.UpdateAsync(user);
             return View();
         }
 
@@ -248,7 +254,7 @@ namespace coderush.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
-        {
+        {    
             await _signInManager.SignOutAsync();
             _logger.LogInformation("User logged out.");
             return RedirectToAction(nameof(HomeController.Index), "Home");

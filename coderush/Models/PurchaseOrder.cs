@@ -15,6 +15,7 @@ namespace coderush.Models
         public int BranchId { get; set; }
         [Display(Name = "Vendor")]
         public int VendorId { get; set; }
+        public Vendor Vendor { get; set; }
         public DateTimeOffset OrderDate { get; set; }
         public DateTimeOffset DeliveryDate { get; set; }
 
@@ -33,7 +34,7 @@ namespace coderush.Models
         public bool fullyPaid { get; set; } = false; // fully recieved
         public List<GoodsReceivedNote> GoodsReceivedNote { get; set; }
         public List<PurchaseOrderLine> PurchaseOrderLines { get; set; } = new List<PurchaseOrderLine>();
-        
+        public string UserId { get; set; }
 
     }
 }

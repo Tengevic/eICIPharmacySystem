@@ -102,7 +102,7 @@ namespace coderush.Controllers.Api
                 .Where(x => x.PurchaseOrderId == purchaseOrderLine.PurchaseOrderId)
                 .Include(x => x.GoodsReceivedNote)
                 .FirstOrDefault();
-            if(purchaseOrder.GoodsReceivedNote != null)
+            if(purchaseOrder.GoodsReceivedNote.Count() != 0)
             {
                 Err err = new Err
                 {
@@ -112,7 +112,6 @@ namespace coderush.Controllers.Api
 
                 return BadRequest(err);
             }
-            Product product = _context.Product.Find(purchaseOrderLine.ProductId);
             purchaseOrderLine = this.Recalculate(purchaseOrderLine);
             _context.PurchaseOrderLine.Add(purchaseOrderLine);
             _context.SaveChanges();
@@ -127,7 +126,7 @@ namespace coderush.Controllers.Api
                .Where(x => x.PurchaseOrderId == purchaseOrderLine.PurchaseOrderId)
                .Include(x => x.GoodsReceivedNote)
                .FirstOrDefault();
-            if (purchaseOrder.GoodsReceivedNote != null)
+            if (purchaseOrder.GoodsReceivedNote.Count() != 0)
             {
                 Err err = new Err
                 {
@@ -137,7 +136,6 @@ namespace coderush.Controllers.Api
 
                 return BadRequest(err);
             }
-            Product product = _context.Product.Find(purchaseOrderLine.ProductId);
             purchaseOrderLine = this.Recalculate(purchaseOrderLine);
             _context.PurchaseOrderLine.Add(purchaseOrderLine);
             _context.SaveChanges();
@@ -153,7 +151,7 @@ namespace coderush.Controllers.Api
                .Where(x => x.PurchaseOrderId == purchaseOrderLine.PurchaseOrderId)
                .Include(x => x.GoodsReceivedNote)
                .FirstOrDefault();
-            if (purchaseOrder.GoodsReceivedNote != null)
+            if (purchaseOrder.GoodsReceivedNote.Count() != 0)
             {
                 Err err = new Err
                 {
@@ -163,7 +161,6 @@ namespace coderush.Controllers.Api
 
                 return BadRequest(err);
             }
-            Product product = _context.Product.Find(purchaseOrderLine.ProductId);
             purchaseOrderLine = this.Recalculate(purchaseOrderLine);
             _context.PurchaseOrderLine.Update(purchaseOrderLine);
             _context.SaveChanges();
@@ -181,7 +178,7 @@ namespace coderush.Controllers.Api
                .Where(x => x.PurchaseOrderId == purchaseOrderLine.PurchaseOrderId)
                .Include(x => x.GoodsReceivedNote)
                .FirstOrDefault();
-            if (purchaseOrder.GoodsReceivedNote != null)
+            if (purchaseOrder.GoodsReceivedNote.Count() != 0)
             {
                 Err err = new Err
                 {

@@ -29,5 +29,6 @@ namespace coderush.Models
         public double Freight { get; set; }
         public double Total { get; set; }
         public List<SalesOrderLine> SalesOrderLines { get; set; } = new List<SalesOrderLine>();
+        public string UserId { get; set; }
     }
 }

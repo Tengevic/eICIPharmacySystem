@@ -11,9 +11,10 @@ using System;
 namespace coderush.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220609100318_userId")]
+    partial class userId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -479,8 +480,6 @@ namespace coderush.Migrations
                     b.Property<int?>("RFPDrugRecieveId");
 
                     b.Property<double>("Sold");
-
-                    b.Property<double>("changestock");
 
                     b.HasKey("GoodsRecievedNoteLineId");
 
@@ -1017,8 +1016,6 @@ namespace coderush.Migrations
 
                     b.HasKey("SalesOrderId");
 
-                    b.HasIndex("CustomerId");
-
                     b.HasIndex("PrescriptionId")
                         .IsUnique()
                         .HasFilter("[PrescriptionId] IS NOT NULL");
@@ -1136,8 +1133,6 @@ namespace coderush.Migrations
                     b.Property<string>("UserId");
 
                     b.Property<DateTime>("date");
-
-                    b.Property<double>("quantity");
 
                     b.Property<double>("subtract");
 
@@ -1574,11 +1569,6 @@ namespace coderush.Migrations
 
             modelBuilder.Entity("coderush.Models.SalesOrder", b =>
                 {
-                    b.HasOne("coderush.Models.Customer", "Customer")
-                        .WithMany()
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
                     b.HasOne("coderush.Models.Prescription", "Prescription")
                         .WithOne("SalesOrder")
                         .HasForeignKey("coderush.Models.SalesOrder", "PrescriptionId");

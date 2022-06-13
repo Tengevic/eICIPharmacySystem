@@ -11,22 +11,24 @@ using coderush.Services;
 using coderush.Models.SyncfusionViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Identity;
 
 namespace coderush.Controllers.Api
 {
-    [Authorize]
     [Produces("application/json")]
     [Route("api/SalesOrder")]
     public class SalesOrderController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly INumberSequence _numberSequence;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public SalesOrderController(ApplicationDbContext context,
+        public SalesOrderController(ApplicationDbContext context, UserManager<ApplicationUser> userManager,
                         INumberSequence numberSequence)
         {
             _context = context;
             _numberSequence = numberSequence;
+            _userManager = userManager;
         }
 
         // GET: api/SalesOrder
@@ -138,11 +140,11 @@ namespace coderush.Controllers.Api
         }
 
         [HttpPost("[action]")]
-        public IActionResult Insert([FromBody]CrudViewModel<SalesOrder> payload)
+        public async Task<IActionResult> Insert([FromBody]CrudViewModel<SalesOrder> payload)
         {
             SalesOrder salesOrder = payload.value;
             salesOrder.SalesOrderName = _numberSequence.GetNumberSequence("SO");
-
+            
             if(salesOrder.PrescriptionId > 0)
             {
                 Prescription prescription = _context.Prescription.Find(salesOrder.PrescriptionId);
@@ -158,6 +160,8 @@ namespace coderush.Controllers.Api
                     return BadRequest(err);
                 }
             }
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            salesOrder.UserId = user.Id;
             _context.SalesOrder.Add(salesOrder);
             _context.SaveChanges();
             this.UpdateSalesOrder(salesOrder.SalesOrderId);
@@ -165,7 +169,7 @@ namespace coderush.Controllers.Api
         }
         //Endpoint
         [HttpPost("[action]")]
-        public IActionResult Add([FromBody] SalesOrder payload)
+        public async Task<IActionResult> Add([FromBody] SalesOrder payload)
         {
             SalesOrder salesOrder = payload;
             salesOrder.SalesOrderName = _numberSequence.GetNumberSequence("SO");
@@ -188,13 +192,15 @@ namespace coderush.Controllers.Api
                     return BadRequest(err);
                 }
             }
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            salesOrder.UserId = user.Id;
             _context.SalesOrder.Add(salesOrder);
             _context.SaveChanges();
             this.UpdateSalesOrder(salesOrder.SalesOrderId);
             return Ok(salesOrder);
         }
         [HttpPost("[action]")]
-        public IActionResult AddByPrescription([FromBody] SalesOrder payload)
+        public async Task<IActionResult> AddByPrescription([FromBody] SalesOrder payload)
         {
             SalesOrder salesOrder = payload;
 
@@ -217,6 +223,8 @@ namespace coderush.Controllers.Api
 
             if(order == null)
             {
+                var user = await _userManager.GetUserAsync(HttpContext.User);
+                salesOrder.UserId = user.Id;
                 salesOrder.SaleDate = DateTime.Now;
                 salesOrder.SalesOrderName = _numberSequence.GetNumberSequence("SO");
                 _context.SalesOrder.Add(salesOrder);
@@ -234,25 +242,29 @@ namespace coderush.Controllers.Api
 
 
         [HttpPost("[action]")]
-        public IActionResult Update([FromBody]CrudViewModel<SalesOrder> payload)
+        public async Task<IActionResult> Update([FromBody]CrudViewModel<SalesOrder> payload)
         {
             SalesOrder salesOrder = payload.value;
             if (salesOrder.PrescriptionId == null)
             {
                 salesOrder.PrescriptionId = 0;
             }
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            salesOrder.UserId = user.Id;
             _context.SalesOrder.Update(salesOrder);
             _context.SaveChanges();
             return Ok(salesOrder);
         }
         [HttpPost("[action]")]
-        public IActionResult Put([FromBody] SalesOrder payload)
+        public async Task<IActionResult> Put([FromBody] SalesOrder payload)
         {
             SalesOrder salesOrder = payload;
             if (salesOrder.PrescriptionId == null)
             {
                 salesOrder.PrescriptionId = 0;
             }
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            salesOrder.UserId = user.Id;
             _context.SalesOrder.Update(salesOrder);
             _context.SaveChanges();
             return Ok(salesOrder);

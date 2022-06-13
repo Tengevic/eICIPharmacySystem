@@ -14,6 +14,7 @@ namespace coderush.Models
         [Display(Name = "Invoice")]
         public int InvoiceId { get; set; }
         public Invoice Invoice { get; set; }
+        [DisplayFormat(DataFormatString = "{MM/dd/yyyy}")]
         public DateTimeOffset PaymentDate { get; set; }
         [Display(Name = "Payment Type")]
         public int PaymentTypeId { get; set; }

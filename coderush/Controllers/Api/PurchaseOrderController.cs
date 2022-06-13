@@ -11,22 +11,28 @@ using coderush.Services;
 using coderush.Models.SyncfusionViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Hosting;
+using System.IO;
+using Microsoft.AspNetCore.Identity;
 
 namespace coderush.Controllers.Api
 {
-    [Authorize]
     [Produces("application/json")]
     [Route("api/PurchaseOrder")]
     public class PurchaseOrderController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly INumberSequence _numberSequence;
+        private IHostingEnvironment _environment;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public PurchaseOrderController(ApplicationDbContext context,
+        public PurchaseOrderController(ApplicationDbContext context, IHostingEnvironment environment, UserManager<ApplicationUser> userManager,
                         INumberSequence numberSequence)
         {
             _context = context;
             _numberSequence = numberSequence;
+            _environment = environment;
+            _userManager = userManager;
         }
 
         // GET: api/PurchaseOrder
@@ -113,10 +119,12 @@ namespace coderush.Controllers.Api
 
 
         [HttpPost("[action]")]
-        public IActionResult Insert([FromBody] CrudViewModel<PurchaseOrder> payload)
+        public async Task<IActionResult> Insert([FromBody] CrudViewModel<PurchaseOrder> payload)
         {
             PurchaseOrder purchaseOrder = payload.value;
             purchaseOrder.PurchaseOrderName = _numberSequence.GetNumberSequence("PO");
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            purchaseOrder.UserId = user.Id;
             _context.PurchaseOrder.Add(purchaseOrder);
             _context.SaveChanges();
             this.UpdatePurchaseOrder(purchaseOrder.PurchaseOrderId);
@@ -124,9 +132,11 @@ namespace coderush.Controllers.Api
         }
 
         [HttpPost("[action]")]
-        public IActionResult Update([FromBody] CrudViewModel<PurchaseOrder> payload)
+        public async Task<IActionResult> Update([FromBody] CrudViewModel<PurchaseOrder> payload)
         {
             PurchaseOrder purchaseOrder = payload.value;
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            purchaseOrder.UserId = user.Id;
             _context.PurchaseOrder.Update(purchaseOrder);
             _context.SaveChanges();
             this.UpdatePurchaseOrder(purchaseOrder.PurchaseOrderId);
@@ -155,6 +165,51 @@ namespace coderush.Controllers.Api
             this.UpdatePurchaseOrder(purchaseOrder.PurchaseOrderId);
             return Ok(purchaseOrder);
 
+        }
+        [HttpGet("[action]/{id}")]
+        public async Task<IActionResult> Print([FromRoute]int id)
+        {
+            PurchaseOrder purchaseOrder = await _context.PurchaseOrder
+                .Where(x => x.PurchaseOrderId.Equals(id))
+                .Include(x => x.PurchaseOrderLines)
+                    .ThenInclude(x => x.Product)
+                .Include(x => x.Vendor)
+                .FirstOrDefaultAsync();
+
+            string path = this._environment.ContentRootPath + @"\Views\EmailViewModels\PurchaseRequest.html";
+
+            string body = string.Empty;
+            using (StreamReader reader = new StreamReader(path))
+            {
+                body = reader.ReadToEnd();
+            }
+            string drugrow = "";
+            int num = 1;
+            foreach (var batch in purchaseOrder.PurchaseOrderLines)
+            {
+                string drug = "<tr>" +
+                                   "<td class='text-center'>" + num + " </td>" +
+                                   "<td class='text-center'>" + batch.Product.ProductName + "</td>" +
+                                   "<td class='text-center'>" + batch.Quantity + "</td>" +
+                                   "<td class='text-center'>" + batch.Price + "</td>" +
+                                   "<td class='text-center'>" + batch.Amount + "</td>" +
+                               "</tr>";
+                drugrow = drugrow + drug;
+                num++;
+            }
+            body = body.Replace("{PurchaseOrderName}", purchaseOrder.PurchaseOrderName);
+            body = body.Replace("{Vname}", purchaseOrder.Vendor.VendorName);
+            body = body.Replace("{Vaddress}", purchaseOrder.Vendor.Address);
+            body = body.Replace("{Vcity}", purchaseOrder.Vendor.City);
+            body = body.Replace("{OrderDate}", purchaseOrder.OrderDate.ToString("dd MMMM yyyy"));
+            body = body.Replace("{DeliveryDate}", purchaseOrder.DeliveryDate.ToString("dd MMMM yyyy"));
+            body = body.Replace("{SubTotal}", purchaseOrder.SubTotal.ToString());
+            body = body.Replace("{Discount}", purchaseOrder.Discount.ToString());
+            body = body.Replace("{Tax}", purchaseOrder.Tax.ToString());
+            body = body.Replace("{Total}", purchaseOrder.Total.ToString());
+            body = body.Replace("{List}", drugrow);
+
+            return Ok(body);
         }
     }
 }

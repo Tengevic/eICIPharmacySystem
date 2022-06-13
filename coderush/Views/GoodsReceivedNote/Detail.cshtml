@@ -707,7 +707,7 @@
                     { field: "ProductId", headerText: 'Drug', foreignKeyField: "ProductId", foreignKeyValue: "ProductName", dataSource: dataManagerProduct },
                     { field: "Description", headerText: 'Description', visible: false },
                     { field: "BatchID", headerText: 'BatchID', validationRules: { required: true }  },
-                    { field: "Quantity", headerText: 'units/batch', defaultValue: 1, editType: "numericedit"},
+                    { field: "Quantity", headerText: 'units/batch', defaultValue: 1, editType: "numericedit", format: "{0:n2}"},
                     { field: "ManufareDate", headerText: 'Manufacture Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
                     { field: "ExpiryDate", headerText: 'Expiry Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
                     { field: "Sold", headerText: 'Units sold', defaultValue: 0, editType: "numericedit", allowEditing: false, visible: false  },

@@ -12,6 +12,7 @@ using coderush.Models.SyncfusionViewModels;
 using Microsoft.AspNetCore.Authorization;
 using coderush.Models.Eici_models;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Identity;
 
 namespace coderush.Controllers.Api
 {
@@ -22,12 +23,14 @@ namespace coderush.Controllers.Api
     {
         private readonly ApplicationDbContext _context;
         private readonly INumberSequence _numberSequence;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public PrescriptionController(ApplicationDbContext context,
+        public PrescriptionController(ApplicationDbContext context, UserManager<ApplicationUser> userManager,
                         INumberSequence numberSequence)
         {
             _context = context;
             _numberSequence = numberSequence;
+            _userManager = userManager;
         }
         [HttpGet]
         public async Task<IActionResult> GetPrescription()
@@ -75,10 +78,12 @@ namespace coderush.Controllers.Api
             return Ok(result);
         }
         [HttpPost("[action]")]
-        public IActionResult Insert([FromBody] CrudViewModel<Prescription> payload)
+        public async Task<IActionResult> Insert([FromBody] CrudViewModel<Prescription> payload)
         {
             Prescription prescription = payload.value;
             prescription.Approved = false;
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            prescription.UserId = user.Id;
             prescription.PrescriptionName = _numberSequence.GetNumberSequence("PS");
             _context.Prescription.Add(prescription);
             _context.SaveChanges();        
@@ -122,6 +127,7 @@ namespace coderush.Controllers.Api
                 presciptionDate= DateTime.Now,
                 Approved = false
             };
+
             prescription.PrescriptionName = _numberSequence.GetNumberSequence("PS");
             _context.Prescription.Add(prescription);
             _context.SaveChanges();
@@ -145,7 +151,7 @@ namespace coderush.Controllers.Api
             return Ok(prescription);
         }
         [HttpPost("[action]")]
-        public IActionResult Update([FromBody] CrudViewModel<Prescription> payload)
+        public async Task<IActionResult> Update([FromBody] CrudViewModel<Prescription> payload)
         {
             Prescription prescription = payload.value;
             Prescription Update = _context.Prescription
@@ -179,6 +185,8 @@ namespace coderush.Controllers.Api
                     return BadRequest(err);
                 }
             }
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            prescription.UserId = user.Id;
             _context.Prescription.Update(Update);
             _context.SaveChanges();
             return Ok(prescription);
@@ -210,7 +218,7 @@ namespace coderush.Controllers.Api
             return Ok(prescription);
         }
         [HttpPost("[action]")]
-        public IActionResult Approve([FromBody] Prescription payload)
+        public async Task<IActionResult> Approve([FromBody] Prescription payload)
         {
             Prescription prescription = payload;
             Prescription Update = _context.Prescription
@@ -242,7 +250,8 @@ namespace coderush.Controllers.Api
                     return BadRequest(err);
                 }
             }
-
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            Update.UserId = user.Id;
             Update.Approved = prescription.Approved;
             _context.Prescription.Update(Update);
             _context.SaveChanges();

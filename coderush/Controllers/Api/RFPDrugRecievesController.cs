@@ -10,6 +10,7 @@ using coderush.Models;
 using coderush.Services;
 using coderush.Models.SyncfusionViewModels;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Identity;
 
 namespace coderush.Controllers.Api
 {
@@ -19,12 +20,14 @@ namespace coderush.Controllers.Api
     {
         private readonly ApplicationDbContext _context;
         private readonly INumberSequence _numberSequence;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public RFPDrugRecievesController(ApplicationDbContext context,
+        public RFPDrugRecievesController(ApplicationDbContext context, UserManager<ApplicationUser> userManager,
                         INumberSequence numberSequence)
         {
             _context = context;
             _numberSequence = numberSequence;
+            _userManager = userManager;
         }
 
         [HttpGet]
@@ -47,30 +50,36 @@ namespace coderush.Controllers.Api
         }
 
         [HttpPost("[action]")]
-        public IActionResult Insert([FromBody] CrudViewModel<RFPDrugRecieve> payload)
+        public async Task<IActionResult> Insert([FromBody] CrudViewModel<RFPDrugRecieve> payload)
         {
             RFPDrugRecieve  RFPDrugRecieve = payload.value;
             RFPDrugRecieve.RFPDrugRecieveName = _numberSequence.GetNumberSequence("RDR");
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            RFPDrugRecieve.UserId = user.Id;
             _context.RFPDrugRecieve.Add(RFPDrugRecieve);
             _context.SaveChanges();
             return Ok(RFPDrugRecieve);
         }
         [HttpPost("[action]")]
-        public IActionResult Add([FromBody] RFPDrugRecieve payload)
+        public async Task<IActionResult> Add([FromBody] RFPDrugRecieve payload)
         {
             RFPDrugRecieve RFPDrugRecieve = payload;
 
             RFPDrugRecieve drugRecieve = _context.RFPDrugRecieve.FirstOrDefault(x => x.RFPpaymentRecievedId == RFPDrugRecieve.RFPpaymentRecievedId);
             RFPDrugRecieve.RFPDrugRecieveName = _numberSequence.GetNumberSequence("RDR");
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            RFPDrugRecieve.UserId = user.Id;
             _context.RFPDrugRecieve.Add(RFPDrugRecieve);
             _context.SaveChanges();
             return Ok(RFPDrugRecieve);
         }
 
         [HttpPost("[action]")]
-        public IActionResult Update([FromBody] CrudViewModel<RFPDrugRecieve> payload)
+        public async Task<IActionResult> Update([FromBody] CrudViewModel<RFPDrugRecieve> payload)
         {
             RFPDrugRecieve RFPDrugRecieve = payload.value;
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            RFPDrugRecieve.UserId = user.Id;
             _context.RFPDrugRecieve.Update(RFPDrugRecieve);
             _context.SaveChanges();
             return Ok(RFPDrugRecieve);

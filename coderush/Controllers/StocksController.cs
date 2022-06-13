@@ -34,6 +34,18 @@ namespace coderush.Controllers
 
             return View(product);
         }
+
+        public IActionResult saleHistory(int id)
+        {
+            Product product = _context.Product.SingleOrDefault(x => x.ProductId.Equals(id));
+
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            return View(product);
+        }
         public IActionResult LowStock()
         {
 

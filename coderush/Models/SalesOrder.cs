@@ -15,6 +15,7 @@ namespace coderush.Models
         public int BranchId { get; set; }
         [Display(Name = "Customer")]
         public int CustomerId { get; set; }
+        public Customer Customer { get; set; }
         public DateTimeOffset SaleDate { get; set; }
         [Display(Name = "Currency")]
         public int CurrencyId { get; set; }
@@ -34,5 +35,6 @@ namespace coderush.Models
         public double Total { get; set; }
         public Invoice Invoice { get; set; }
         public List<SalesOrderLine> SalesOrderLines { get; set; } = new List<SalesOrderLine>();
+        public string UserId { get; set; }
     }
 }

@@ -106,61 +106,90 @@
 
             });
         }
-        $(function () {
-
-            var dataManager = ej.DataManager({
-                url: "/api/GoodsRecievedNoteLines",
+        $(function ()
+        {
+             var dataManager = ej.DataManager({
+                url: "/api/SalesOrderLine",
                 adaptor: new ej.WebApiAdaptor(),
-                headers: [{ "ProductId": @Model.ProductId}],
-                offline: true,
+                 headers: [{ "ProductId": @Model.ProductId}],
+                offline: true
             });
-
             var dataManagerProduct = ej.DataManager({
                 url: "/api/Product",
                 adaptor: new ej.WebApiAdaptor()
             });
-
-            var dataManagerGoodsReceivedNote = ej.DataManager({
-                url: "/api/GoodsReceivedNote",
+            var dataManagerGoodsRecievedNoteLines = ej.DataManager({
+                url: "/api/GoodsRecievedNoteLines",
                 adaptor: new ej.WebApiAdaptor()
             });
-
+            var dataManagerSalesOrder = ej.DataManager({
+                url: "/api/SalesOrder",
+                adaptor: new ej.WebApiAdaptor()
+            });
+            var dataManagerStock = ej.DataManager({
+                url: "/api/Branch",
+                adaptor: new ej.WebApiAdaptor()
+            });
+            var dataManagerCustomer = ej.DataManager({
+                url: "/api/Customer",
+                adaptor: new ej.WebApiAdaptor()
+            });
+            var dataManagerCurrency = ej.DataManager({
+                url: "/api/Currency",
+                adaptor: new ej.WebApiAdaptor()
+            });
+            var dataManagerSalesType = ej.DataManager({
+                url: "/api/SalesType",
+                adaptor: new ej.WebApiAdaptor()
+            });
+ 
             dataManager.ready.done(function (e) {
             $("#Grid").ejGrid({
                 dataSource: ej.DataManager({
                     json: e.result,
                     adaptor: new ej.remoteSaveAdaptor(),
-
+                    insertUrl: "/api/SalesOrderLine/Insert",
+                    updateUrl: "/api/SalesOrderLine/Update",
+                    removeUrl: "/api/SalesOrderLine/Remove",
                 }),
                 toolbarSettings: {
                     showToolbar: true,
-                    toolbarItems: ["search", "printGrid"]
+                    toolbarItems: ["add", "delete", "update", "cancel"]
                 },
-                isResponsive: true,
-                enableResponsiveRow: true,
-                allowSorting: true,
-                allowSearching: true,
-                allowFiltering: true,
-                filterSettings: {
-                    filterType: "excel",
-                    maxFilterChoices: 100,
-                    enableCaseSensitivity: false
+                editSettings: {
+                    allowEditing: false,
+                    allowAdding: true,
+                    allowDeleting: true,
+                    showDeleteConfirmDialog: true,
                 },
                 allowPaging: true,
                 columns: [
-                    { field: "GoodsRecievedNoteLineId", headerText: 'Line Id', isPrimaryKey: true, isIdentity: true, visible: false },
-                    { field: "GoodsReceivedNoteId", headerText: 'GNR#', foreignKeyField: "GoodsReceivedNoteId", foreignKeyValue: "GoodsReceivedNoteName", dataSource: dataManagerGoodsReceivedNote, visible: false },
-                    { field: "Dispose", headerText: 'Dispose', allowEditing: false, type: "boolean", editType: "booleanedit", defaultValue: false, visible: false },
-                    { field: "ProductId", headerText: 'Drug', foreignKeyField: "ProductId", foreignKeyValue: "ProductName", dataSource: dataManagerProduct, visible: false },
-                    { field: "BatchID", headerText: 'BatchID' },
+                    { field: "SalesOrderLineId", headerText: 'Line Id', isPrimaryKey: true, isIdentity: true, visible: false },
+                    { field: "SalesOrderId", headerText: 'SO#', foreignKeyField: "SalesOrderId", foreignKeyValue: "SalesOrderName", dataSource: dataManagerSalesOrder, visible: false },
+                    { field: "ProductId", headerText: 'Product', foreignKeyField: "ProductId", foreignKeyValue: "ProductName", dataSource: dataManagerProduct, validationRules: { required: true }  },
+                    { field: "GoodsRecievedNoteLineId", headerText: 'BatchID', foreignKeyField: "GoodsRecievedNoteLineId", foreignKeyValue: "BatchID", dataSource: dataManagerGoodsRecievedNoteLines, allowEditing: false },
                     { field: "Description", headerText: 'Description', visible: false },
-                    { field: "ManufareDate", headerText: 'Manufacture Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
-                    { field: "ExpiryDate", headerText: 'Expiry Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
-                    { field: "Quantity", headerText: 'units/batch', defaultValue: 1, editType: "numericedit"},
-                    { field: "Sold", headerText: 'Units sold', defaultValue: 0, editType: "numericedit", allowEditing: false },
-                    { field: "InStock", headerText: ' stock', defaultValue: 0, editType: "numericedit", allowEditing: false },
-                    { field: "Expired", headerText: ' Expired ', defaultValue: 0, editType: "numericedit", allowEditing: false },
+                    { field: "Quantity", headerText: 'Qty', defaultValue: 1, editType: "numericedit", format: "{0:n2}"},
+                    { field: "Price", headerText: 'Cost per unit', defaultValue: 0, editParams: { decimalPlaces: 2 }, editType: "numericedit", format: "{0:n2}" },
+                    { field: "Amount", headerText: 'Amount', defaultValue: 0, allowEditing: false, editParams: { decimalPlaces: 2 }, editType: "numericedit", format: "{0:n2}" },
+                    { field: "DiscountPercentage", headerText: 'Disc %', defaultValue: 0, editParams: { decimalPlaces: 2 }, editType: "numericedit", format: "{0:n2}" },
+                    { field: "DiscountAmount", headerText: 'Disc Amt', defaultValue: 0, editParams: { decimalPlaces: 2 }, visible: false, editType: "numericedit", format: "{0:n2}" },
+                    { field: "SubTotal", headerText: 'SubTotal', defaultValue: 0, editParams: { decimalPlaces: 2 }, allowEditing: false, editType: "numericedit", format: "{0:n2}" },
+                    { field: "TaxPercentage", headerText: 'Tax %', defaultValue: 0, editParams: { decimalPlaces: 2 }, editType: "numericedit", format: "{0:n2}" },
+                    { field: "TaxAmount", headerText: 'Tax Amt', defaultValue: 0, editParams: { decimalPlaces: 2 }, visible: false, editType: "numericedit", format: "{0:n2}" },
+                    { field: "Total", headerText: 'Total', defaultValue: 0, editParams: { decimalPlaces: 2 }, allowEditing: false, editType: "numericedit", format: "{0:n2}" },
                 ],
+                actionComplete: "complete",
+                actionFailure: function (args) {
+                    if (args.requestType == "save") {
+                        var s = ej.parseJSON(args.error.responseText)
+                        toastr.warning(s.message, "Cannot make sale");
+                    }
+                    if (args.requestType == 'delete') {
+                        var s = ej.parseJSON(args.error.error.responseText)
+                        toastr.warning(s.message,"Cannot delete");
+                    }
+                }
             });
             });
 

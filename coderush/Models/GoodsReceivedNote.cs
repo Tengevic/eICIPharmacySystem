@@ -25,5 +25,6 @@ namespace coderush.Models
         public bool IsFullReceive { get; set; } = true;
         public Bill Bill { get; set; }
         public List<GoodsRecievedNoteLine> goodsRecievedNoteLines { get; set; } = new List<GoodsRecievedNoteLine>();
+        public string UserId { get; set; }
     }
 }

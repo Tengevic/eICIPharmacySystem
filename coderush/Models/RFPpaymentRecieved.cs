@@ -22,5 +22,6 @@ namespace coderush.Models
         [Display(Name = "Full Payment")]
         public bool IsFullPayment { get; set; } = true;
         public RFPDrugRecieve RFPDrugRecieve { get; set; }
+        public string UserId { get; set; }
     }
 }

@@ -9,6 +9,7 @@ using coderush.Data;
 using coderush.Models;
 using coderush.Services;
 using coderush.Models.SyncfusionViewModels;
+using Newtonsoft.Json;
 
 namespace coderush.Controllers.Api
 {
@@ -67,7 +68,7 @@ namespace coderush.Controllers.Api
         public async Task<IActionResult> GetbyInvoiceId([FromRoute] int id)
         {
             List<RFPpaymentRecieved> Items = await _context.RFPpaymentRecieved
-                .Where(x => x.RFPpaymentRecievedId == id)
+                .Where(x => x.RFPinvoiceId == id)
                 .Include(x => x.PaymentType)
                 .Include(x => x.RFPinvoice)
                 .Include(x => x.RFPDrugRecieve)
@@ -132,7 +133,18 @@ namespace coderush.Controllers.Api
         {
             RFPpaymentRecieved paymentReceive = _context.RFPpaymentRecieved
                 .Where(x => x.RFPpaymentRecievedId == (int)payload.key)
+                .Include(x => x.RFPDrugRecieve)
                 .FirstOrDefault();
+            if(paymentReceive.RFPDrugRecieve != null)
+            {
+                Err err = new Err
+                {
+                    message = "Record has a recieve record"
+                };
+                string errMsg = JsonConvert.SerializeObject(err);
+
+                return BadRequest(err);
+            }
             if (paymentReceive.IsFullPayment)
             {
                 RFPinvoice invoice = _context.RFPinvoice.Find(paymentReceive.RFPinvoiceId);

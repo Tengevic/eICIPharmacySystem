@@ -12,6 +12,17 @@
     <Compile Remove="Migrations\20220526061012_parchaseorder.Designer.cs" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Views\EmailViewModels\2.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Views\EmailViewModels\2.jpg">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
 
   <ItemGroup>
     <PackageReference Include="Grpc.Core" Version="2.45.0" />

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -15,5 +16,6 @@ namespace coderush.Models
         public bool Approved { get; set; } = false;
         public SalesOrder SalesOrder { get; set; }
         public ICollection<PrescriptionLines> prescriptionLines { get; set; }
+        public string UserId { get; set; }
     }
 }

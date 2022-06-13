@@ -1,0 +1,147 @@
+﻿<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!------ Include the above in your HEAD tag ---------->
+<style>
+    .purchase {
+        position: relative;
+        background-color: #FFF;
+        min-height: 680px;
+        padding: 15px;
+        font-family: Times New Roman;
+    }
+
+        .purchase header {
+            padding: 0px 0px 0px 0px;
+            margin-bottom: 0px;
+            border-bottom: 1px solid #3989c6;
+        }
+
+            .purchase header img {
+                max-width: 200px;
+                margin-top: 0;
+                margin-bottom: 0;
+            }
+
+        .purchase .company-details {
+            text-align: right;
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+
+        .purchase main {
+            padding: 0px 0px;
+            margin-bottom: 0px;
+        }
+
+        .purchase .to-details {
+            text-align: left;
+        }
+
+        .purchase .to-name {
+            font-weight: bold;
+        }
+
+            .purchase .to-name .to-address .to-city {
+                margin-top: 0;
+                margin-bottom: 0;
+            }
+
+        .purchase .purchase-info {
+            text-align: right;
+        }
+
+    .purchase-info .info-code {
+        font-weight: bold;
+    }
+
+        .purchase-info .info-code .info-date {
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+
+    .table thead th {
+        margin: 0 !important;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+    }
+
+    .table td {
+        margin: 0 !important;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+        border: none;
+    }
+
+    .table .blank-row {
+        height: 25px !important;
+        background-color: #FFFFFF;
+        border: none;
+    }
+
+    .table tbody {
+        min-height: 1000px !important;
+    }
+</style>
+<div>
+    <div class="purchase overflow-auto">
+        <!--<div style="min-width: 600px">-->
+        <header>
+            <div class="row">
+                <div class="col-sm-3 col-xs-3">
+                    <img src='{pic}' class="img-responsive" >
+                </div>
+                <div class="col-sm-9 col-xs-9 company-details">
+                    <div>ICI, Eldoret, postal</div>
+                    <div>company phone +0987654</div>
+                    <div>company fax +098765</div>
+                </div>
+            </div>
+        </header>
+        <main>
+            <div class="row">
+                <div class="col-sm-3 col-xs-3 to-details">
+                    <div>PURCHASED ORDER FOR :</div>
+                    <div class="to-name">{Vname}</div>
+                    <div class="to-address">{Vaddress}</div>
+                    <div class="to-city">{Vcity}, Postal</div>
+                </div>
+                <div class="col-sm-9 col-xs-9 purchase-info">
+                    <h4 class="info-code">{PurchaseOrderName}</h4>DeliveryDate
+                    <div class="info-date">Order Date : {OrderDate}</div>
+                    <div class="info-date">Delivery Date : {DeliveryDate}</div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12 col-xs-12 table-responsive">
+                    <table class="table table-condensed" border="0" cellspacing="0" cellpadding="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th class="text-center">#</th>
+                                <th class="text-center col-xs-5 col-sm-5">Item</th>
+                                <th class="text-center col-xs-1 col-sm-1">Qty</th>
+                                <th class="text-center col-xs-3 col-sm-3">Price</th>
+                                <th class="text-center col-xs-3 col-sm-3">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                           {List}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th>
+                                    Information
+                                </th>
+                                <th class="text-center">SubTotal: {SubTotal} </th>
+                                <th class="text-center">Discount: {Discount}</th>
+                                <th class="text-center">Tax: {Tax}</th> 
+                                <th class="text-center">Total: {Total}</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </main>
+        <!--</div>-->
+    </div>
+</div>

@@ -23,5 +23,6 @@ namespace coderush.Models
         public int InvoiceTypeId { get; set; }
         public bool fullyPaid { get; set; } = false;
         public RFPpaymentRecieved RFPpaymentRecieved { get; set; }
+        public string UserId { get; set; }
     }
 }

@@ -10,6 +10,7 @@ using coderush.Models;
 using coderush.Services;
 using coderush.Models.SyncfusionViewModels;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Identity;
 
 namespace coderush.Controllers.Api
 {
@@ -19,12 +20,14 @@ namespace coderush.Controllers.Api
     {
         private readonly ApplicationDbContext _context;
         private readonly INumberSequence _numberSequence;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public RFPSaleordersController(ApplicationDbContext context,
+        public RFPSaleordersController(ApplicationDbContext context, UserManager<ApplicationUser> userManager,
                         INumberSequence numberSequence)
         {
             _context = context;
             _numberSequence = numberSequence;
+            _userManager = userManager;
         }
 
         // GET: api/SalesOrder
@@ -110,10 +113,12 @@ namespace coderush.Controllers.Api
         }
 
         [HttpPost("[action]")]
-        public IActionResult Insert([FromBody] CrudViewModel<RFPSaleorder> payload)
+        public async Task<IActionResult> Insert([FromBody] CrudViewModel<RFPSaleorder> payload)
         {
             RFPSaleorder salesOrder = payload.value;
             salesOrder.RFPSaleorderName = _numberSequence.GetNumberSequence("RSO");
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            salesOrder.UserId = user.Id;
             _context.RFPSaleorder.Add(salesOrder);
             _context.SaveChanges();
             this.UpdateSalesOrder(salesOrder.RFPSaleorderId);
@@ -121,10 +126,12 @@ namespace coderush.Controllers.Api
         }
         //Endpoint
         [HttpPost("[action]")]
-        public IActionResult Add([FromBody] RFPSaleorder payload)
+        public async Task<IActionResult> Add([FromBody] RFPSaleorder payload)
         {
             RFPSaleorder salesOrder = payload;
             salesOrder.RFPSaleorderName = _numberSequence.GetNumberSequence("RSO");
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            salesOrder.UserId = user.Id;
             _context.RFPSaleorder.Add(salesOrder);
             _context.SaveChanges();
             this.UpdateSalesOrder(salesOrder.RFPSaleorderId);
@@ -132,17 +139,21 @@ namespace coderush.Controllers.Api
         }
 
         [HttpPost("[action]")]
-        public IActionResult Update([FromBody] CrudViewModel<RFPSaleorder> payload)
+        public async Task<IActionResult> Update([FromBody] CrudViewModel<RFPSaleorder> payload)
         {
             RFPSaleorder salesOrder = payload.value;
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            salesOrder.UserId = user.Id;
             _context.RFPSaleorder.Update(salesOrder);
             _context.SaveChanges();
             return Ok(salesOrder);
         }
         [HttpPost("[action]")]
-        public IActionResult Put([FromBody] RFPSaleorder payload)
+        public async Task<IActionResult> Put([FromBody] RFPSaleorder payload)
         {
             RFPSaleorder salesOrder = payload;
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            salesOrder.UserId = user.Id;
             _context.RFPSaleorder.Update(salesOrder);
             _context.SaveChanges();
             return Ok(salesOrder);

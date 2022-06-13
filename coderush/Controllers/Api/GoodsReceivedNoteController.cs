@@ -11,6 +11,7 @@ using coderush.Services;
 using coderush.Models.SyncfusionViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Identity;
 
 namespace coderush.Controllers.Api
 {
@@ -21,12 +22,14 @@ namespace coderush.Controllers.Api
     {
         private readonly ApplicationDbContext _context;
         private readonly INumberSequence _numberSequence;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public GoodsReceivedNoteController(ApplicationDbContext context,
+        public GoodsReceivedNoteController(ApplicationDbContext context, UserManager<ApplicationUser> userManager,
                         INumberSequence numberSequence)
         {
             _context = context;
             _numberSequence = numberSequence;
+            _userManager = userManager;
         }
 
         // GET: api/GoodsReceivedNote
@@ -78,7 +81,7 @@ namespace coderush.Controllers.Api
         }
 
         [HttpPost("[action]")]
-        public IActionResult Insert([FromBody]CrudViewModel<GoodsReceivedNote> payload)
+        public async Task<IActionResult> Insert([FromBody]CrudViewModel<GoodsReceivedNote> payload)
         {
             GoodsReceivedNote goodsReceivedNote = payload.value;
             goodsReceivedNote.GoodsReceivedNoteName = _numberSequence.GetNumberSequence("GRN");
@@ -89,12 +92,14 @@ namespace coderush.Controllers.Api
                 _context.PurchaseOrder.Update(purchaseOrder);
                 _context.SaveChanges();
             }
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            goodsReceivedNote.UserId = user.Id;
             _context.GoodsReceivedNote.Add(goodsReceivedNote);
             _context.SaveChanges();
             return Ok(goodsReceivedNote);
         }
         [HttpPost("[action]")]
-        public IActionResult Add([FromBody] GoodsReceivedNote payload)
+        public async Task<IActionResult> Add([FromBody] GoodsReceivedNote payload)
         {
             GoodsReceivedNote goodsReceivedNote = payload;
             goodsReceivedNote.GoodsReceivedNoteName = _numberSequence.GetNumberSequence("GRN");
@@ -105,13 +110,15 @@ namespace coderush.Controllers.Api
                 _context.PurchaseOrder.Update(purchaseOrder);
                 _context.SaveChanges();
             }
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            goodsReceivedNote.UserId = user.Id;
             _context.GoodsReceivedNote.Add(goodsReceivedNote);
             _context.SaveChanges();
             return Ok(goodsReceivedNote);
         }
 
         [HttpPost("[action]")]
-        public IActionResult Update([FromBody]CrudViewModel<GoodsReceivedNote> payload)
+        public async Task<IActionResult> Update([FromBody]CrudViewModel<GoodsReceivedNote> payload)
         {
             GoodsReceivedNote goodsReceivedNote = payload.value;
             if (goodsReceivedNote.IsFullReceive)
@@ -121,6 +128,8 @@ namespace coderush.Controllers.Api
                 _context.PurchaseOrder.Update(purchaseOrder);
                 _context.SaveChanges();
             }
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+            goodsReceivedNote.UserId = user.Id;
             _context.GoodsReceivedNote.Update(goodsReceivedNote);
             _context.SaveChanges();
             return Ok(goodsReceivedNote);

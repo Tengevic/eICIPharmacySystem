@@ -144,9 +144,11 @@ namespace coderush.Controllers.Api
                 {
                     List<SalesOrderLine> lines = new List<SalesOrderLine>();
                     lines = _context.SalesOrderLine.Where(x => x.GoodsRecievedNoteLineId.Equals(batch.GoodsRecievedNoteLineId)).ToList();
+                    List<stockNumber> stockNumber = _context.stockNumber.Where(x => x.GoodsRecievedNoteLineId.Equals(batch.GoodsRecievedNoteLineId)).ToList();
 
+                    batch.changestock = stockNumber.Sum(x => x.Add) - stockNumber.Sum(x => x.subtract);
                     batch.Sold = lines.Sum(x => x.Quantity);
-                    batch.InStock = batch.Quantity - batch.Sold - batch.Expired;
+                    batch.InStock = batch.Quantity - batch.Sold - batch.Expired - batch.changestock;
 
                     _context.Update(batch);
 
@@ -338,9 +340,7 @@ namespace coderush.Controllers.Api
         public IActionResult Expired([FromBody] CrudViewModel<GoodsRecievedNoteLine> payload)
         {
             GoodsRecievedNoteLine goodsRecievedNoteLine = payload.value;
-
-          
-
+         
             if (goodsRecievedNoteLine.InStock < goodsRecievedNoteLine.Expired)
             {
                 Err err = new Err

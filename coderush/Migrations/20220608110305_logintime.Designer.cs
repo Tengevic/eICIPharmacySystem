@@ -11,9 +11,10 @@ using System;
 namespace coderush.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220608110305_logintime")]
+    partial class logintime
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -436,8 +437,6 @@ namespace coderush.Migrations
 
                     b.Property<int>("PurchaseOrderId");
 
-                    b.Property<string>("UserId");
-
                     b.Property<string>("VendorDONumber");
 
                     b.Property<string>("VendorInvoiceNumber");
@@ -479,8 +478,6 @@ namespace coderush.Migrations
                     b.Property<int?>("RFPDrugRecieveId");
 
                     b.Property<double>("Sold");
-
-                    b.Property<double>("changestock");
 
                     b.HasKey("GoodsRecievedNoteLineId");
 
@@ -640,8 +637,6 @@ namespace coderush.Migrations
 
                     b.Property<string>("PrescriptionName");
 
-                    b.Property<string>("UserId");
-
                     b.Property<DateTime>("presciptionDate");
 
                     b.HasKey("PrescriptionId");
@@ -770,8 +765,6 @@ namespace coderush.Migrations
 
                     b.Property<double>("Total");
 
-                    b.Property<string>("UserId");
-
                     b.Property<int>("VendorId");
 
                     b.Property<bool>("fullyPaid");
@@ -874,8 +867,6 @@ namespace coderush.Migrations
 
                     b.Property<int>("RFPpaymentRecievedId");
 
-                    b.Property<string>("UserId");
-
                     b.HasKey("RFPDrugRecieveId");
 
                     b.HasIndex("RFPpaymentRecievedId")
@@ -898,8 +889,6 @@ namespace coderush.Migrations
                     b.Property<int>("RFPSaleorderId");
 
                     b.Property<string>("RFPinvoiceName");
-
-                    b.Property<string>("UserId");
 
                     b.Property<bool>("fullyPaid");
 
@@ -927,8 +916,6 @@ namespace coderush.Migrations
                     b.Property<int>("RFPinvoiceId");
 
                     b.Property<string>("RFPpaymentRecievedName");
-
-                    b.Property<string>("UserId");
 
                     b.HasKey("RFPpaymentRecievedId");
 
@@ -971,8 +958,6 @@ namespace coderush.Migrations
 
                     b.Property<double>("Total");
 
-                    b.Property<string>("UserId");
-
                     b.HasKey("RFPSaleorderId");
 
                     b.ToTable("RFPSaleorder");
@@ -1013,11 +998,7 @@ namespace coderush.Migrations
 
                     b.Property<double>("Total");
 
-                    b.Property<string>("UserId");
-
                     b.HasKey("SalesOrderId");
-
-                    b.HasIndex("CustomerId");
 
                     b.HasIndex("PrescriptionId")
                         .IsUnique()
@@ -1120,30 +1101,6 @@ namespace coderush.Migrations
                     b.HasKey("ShipmentTypeId");
 
                     b.ToTable("ShipmentType");
-                });
-
-            modelBuilder.Entity("coderush.Models.stockNumber", b =>
-                {
-                    b.Property<int>("stockNumberId")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<double>("Add");
-
-                    b.Property<string>("Description");
-
-                    b.Property<int>("GoodsRecievedNoteLineId");
-
-                    b.Property<string>("UserId");
-
-                    b.Property<DateTime>("date");
-
-                    b.Property<double>("quantity");
-
-                    b.Property<double>("subtract");
-
-                    b.HasKey("stockNumberId");
-
-                    b.ToTable("stockNumber");
                 });
 
             modelBuilder.Entity("coderush.Models.UnitOfMeasure", b =>
@@ -1574,11 +1531,6 @@ namespace coderush.Migrations
 
             modelBuilder.Entity("coderush.Models.SalesOrder", b =>
                 {
-                    b.HasOne("coderush.Models.Customer", "Customer")
-                        .WithMany()
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
                     b.HasOne("coderush.Models.Prescription", "Prescription")
                         .WithOne("SalesOrder")
                         .HasForeignKey("coderush.Models.SalesOrder", "PrescriptionId");

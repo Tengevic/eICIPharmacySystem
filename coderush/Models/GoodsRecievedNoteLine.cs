@@ -9,9 +9,9 @@ namespace coderush.Models
     public class GoodsRecievedNoteLine
     {
         public int GoodsRecievedNoteLineId { get; set; }
-        [Display(Name = "GoodsReceivedNotedD")]
+        [Display(Name = "GoodsReceivedNotedID")]
         public int? GoodsReceivedNoteId { get; set; }
-        [Display(Name = "GoodsReceivedNote ")]
+        [Display(Name = "GoodsReceivedNote")]
         public GoodsReceivedNote GoodsReceivedNote { get; set; }
         public int? RFPDrugRecieveId { get; set; }
         [Display(Name = "Product Item")]
@@ -23,9 +23,11 @@ namespace coderush.Models
         public double InStock { get; set; }
         public double Expired { get; set; }
         public string BatchID { get; set; }
+        [DisplayFormat(DataFormatString = "{MM/dd/yyyy}")]
         public DateTime ManufareDate { get; set; }
+        [DisplayFormat(DataFormatString = "{MM/dd/yyyy}")]
         public DateTime ExpiryDate { get; set; }
         public Boolean Dispose { get; set; } = false;
-
+        public double changestock { get; set; }
     }
 }

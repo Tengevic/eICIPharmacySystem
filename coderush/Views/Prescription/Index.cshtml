@@ -94,7 +94,7 @@
                         { field: "PrescriptionName", headerText: 'Prescription number', allowEditing: false },                    
                         { field: "CustomerId", headerText: 'Customer', foreignKeyField: "CustomerId", foreignKeyValue: "CustomerName", dataSource: dataManagerCustomer, validationRules: { required: true } },
                         { field: "presciptionDate", headerText: 'Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
-                        { field: "Approved", headerText: 'Approved', type: "boolean", editType: "booleanedit", defaultValue: false },
+                        { field: "Approved", headerText: 'Approved', type: "boolean", editType: "booleanedit", defaultValue: false, allowEditing: false},
                     ],
                     actionComplete: "complete",
                     actionFailure: function (args) {

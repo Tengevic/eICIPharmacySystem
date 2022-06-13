@@ -10,6 +10,7 @@ using coderush.Models;
 using coderush.Models.SyncfusionViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Newtonsoft.Json;
+using coderush.Models.Eici_models;
 
 namespace coderush.Controllers.Api
 {
@@ -61,6 +62,40 @@ namespace coderush.Controllers.Api
                 return Ok(new { Items, Count });
             }
             
+        }
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetSalesOrderLineSaleHistory()
+        {
+            saleOrderDateRange saleOrderDateRange = new saleOrderDateRange();
+            var headers = Request.Headers["ProductId"];
+            var headerStart = Request.Headers["Start"];
+            var headerEnd = Request.Headers["End"];
+            saleOrderDateRange.ProductId = Convert.ToInt32(headers);
+            saleOrderDateRange.Start = Convert.ToDateTime(headerStart);
+            saleOrderDateRange.End = Convert.ToDateTime(headerEnd);
+
+            List<SalesOrderLine> SalesOrderLine = await _context.SalesOrderLine
+                            .Where(x => x.ProductId == saleOrderDateRange.ProductId)
+                            .Include(x => x.Product)
+                            .Include(x => x.SalesOrder.Customer)
+                            .Where(x => x.SalesOrder.SaleDate > saleOrderDateRange.Start)
+                            .Where(x => x.SalesOrder.SaleDate < saleOrderDateRange.End)
+                            .ToListAsync();
+
+            List<SaleHistory> SaleHistory = new List<SaleHistory>();
+
+            foreach (SalesOrderLine salesOrderLines in SalesOrderLine)
+            {
+                SaleHistory sales = new SaleHistory
+                {
+                    CustomerName = salesOrderLines.SalesOrder.Customer.CustomerName,
+                    ProductName = salesOrderLines.Product.ProductName,
+                    Quanity = salesOrderLines.Quantity,
+                    saledate = salesOrderLines.SalesOrder.SaleDate
+                };
+                SaleHistory.Add(sales);
+            }
+            return Ok(SaleHistory);
         }
         [HttpGet("[action]/{id}")]
         public async Task<IActionResult> GetSalesOrderLineByRFPSaleOrderId([FromRoute] int id)
@@ -263,9 +298,11 @@ namespace coderush.Controllers.Api
                 {
                     List<SalesOrderLine> lines = new List<SalesOrderLine>();
                     lines = _context.SalesOrderLine.Where(x => x.GoodsRecievedNoteLineId.Equals(batch.GoodsRecievedNoteLineId)).ToList();
+                    List<stockNumber> stockNumber = _context.stockNumber.Where(x => x.GoodsRecievedNoteLineId.Equals(batch.GoodsRecievedNoteLineId)).ToList();
 
+                    batch.changestock = stockNumber.Sum(x => x.Add) - stockNumber.Sum(x => x.subtract);
                     batch.Sold = lines.Sum(x => x.Quantity);
-                    batch.InStock = batch.Quantity - batch.Sold;
+                    batch.InStock = batch.Quantity - batch.Sold - batch.Expired - batch.changestock;
 
                     _context.Update(batch);
 
@@ -497,5 +534,6 @@ namespace coderush.Controllers.Api
             return Ok(salesOrderLine);
 
         }
+       
     }
 }

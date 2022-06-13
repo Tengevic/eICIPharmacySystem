@@ -129,25 +129,24 @@
                 $("#" + this._id + "_dialogEdit").ejDialog({ title: "Edit Record" });
             }
             if (args.requestType == 'beginedit' || args.requestType == 'add') {
-                //var selected = $('#GridRFPinvoiceId').data('ejDropDownList');
-                //var selectedValue = parseInt(selected.option('value'));
-                //var selectedText = selected.option('text');
-                //$.ajax({
-                //    type: 'GET',
-                //    url: '/api/RFPinvoices',
-                //    success: function (data) {
-                //        if (args.requestType == 'beginedit') {
-                //            data.push({ 'RFPinvoiceId': selectedValue, 'RFPinvoiceName': selectedText });
-                //        }
+                var selected = $('#GridRFPinvoiceId').data('ejDropDownList');
+                var selectedValue = parseInt(selected.option('value'));
+                var selectedText = selected.option('text');
+                $.ajax({
+                    type: 'GET',
+                    url: '/api/RFPinvoices/GetNotPaidYet',
+                    success: function (data) {
+                        if (args.requestType == 'beginedit') {
+                            data.push({ 'RFPinvoiceId': selectedValue, 'RFPinvoiceName': selectedText });
+                        }
 
-                //        $("#GridRFPinvoiceId").ejDropDownList({
-                //            dataSource: data,
-                //            fields: { id: 'RFPinvoiceId', text: 'RFPinvoiceName', value: 'RFPinvoiceId' },
-                //            value: selectedValue
-                //        });
-                //    }
-                //});
-
+                        $("#GridRFPinvoiceId").ejDropDownList({
+                            dataSource: data,
+                            fields: { id: 'RFPinvoiceId', text: 'RFPinvoiceName', value: 'RFPinvoiceId' },
+                            value: selectedValue
+                        });
+                    }
+                });
             }
           
         }

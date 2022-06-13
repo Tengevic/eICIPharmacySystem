@@ -204,13 +204,13 @@
                 type: "POST",
                 contentType: "application/json;charset=utf-8",
                 data: JSON.stringify(data),
-                url: "/api/RFPDrugRecieves/Add",
+                url: "/api/SalesOrder/AddByPrescription",
                 beforeSend: function () {
 
                 },
                 success: function (result) {
                     SalesOrderId = result.SalesOrderId;
-                    window.location = "/RFPDrugRecieves/Detail/" + SalesOrderId;
+                    window.location = "/SalesOrder/Detail/" + SalesOrderId;
                 },
                 error: function (result) {
                     var s = ej.parseJSON(result.responseText)
@@ -308,7 +308,7 @@
                     { field: "PrescriptionId", headerText: 'PS#', defaultValue: @Model.PrescriptionId, foreignKeyField: "PrescriptionId", foreignKeyValue: "PrescriptionName", dataSource: dataManagerPrescription, visible: false },
                     { field: "ProductId", headerText: 'Drug', foreignKeyField: "ProductId", foreignKeyValue: "ProductName", dataSource: dataManagerProduct },
                     { field: "prescription", headerText: 'Prescription' },
-                    { field: "Quantity", headerText: 'Quantity', defaultValue: 1, editType: "numericedit" },
+                    { field: "Quantity", headerText: 'Quantity', defaultValue: 1, editType: "numericedit", format: "{0:n2}"},
                     { field: "remainder", headerText: 'Units sold', defaultValue: 0, editType: "numericedit", allowEditing: false, visible: false  },
 
                 ],

@@ -18,6 +18,7 @@ namespace coderush.Models
         [Display(Name = "Full Receive")]
         public bool IsFullReceive { get; set; } = true;
         public List<GoodsRecievedNoteLine> goodsRecievedNoteLines { get; set; } = new List<GoodsRecievedNoteLine>();
+        public string UserId { get; set; }
     }
 }
 

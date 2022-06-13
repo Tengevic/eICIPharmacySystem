@@ -177,7 +177,7 @@
                                                 <th>Payment Name</th>
                                                 <th>Payment type</th>
                                                 <th>Amount</th>
-                                                <th>Upload</th>
+                                                <th>Payment Code</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -298,7 +298,7 @@
                 Cost per unit:
             </td>
             <td>
-                <input id="Cost" type="number" value=0 onchange="NewCost(this.value)" />
+                <label id="Cost" name="Cost"></label>
             </td>
         </tr>
         <tr>
@@ -447,6 +447,7 @@
         var paymentType;
         var InvoiceId;
 
+        // sumbit payment data to database
         function Payment() {
             var amount = $("#payAmount").val();
             if (amount == "") {
@@ -480,7 +481,6 @@
                         $("#sendpay").hide();
                         $("#submitPay").prop('disabled', false);
                         toastr.success("Success");
-                        PaymentsList(result.InvoiceId);
                         //for (let i = 0; i < paymentType.length; i++) {
                         //    if (paymentType[i].PaymentTypeId == result.PaymentTypeId) {
                         //        if (paymentType[i].RequireUpload) {
@@ -511,6 +511,7 @@
                 });
             }
         }
+        // open payment diaog
         function MakePayment() {
 
             $.ajax({
@@ -542,6 +543,7 @@
                 }
             });
         }
+        // open invoice dialog
         function Invoice() {
             $("#dialogInvoice").ejDialog("open");
             $("#sendInvoice").hide();
@@ -552,6 +554,7 @@
                 }
             });
         }
+        // sumbit invoice data to databse
         function InvoiceSubmit() {
             data = {
                 SalesOrderId: @Model.SalesOrderId,
@@ -588,6 +591,7 @@
             }
 
         }
+        // opens saleorderline data to databse
         function myFunction(item) {
             Item = item;
             $("#dialog").ejDialog("open");
@@ -597,6 +601,7 @@
             $("#genericType").text(Item.Product.ProductType.ProductTypeName); 
             $("#instock").text(Item.Product.InStock);
             $("#Quantity").val(Item.Quantity);
+            $("#Cost").text(Item.Product.DefaultSellingPrice);
             Amount = Item.Quantity * Item.Product.DefaultSellingPrice;
             $("#CostAmount").text(Amount);
             $("#DiscAmount").val();
@@ -610,6 +615,7 @@
             amount = x * parseInt($("#Quantity").val());
             $("#CostAmount").text(amount);
         }
+        // sumbit saleorderline data to databse
         function Submit() {
             Price = $("#Cost").val();
             DiscountPercentage = $("#Disc").val();
@@ -636,7 +642,7 @@
                 "DiscountAmount": 0,
                 "DiscountPercentage": parseInt(DiscountPercentage),
                 "Amount": 0,
-                "Price": parseInt(Price),
+                "Price": Item.Product.DefaultSellingPrice,
                 "Quantity": parseInt(Quantity),
                 "ProductId": Item.Product.ProductId,
             }
@@ -648,6 +654,7 @@
                 $("#Grid").ejGrid("addRecord", data);
             }
         }
+        // fill prescription line data to databse
         function PrescriptionLines() {
              $.ajax({
                 type: 'GET',
@@ -673,6 +680,7 @@
                 }
             });
         }
+        // fill data into payment list table
         function PaymentsList(InvoiceId) {
                $.ajax({
                 type: 'GET',
@@ -690,7 +698,7 @@
                                row.insertCell(1).innerHTML = item[i].PaymentReceiveName;
                                row.insertCell(2).innerHTML = item[i].PaymentType.PaymentTypeName;
                                row.insertCell(3).innerHTML = item[i].PaymentAmount;
-                               row.insertCell(4).innerHTML = "<a href='/PaymentReceive/Detail/" + item[i].PaymentReceiveId +"'>Uploads</a>";
+                               row.insertCell(4).innerHTML = item[i].PaymentCode;
 
                            }
                        }
@@ -796,7 +804,7 @@
                     { field: "ProductId", headerText: 'Product', foreignKeyField: "ProductId", foreignKeyValue: "ProductName", dataSource: dataManagerProduct, validationRules: { required: true }  },
                     { field: "GoodsRecievedNoteLineId", headerText: 'BatchID', foreignKeyField: "GoodsRecievedNoteLineId", foreignKeyValue: "BatchID", dataSource: dataManagerGoodsRecievedNoteLines, allowEditing: false },
                     { field: "Description", headerText: 'Description', visible: false },
-                    { field: "Quantity", headerText: 'Qty', defaultValue: 1, editType: "numericedit" },
+                    { field: "Quantity", headerText: 'Qty', defaultValue: 1, editType: "numericedit", format: "{0:n2}"},
                     { field: "Price", headerText: 'Cost per unit', defaultValue: 0, editType: "numericedit", format: "{0:n2}" },
                     { field: "Amount", headerText: 'Amount', defaultValue: 0, allowEditing: false, editType: "numericedit", format: "{0:n2}" },
                     { field: "DiscountPercentage", headerText: 'Disc %', defaultValue: 0, editType: "numericedit", format: "{0:n2}" },

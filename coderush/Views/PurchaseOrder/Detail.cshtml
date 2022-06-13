@@ -15,6 +15,8 @@
                 <div class="box">
                     <div class="box-header with-border">
                         <h3 class="box-title"><i class="fa fa-building"></i> @ViewData["Title"]</h3>
+                        <button onclick="PrintPanel()">
+                        <i class="fa fa-print"></i></button>
                         <div class="box-tools pull-right">
                             <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
                                     title="Collapse">
@@ -95,6 +97,7 @@
 
 
                                 </dl>
+                               
                             </div>
 
                         </div>
@@ -348,8 +351,27 @@
         var Drugs;
         var Quantity;
         var recievedate;
-        var IsFullReceive;
+        var IsFullReceive = false;
 
+        function PrintPanel() {
+            var message;
+            $.ajax({
+                type: 'GET',
+                url: '/api/PurchaseOrder/Print/' + @Model.PurchaseOrderId,
+                success: function (data) {
+                    message = data;
+                    var printWindow = window.open('', '', 'height=400,width=800');
+                    printWindow.document.write(message);
+                    printWindow.document.close();
+                    setTimeout(function () {
+                        printWindow.print();
+                    }, 500);
+                    return false;
+                }
+            });
+            
+        }
+        // submit drug recieve to the database
         function Submit() {
             data = {
                 PurchaseOrderId: @Model.PurchaseOrderId,
@@ -359,9 +381,9 @@
                 WarehouseId: 1,
                 IsFullReceive: IsFullReceive,
             }
-            if (GRNDate == null) {
+            if (data.GRNDate == null) {
                 toastr.warning("Select a date")
-            } else if (VendorInvoiceNumber == "") {
+            } else if (data.VendorInvoiceNumber == "") {
                 toastr.warning("Please enter Vendor Invoice number")
             } else {
                 $.ajax({
@@ -387,12 +409,11 @@
                     }
                 });
             }
-            
-           
+
+
         }
-
+        // opens drug recieve dialog box
         function Recieve() {
-
             $("#dialog").ejDialog("open");
             $("#sendp").hide();
             $("#Recievedate").ejDatePicker({
@@ -407,6 +428,7 @@
                 }
             });
         }
+        // changes the cost amount
         function NewAmount(x) {
             Amount = x * Quantity;
             $("#Cost").text(Amount);
@@ -486,7 +508,6 @@
                 dataSource: dataManagerVendor,
                 fields: { id: 'VendorId', text: 'VendorName', value: 'VendorId' },
                 value: @Model.VendorId,
-                enabled: false,
             });
 
             $('#CurrencyId').ejDropDownList({
@@ -530,15 +551,15 @@
                     { field: "PurchaseOrderId", headerText: 'PO#', defaultValue: @Model.PurchaseOrderId, foreignKeyField: "PurchaseOrderId", foreignKeyValue: "PurchaseOrderName", dataSource: dataManagerPurchaseOrder, visible: false },
                     { field: "ProductId", headerText: 'Drug', foreignKeyField: "ProductId", foreignKeyValue: "ProductName", dataSource: dataManagerProduct },
                     { field: "Description", headerText: 'Description' , visible: false},
-                    { field: "Quantity", headerText: 'units', defaultValue: 1, editType: "numericedit"},
-                    { field: "Price", headerText: 'Price', defaultValue: 0, editType: "numericedit", format: "{0:n2}" },
-                    { field: "Amount", headerText: 'Amount', defaultValue: 0, allowEditing: false, editType: "numericedit", format: "{0:n2}" },
-                    { field: "DiscountPercentage", headerText: 'Disc %', defaultValue: 0, editType: "numericedit", format: "{0:n2}" },
-                    { field: "DiscountAmount", headerText: 'Disc Amt', defaultValue: 0, visible: false, editType: "numericedit", format: "{0:n2}" },
-                    { field: "SubTotal", headerText: 'SubTotal', defaultValue: 0, allowEditing: false, editType: "numericedit", format: "{0:n2}" },
-                    { field: "TaxPercentage", headerText: 'Tax %', defaultValue: 0, editType: "numericedit", format: "{0:n2}" },
-                    { field: "TaxAmount", headerText: 'Tax Amt', defaultValue: 0, visible: false, editType: "numericedit", format: "{0:n2}" },
-                    { field: "Total", headerText: 'Total', defaultValue: 0, allowEditing: false, editType: "numericedit", format: "{0:n2}" },
+                    { field: "Quantity", headerText: 'units', defaultValue: 1, editType: "numericedit", format: "{0:n2}"  ,decimalPlaces: 2},
+                    { field: "Price", headerText: 'Price', defaultValue: 0, editType: "numericedit", editParams: { decimalPlaces: 2 }, format: "{0:n2}" },
+                    { field: "Amount", headerText: 'Amount', defaultValue: 0, allowEditing: false, editParams: { decimalPlaces: 2 }, editType: "numericedit", format: "{0:n2}" },
+                    { field: "DiscountPercentage", headerText: 'Disc %', defaultValue: 0, editType: "numericedit", editParams: { decimalPlaces: 2 }, format: "{0:n2}" },
+                    { field: "DiscountAmount", headerText: 'Disc Amt', defaultValue: 0, visible: false, editType: "numericedit", editParams: { decimalPlaces: 2 }, format: "{0:n2}" },
+                    { field: "SubTotal", headerText: 'SubTotal', defaultValue: 0, allowEditing: false, editType: "numericedit", editParams: { decimalPlaces: 2 }, format: "{0:n2}" },
+                    { field: "TaxPercentage", headerText: 'Tax %', defaultValue: 0, editType: "numericedit", editParams: { decimalPlaces: 2 }, format: "{0:n2}" },
+                    { field: "TaxAmount", headerText: 'Tax Amt', defaultValue: 0, visible: false, editType: "numericedit", editParams: { decimalPlaces: 2 }, format: "{0:n2}" },
+                    { field: "Total", headerText: 'Total', defaultValue: 0, allowEditing: false, editType: "numericedit", editParams: { decimalPlaces: 2 }, format: "{0:n2}" },
                 ],
                 actionComplete: "complete",
                 actionFailure: function (args) {

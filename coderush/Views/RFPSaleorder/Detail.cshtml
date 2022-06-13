@@ -25,7 +25,7 @@
                         </div>
                     </div>
                     <div class="box-body">
-                        <div class="content-container-fluid">
+                        <div class="content-container-fluid" style=" height: 200px;">
                             <div class="row">
                                 <dl class="dl-horizontal">
                                     <dt>
@@ -433,18 +433,19 @@
         var InvoiceId;
         var RFPpaymentRecievedId;
         var recievedate;
+        var fullpay = false;
         var IsFullReceive = false;
 
+        // sumbit drug recive data to database
         function Recieve() {
             data = {
                 RFPpaymentRecievedId: RFPpaymentRecievedId,
                 IsFullReceive: IsFullReceive,
                 GRNDate: recievedate
             }
-            if (GRNDate == null) {
+            if (data.GRNDate == null) {
                 toastr.warning("Select a date")
             } else {
-                console.log(data);
                 $.ajax({
                     type: "POST",
                     contentType: "application/json;charset=utf-8",
@@ -458,7 +459,6 @@
                         $("#sendR").hide();
                         $("#btnSubmit").prop('disabled', false);
                         window.location = "/RFPDrugRecieve/Detail/" + result.RFPDrugRecieveId;
-
                     },
                     error: function (result) {
                         $("#sendR").hide();
@@ -470,9 +470,8 @@
             }
            
         }
-
+        // open drug payment dialog
         function DrugPayment(Item){
-            console.log(Item);
             $("#dialog").ejDialog("open");
             $("#sendR").hide();
             RFPpaymentRecievedId = Item.RFPpaymentRecievedId;
@@ -489,7 +488,7 @@
                 }
             });
         }
-
+        // submit drug payment data to database
         function Payment() {
             var amount = $("#payAmount").val();
             if (amount == "") {
@@ -502,7 +501,7 @@
                 PaymentDate: Paymentdate,
                 PaymentTypeId: PaymentTypeId,
                 PaymentAmount: parseInt(amount),
-                IsFullPayment: IsFullReceive,
+                IsFullPayment: fullpay,
                 PaymentCode: code
             }
             if (data.PaymentTypeId == null) {
@@ -510,7 +509,6 @@
             } else if (data.PaymentDate == null) {
                 toastr.warning("Select a date");
             } else {
-                console.log(data)
                 $.ajax({
                     type: "POST",
                     contentType: "application/json;charset=utf-8",
@@ -524,7 +522,6 @@
                         $("#sendpay").hide();
                         $("#submitPay").prop('disabled', false);
                         toastr.success("Success");
-                        PaymentsList(result.InvoiceId)
 
                     },
                     error: function (result) {
@@ -536,8 +533,8 @@
                 });
             }
         }
+        // open payment dialog
         function MakePayment() {
-
             $.ajax({
                 type: 'GET',
                 url: "/api/PaymentType",
@@ -567,7 +564,7 @@
                 }
             });
         }
-
+        // open invoice dialog
         function Invoice() {
             $("#dialogInvoice").ejDialog("open");
             $("#sendInvoice").hide();
@@ -578,6 +575,7 @@
                 }
             });
         }
+        //submit invoice data to databse
         function InvoiceSubmit() {
             data = {
                 RFPSaleorderId: @Model.RFPSaleorderId,
@@ -620,6 +618,7 @@
             amount = x * Quantity;
             $("#CostAmount").text(amount);
         }
+        //sumbit sale order detail
         function Submit() {
             Price = $("#Cost").val();
             DiscountPercentage = $("#Disc").val();
@@ -658,13 +657,12 @@
                 $("#Grid").ejGrid("addRecord", data);
             }
         }
-
+        // fill data to payment list table
         function PaymentsList(InvoiceId) {
             $.ajax({
                 type: 'GET',
                 url: '/api/RFPpaymentRecieveds/GetbyInvoiceId/' + InvoiceId,
                 success: function (data) {
-                    console.log(data);
                     if (data.Count == 0) {
                         $("div.payment").replaceWith("<h4>No payment Available</h4>");
                     } else {
@@ -717,6 +715,7 @@
             $('#dialog').ejDialog({
                 title: "Add Record",
                 showOnInit: false,
+                width: 400,
                 close: function (args) {
                     location.reload();
                 }
@@ -745,7 +744,7 @@
                 adaptor: new ej.WebApiAdaptor()
             });
             var dataManagerCustomer = ej.DataManager({
-                url: "/api/Customer",
+                url: "/api/RFPCustomers",
                 adaptor: new ej.WebApiAdaptor()
             });
             var dataManagerCurrency = ej.DataManager({
@@ -783,14 +782,14 @@
                     { field: "GoodsRecievedNoteLineId", headerText: 'BatchID', foreignKeyField: "GoodsRecievedNoteLineId", foreignKeyValue: "BatchID", dataSource: dataManagerGoodsRecievedNoteLines, allowEditing: false },
                     { field: "Description", headerText: 'Description', visible: false },
                     { field: "Quantity", headerText: 'Qty', defaultValue: 1, editType: "numericedit" },
-                    { field: "Price", headerText: 'Cost per unit', defaultValue: 0, editType: "numericedit", format: "{0:n2}" },
-                    { field: "Amount", headerText: 'Amount', defaultValue: 0, allowEditing: false, editType: "numericedit", format: "{0:n2}" },
-                    { field: "DiscountPercentage", headerText: 'Disc %', defaultValue: 0, editType: "numericedit", format: "{0:n2}" },
-                    { field: "DiscountAmount", headerText: 'Disc Amt', defaultValue: 0, visible: false, editType: "numericedit", format: "{0:n2}" },
-                    { field: "SubTotal", headerText: 'SubTotal', defaultValue: 0, allowEditing: false, editType: "numericedit", format: "{0:n2}" },
-                    { field: "TaxPercentage", headerText: 'Tax %', defaultValue: 0, editType: "numericedit", format: "{0:n2}" },
-                    { field: "TaxAmount", headerText: 'Tax Amt', defaultValue: 0, visible: false, editType: "numericedit", format: "{0:n2}" },
-                    { field: "Total", headerText: 'Total', defaultValue: 0, allowEditing: false, editType: "numericedit", format: "{0:n2}" },
+                    { field: "Price", headerText: 'Cost per unit', defaultValue: 0, editParams: { decimalPlaces: 2 }, editType: "numericedit", format: "{0:n2}" },
+                    { field: "Amount", headerText: 'Amount', defaultValue: 0, editParams: { decimalPlaces: 2 }, allowEditing: false, editType: "numericedit", format: "{0:n2}" },
+                    { field: "DiscountPercentage", headerText: 'Disc %', defaultValue: 0, editParams: { decimalPlaces: 2 }, editType: "numericedit", format: "{0:n2}" },
+                    { field: "DiscountAmount", headerText: 'Disc Amt', defaultValue: 0, editParams: { decimalPlaces: 2 }, visible: false, editType: "numericedit", format: "{0:n2}" },
+                    { field: "SubTotal", headerText: 'SubTotal', defaultValue: 0, editParams: { decimalPlaces: 2 }, allowEditing: false, editType: "numericedit", format: "{0:n2}" },
+                    { field: "TaxPercentage", headerText: 'Tax %', defaultValue: 0, editParams: { decimalPlaces: 2 }, editType: "numericedit", format: "{0:n2}" },
+                    { field: "TaxAmount", headerText: 'Tax Amt', defaultValue: 0, editParams: { decimalPlaces: 2 }, visible: false, editType: "numericedit", format: "{0:n2}" },
+                    { field: "Total", headerText: 'Total', defaultValue: 0, editParams: { decimalPlaces: 2 }, allowEditing: false, editType: "numericedit", format: "{0:n2}" },
                 ],
                 actionComplete: "complete",
                 actionFailure: function (args) {
