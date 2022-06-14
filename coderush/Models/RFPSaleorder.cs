@@ -15,6 +15,7 @@ namespace coderush.Models
         public int BranchId { get; set; }
         [Display(Name = "Customer")]
         public int RFPCustomerId { get; set; }
+        public RFPCustomer RFPCustomer { get; set; }
         public RFPinvoice RFPinvoice { get; set; }
         public DateTimeOffset SaleDate { get; set; }
         [Display(Name = "Currency")]

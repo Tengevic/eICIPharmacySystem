@@ -117,6 +117,7 @@
                     pageSettings: { pageSize: 10, printMode: ej.Grid.PrintMode.CurrentPage },
                     columns: [
                         { headerText: 'Detail', template: "<a href='/Stocks/Detail/{{:ProductId}}'>Detail</a>" },
+                        { headerText: 'saleHistory', template: "<a href='/Stocks/saleHistory/{{:ProductId}}'>saleHistory</a>" },
                         { field: "ProductId", headerText: 'Product Id', isPrimaryKey: true, isIdentity: true, visible: false },
                         { field: "ProductName", headerText: 'Product Name', validationRules: { required: true } },
                         { field: "UnitOfMeasureId", headerText: 'UOM', foreignKeyField: "UnitOfMeasureId", foreignKeyValue: "UnitOfMeasureName", dataSource: dataManagerUnitOfMeasure, validationRules: { required: true } },

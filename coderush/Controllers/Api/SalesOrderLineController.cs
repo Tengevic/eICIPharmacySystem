@@ -63,39 +63,44 @@ namespace coderush.Controllers.Api
             }
             
         }
-        [HttpGet("[action]")]
-        public async Task<IActionResult> GetSalesOrderLineSaleHistory()
+        [HttpGet("[action]/{id}")]
+        public async Task<IActionResult> SaleHistory([FromRoute] int id)
         {
-            saleOrderDateRange saleOrderDateRange = new saleOrderDateRange();
-            var headers = Request.Headers["ProductId"];
-            var headerStart = Request.Headers["Start"];
-            var headerEnd = Request.Headers["End"];
-            saleOrderDateRange.ProductId = Convert.ToInt32(headers);
-            saleOrderDateRange.Start = Convert.ToDateTime(headerStart);
-            saleOrderDateRange.End = Convert.ToDateTime(headerEnd);
-
             List<SalesOrderLine> SalesOrderLine = await _context.SalesOrderLine
-                            .Where(x => x.ProductId == saleOrderDateRange.ProductId)
+                            .Where(x => x.ProductId == id)
                             .Include(x => x.Product)
                             .Include(x => x.SalesOrder.Customer)
-                            .Where(x => x.SalesOrder.SaleDate > saleOrderDateRange.Start)
-                            .Where(x => x.SalesOrder.SaleDate < saleOrderDateRange.End)
+                            .Include(x => x.RFPSaleorder.RFPCustomer)
                             .ToListAsync();
 
-            List<SaleHistory> SaleHistory = new List<SaleHistory>();
+            List<SaleHistory> Items = new List<SaleHistory>();
 
             foreach (SalesOrderLine salesOrderLines in SalesOrderLine)
             {
                 SaleHistory sales = new SaleHistory
                 {
-                    CustomerName = salesOrderLines.SalesOrder.Customer.CustomerName,
                     ProductName = salesOrderLines.Product.ProductName,
                     Quanity = salesOrderLines.Quantity,
-                    saledate = salesOrderLines.SalesOrder.SaleDate
+                    Total =salesOrderLines.Total
                 };
-                SaleHistory.Add(sales);
+                if (salesOrderLines.SalesOrder != null)
+                {
+                    sales.CustomerName = salesOrderLines.SalesOrder.Customer.CustomerName;
+                    sales.saledate = salesOrderLines.SalesOrder.SaleDate;
+                    sales.SaleOrderName = salesOrderLines.SalesOrder.SalesOrderName;
+
+                }
+                if (salesOrderLines.RFPSaleorder != null)
+                {
+                    sales.CustomerName = salesOrderLines.RFPSaleorder.RFPCustomer.RFPCustomerName;
+                    sales.saledate = salesOrderLines.RFPSaleorder.SaleDate;
+                    sales.SaleOrderName = salesOrderLines.RFPSaleorder.RFPSaleorderName;
+                }
+
+                Items.Add(sales);
             }
-            return Ok(SaleHistory);
+            int Count = Items.Count();
+            return Ok(new { Items, Count });
         }
         [HttpGet("[action]/{id}")]
         public async Task<IActionResult> GetSalesOrderLineByRFPSaleOrderId([FromRoute] int id)
@@ -109,23 +114,24 @@ namespace coderush.Controllers.Api
             return Ok(new { Items, Count });
 
         }
-        [HttpGet("[action]")]
-        public async Task<IActionResult> GetSalesOrderLineByShipmentId()
-        {
-            var headers = Request.Headers["ShipmentId"];
-            int shipmentId = Convert.ToInt32(headers);
-            Shipment shipment = await _context.Shipment.SingleOrDefaultAsync(x => x.ShipmentId.Equals(shipmentId));
-            List<SalesOrderLine> Items = new List<SalesOrderLine>();
-            if (shipment != null)
-            {
-                int salesOrderId = shipment.SalesOrderId;
-                Items = await _context.SalesOrderLine
-                    .Where(x => x.SalesOrderId.Equals(salesOrderId))
-                    .ToListAsync();
-            }
-            int Count = Items.Count();
-            return Ok(new { Items, Count });
-        }
+        //[HttpGet("[action]")]
+        //public async Task<IActionResult> GetSalesOrderLineByShipmentId()
+        //{
+        //    //var headers = Request.Headers["ShipmentId"];
+        //    //int shipmentId = Convert.ToInt32(headers);
+        //    //Shipment shipment = await _context.Shipment.SingleOrDefaultAsync(x => x.ShipmentId.Equals(shipmentId));
+        //    //List<SalesOrderLine> Items = new List<SalesOrderLine>();
+        //    //if (shipment != null)
+        //    //{
+        //    //    int salesOrderId = shipment.SalesOrderId;
+        //    //    Items = await _context.SalesOrderLine
+        //    //        .Where(x => x.SalesOrderId.Equals(salesOrderId))
+        //    //        .ToListAsync();
+        //    //}
+        //    //int Count = Items.Count();
+        //    //return Ok(new { Items, Count });
+           
+        //}
 
         //[HttpGet("[action]")]
         //public async Task<IActionResult> GetSalesOrderLineByInvoiceId()

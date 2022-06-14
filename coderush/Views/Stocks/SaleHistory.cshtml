@@ -50,7 +50,6 @@
                             </dd>
                         </dl>
                     </div>
-                    <button onclick="myFunction()">test</button>
                 </div>
             </div>
             <!-- /.box-body -->
@@ -85,20 +84,10 @@
     <script type="text/javascript">
 
         function myFunction() {
-            data = {
-                ProductId: @Model.ProductId,
-                Start: "2022-05-09T21:00:00+00:00",
-                End: "2022-06-13T21:00:00+00:00"
 
-            }
             $.ajax({
-                url: "/api/SalesOrderLine/GetSalesOrderLineByShipmentId",
+                url: "/api/SalesOrderLine/SaleHistory/" + @Model.ProductId,
                 type: "GET",
-                beforeSend: function (xhr) {
-                     xhr.setRequestHeader("ProductId", @Model.ProductId);
-                     xhr.setRequestHeader("Start", data.Start);
-                     xhr.setRequestHeader("End", data.End);
-                 },
                 processData: false, // avoid the data being parsed to query string params
                 success: function (result) {
                     console.log(result);
@@ -109,52 +98,26 @@
         $(function ()
         {
              var dataManager = ej.DataManager({
-                url: "/api/SalesOrderLine",
+                url: "/api/SalesOrderLine/SaleHistory/" + @Model.ProductId,
                 adaptor: new ej.WebApiAdaptor(),
-                 headers: [{ "ProductId": @Model.ProductId}],
                 offline: true
             });
-            var dataManagerProduct = ej.DataManager({
-                url: "/api/Product",
-                adaptor: new ej.WebApiAdaptor()
-            });
-            var dataManagerGoodsRecievedNoteLines = ej.DataManager({
-                url: "/api/GoodsRecievedNoteLines",
-                adaptor: new ej.WebApiAdaptor()
-            });
-            var dataManagerSalesOrder = ej.DataManager({
-                url: "/api/SalesOrder",
-                adaptor: new ej.WebApiAdaptor()
-            });
-            var dataManagerStock = ej.DataManager({
-                url: "/api/Branch",
-                adaptor: new ej.WebApiAdaptor()
-            });
-            var dataManagerCustomer = ej.DataManager({
-                url: "/api/Customer",
-                adaptor: new ej.WebApiAdaptor()
-            });
-            var dataManagerCurrency = ej.DataManager({
-                url: "/api/Currency",
-                adaptor: new ej.WebApiAdaptor()
-            });
-            var dataManagerSalesType = ej.DataManager({
-                url: "/api/SalesType",
-                adaptor: new ej.WebApiAdaptor()
-            });
- 
             dataManager.ready.done(function (e) {
             $("#Grid").ejGrid({
                 dataSource: ej.DataManager({
                     json: e.result,
                     adaptor: new ej.remoteSaveAdaptor(),
-                    insertUrl: "/api/SalesOrderLine/Insert",
-                    updateUrl: "/api/SalesOrderLine/Update",
-                    removeUrl: "/api/SalesOrderLine/Remove",
+
                 }),
                 toolbarSettings: {
                     showToolbar: true,
-                    toolbarItems: ["add", "delete", "update", "cancel"]
+                    toolbarItems: ["printGrid"]
+                },
+                allowFiltering: true,
+                filterSettings: {
+                    filterType: "excel",
+                    maxFilterChoices: 100,
+                    enableCaseSensitivity: false
                 },
                 editSettings: {
                     allowEditing: false,
@@ -163,20 +126,13 @@
                     showDeleteConfirmDialog: true,
                 },
                 allowPaging: true,
+                pageSettings: { pageSize: 10, printMode: ej.Grid.PrintMode.CurrentPage },
                 columns: [
-                    { field: "SalesOrderLineId", headerText: 'Line Id', isPrimaryKey: true, isIdentity: true, visible: false },
-                    { field: "SalesOrderId", headerText: 'SO#', foreignKeyField: "SalesOrderId", foreignKeyValue: "SalesOrderName", dataSource: dataManagerSalesOrder, visible: false },
-                    { field: "ProductId", headerText: 'Product', foreignKeyField: "ProductId", foreignKeyValue: "ProductName", dataSource: dataManagerProduct, validationRules: { required: true }  },
-                    { field: "GoodsRecievedNoteLineId", headerText: 'BatchID', foreignKeyField: "GoodsRecievedNoteLineId", foreignKeyValue: "BatchID", dataSource: dataManagerGoodsRecievedNoteLines, allowEditing: false },
-                    { field: "Description", headerText: 'Description', visible: false },
-                    { field: "Quantity", headerText: 'Qty', defaultValue: 1, editType: "numericedit", format: "{0:n2}"},
-                    { field: "Price", headerText: 'Cost per unit', defaultValue: 0, editParams: { decimalPlaces: 2 }, editType: "numericedit", format: "{0:n2}" },
-                    { field: "Amount", headerText: 'Amount', defaultValue: 0, allowEditing: false, editParams: { decimalPlaces: 2 }, editType: "numericedit", format: "{0:n2}" },
-                    { field: "DiscountPercentage", headerText: 'Disc %', defaultValue: 0, editParams: { decimalPlaces: 2 }, editType: "numericedit", format: "{0:n2}" },
-                    { field: "DiscountAmount", headerText: 'Disc Amt', defaultValue: 0, editParams: { decimalPlaces: 2 }, visible: false, editType: "numericedit", format: "{0:n2}" },
-                    { field: "SubTotal", headerText: 'SubTotal', defaultValue: 0, editParams: { decimalPlaces: 2 }, allowEditing: false, editType: "numericedit", format: "{0:n2}" },
-                    { field: "TaxPercentage", headerText: 'Tax %', defaultValue: 0, editParams: { decimalPlaces: 2 }, editType: "numericedit", format: "{0:n2}" },
-                    { field: "TaxAmount", headerText: 'Tax Amt', defaultValue: 0, editParams: { decimalPlaces: 2 }, visible: false, editType: "numericedit", format: "{0:n2}" },
+                    { field: "ProductName", headerText: 'Product Name', validationRules: { required: true } },
+                    { field: "SaleOrderName", headerText: 'Drug Sale number', allowEditing: false },
+                    { field: "CustomerName", headerText: 'Customer Name', validationRules: { required: true } },
+                    { field: "Quanity", headerText: 'Qty', defaultValue: 1, editType: "numericedit", format: "{0:n2}"},
+                    { field: "saledate", headerText: 'Sell Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
                     { field: "Total", headerText: 'Total', defaultValue: 0, editParams: { decimalPlaces: 2 }, allowEditing: false, editType: "numericedit", format: "{0:n2}" },
                 ],
                 actionComplete: "complete",

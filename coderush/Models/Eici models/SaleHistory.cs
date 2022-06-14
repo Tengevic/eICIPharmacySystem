@@ -9,7 +9,9 @@ namespace coderush.Models.Eici_models
     {
         public string ProductName { get; set; }
         public double Quanity { get; set; }
+        public string SaleOrderName { get; set; }
         public string CustomerName { get; set; }
+        public double Total { get; set; }
         public DateTimeOffset saledate { get; set; }
         
     }
