@@ -405,7 +405,6 @@ namespace coderush.Controllers.Api
                     ProductId = salesOrderLine.ProductId,
                     SalesOrderId = salesOrderLine.SalesOrderId,
                     RFPSaleorderId = salesOrderLine.RFPSaleorderId,
-                    Quantity = salesOrderLine.Quantity,
                     Amount = salesOrderLine.Amount,
                     Description = salesOrderLine.Description,
                     DiscountPercentage = salesOrderLine.DiscountPercentage,

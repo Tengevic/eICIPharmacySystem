@@ -126,7 +126,7 @@
                     showDeleteConfirmDialog: true,
                 },
                 allowPaging: true,
-                pageSettings: { pageSize: 10, printMode: ej.Grid.PrintMode.CurrentPage },
+                pageSettings: { pageSize: 10, printMode: ej.Grid.PrintMode.AllPages },
                 columns: [
                     { field: "ProductName", headerText: 'Product Name', validationRules: { required: true } },
                     { field: "SaleOrderName", headerText: 'Drug Sale number', allowEditing: false },
@@ -136,6 +136,9 @@
                     { field: "Total", headerText: 'Total', defaultValue: 0, editParams: { decimalPlaces: 2 }, allowEditing: false, editType: "numericedit", format: "{0:n2}" },
                 ],
                 actionComplete: "complete",
+                beforePrint: function (args) {
+                    console.log(args)
+                },
                 actionFailure: function (args) {
                     if (args.requestType == "save") {
                         var s = ej.parseJSON(args.error.responseText)

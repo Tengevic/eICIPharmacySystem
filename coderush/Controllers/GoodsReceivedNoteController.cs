@@ -22,12 +22,12 @@ namespace coderush.Controllers
         {
             return View();
         }
-        public IActionResult Detail(int id)
+        public async Task<IActionResult> Detail(int id)
         {
-            GoodsReceivedNote goodsReceivedNote = _context
+            GoodsReceivedNote goodsReceivedNote = await _context
                 .GoodsReceivedNote
                 .Include(x =>x.Bill)
-                .SingleOrDefault(x => x.GoodsReceivedNoteId.Equals(id));
+                .FirstOrDefaultAsync(x => x.GoodsReceivedNoteId.Equals(id));
 
             if (goodsReceivedNote == null)
             {

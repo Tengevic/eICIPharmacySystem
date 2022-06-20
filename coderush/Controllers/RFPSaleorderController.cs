@@ -23,11 +23,11 @@ namespace coderush.Controllers
             return View();
         }
 
-        public IActionResult Detail(int id)
+        public async Task<IActionResult> Detail(int id)
         {
-            RFPSaleorder salesOrder = _context.RFPSaleorder
+            RFPSaleorder salesOrder = await _context.RFPSaleorder
                 .Include(x => x.RFPinvoice)
-                .SingleOrDefault(x => x.RFPSaleorderId.Equals(id));
+                .SingleOrDefaultAsync(x => x.RFPSaleorderId.Equals(id));
 
             if (salesOrder == null)
             {

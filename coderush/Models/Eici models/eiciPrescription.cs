@@ -26,6 +26,6 @@ namespace coderush.Models.Eici_models
         public int DrugId { get; set; }
         public string DrugName { get; set; }
         public string prescription { get; set; }
-        public int Quantity { get; set; }
+        public double Quantity { get; set; }
     }
 }

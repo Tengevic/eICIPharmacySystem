@@ -20,12 +20,12 @@ namespace coderush.Controllers
         {
             return View();
         }
-        public IActionResult Detail(int id)
+        public async Task<IActionResult> Detail(int id)
         {
-            RFPDrugRecieve goodsReceivedNote = _context.RFPDrugRecieve
+            RFPDrugRecieve goodsReceivedNote = await _context.RFPDrugRecieve
                 .Include(x => x.RFPpaymentRecieved)
                     .ThenInclude(x => x.RFPinvoice)
-                .SingleOrDefault(x => x.RFPDrugRecieveId.Equals(id));
+                .SingleOrDefaultAsync(x => x.RFPDrugRecieveId.Equals(id));
             if (goodsReceivedNote == null)
             {
                 return NotFound();

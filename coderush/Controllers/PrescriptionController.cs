@@ -26,12 +26,12 @@ namespace coderush.Controllers
                 return View();
             }
 
-            public IActionResult Detail(int id)
+            public async Task<IActionResult> Detail(int id)
             {
-            Prescription prescription = _context.Prescription
+            Prescription prescription = await _context.Prescription
                             .Include(x => x.Customer)
                             .Include(x=> x.SalesOrder)
-                           .SingleOrDefault(x => x.PrescriptionId.Equals(id));
+                           .FirstOrDefaultAsync(x => x.PrescriptionId.Equals(id));
                                 
 
                 if (prescription == null)

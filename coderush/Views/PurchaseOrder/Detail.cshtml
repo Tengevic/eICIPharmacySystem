@@ -551,7 +551,7 @@
                     { field: "PurchaseOrderId", headerText: 'PO#', defaultValue: @Model.PurchaseOrderId, foreignKeyField: "PurchaseOrderId", foreignKeyValue: "PurchaseOrderName", dataSource: dataManagerPurchaseOrder, visible: false },
                     { field: "ProductId", headerText: 'Drug', foreignKeyField: "ProductId", foreignKeyValue: "ProductName", dataSource: dataManagerProduct },
                     { field: "Description", headerText: 'Description' , visible: false},
-                    { field: "Quantity", headerText: 'units', defaultValue: 1, editType: "numericedit", format: "{0:n2}"  ,decimalPlaces: 2},
+                    { field: "Quantity", headerText: 'units', defaultValue: 1, editType: "numericedit", editParams: { decimalPlaces: 2 }, format: "{0:n2}"  ,decimalPlaces: 2},
                     { field: "Price", headerText: 'Price', defaultValue: 0, editType: "numericedit", editParams: { decimalPlaces: 2 }, format: "{0:n2}" },
                     { field: "Amount", headerText: 'Amount', defaultValue: 0, allowEditing: false, editParams: { decimalPlaces: 2 }, editType: "numericedit", format: "{0:n2}" },
                     { field: "DiscountPercentage", headerText: 'Disc %', defaultValue: 0, editType: "numericedit", editParams: { decimalPlaces: 2 }, format: "{0:n2}" },

@@ -308,7 +308,7 @@
                     { field: "PrescriptionId", headerText: 'PS#', defaultValue: @Model.PrescriptionId, foreignKeyField: "PrescriptionId", foreignKeyValue: "PrescriptionName", dataSource: dataManagerPrescription, visible: false },
                     { field: "ProductId", headerText: 'Drug', foreignKeyField: "ProductId", foreignKeyValue: "ProductName", dataSource: dataManagerProduct },
                     { field: "prescription", headerText: 'Prescription' },
-                    { field: "Quantity", headerText: 'Quantity', defaultValue: 1, editType: "numericedit", format: "{0:n2}"},
+                    { field: "Quantity", headerText: 'Quantity', defaultValue: 1, editType: "numericedit", format: "{0:n2}", editParams: { decimalPlaces: 2 }},
                     { field: "remainder", headerText: 'Units sold', defaultValue: 0, editType: "numericedit", allowEditing: false, visible: false  },
 
                 ],

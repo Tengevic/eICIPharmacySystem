@@ -1,6 +1,7 @@
 ﻿using coderush.Data;
 using coderush.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,9 +24,9 @@ namespace coderush.Controllers
             return View();
         }
 
-        public IActionResult Detail(int id)
+        public async Task<IActionResult> Detail(int id)
         {
-            Product product = _context.Product.SingleOrDefault(x => x.ProductId.Equals(id));
+            Product product = await _context.Product.SingleOrDefaultAsync(x => x.ProductId.Equals(id));
 
             if (product == null)
             {
@@ -35,9 +36,9 @@ namespace coderush.Controllers
             return View(product);
         }
 
-        public IActionResult saleHistory(int id)
+        public async Task<IActionResult> saleHistory(int id)
         {
-            Product product = _context.Product.SingleOrDefault(x => x.ProductId.Equals(id));
+            Product product = await _context.Product.SingleOrDefaultAsync(x => x.ProductId.Equals(id));
 
             if (product == null)
             {

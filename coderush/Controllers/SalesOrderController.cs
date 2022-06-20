@@ -25,12 +25,14 @@ namespace coderush.Controllers
             return View();
         }
 
-        public IActionResult Detail(int id)
+        public async Task<IActionResult> Detail(int id)
         {
-            SalesOrder salesOrder = _context.SalesOrder
+            SalesOrder salesOrder = await _context.SalesOrder
+                .Where(x => x.SalesOrderId.Equals(id))
                 .Include(x =>x.Prescription)
                 .Include(x => x.Invoice)
-                .SingleOrDefault(x => x.SalesOrderId.Equals(id));
+                .FirstAsync();
+                
             
             if (salesOrder == null)
             {

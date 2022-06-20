@@ -27,7 +27,7 @@ namespace coderush.Controllers.Api
         [HttpGet]
         public async Task<IActionResult> GetProduct()
         {
-            List<Product> Items = await _context.Product.ToListAsync();
+            List<Product> Items = await _context.Product.OrderBy(x =>x.ProductName).ToListAsync();
             int Count = Items.Count();
             return Ok(new { Items, Count });
         }

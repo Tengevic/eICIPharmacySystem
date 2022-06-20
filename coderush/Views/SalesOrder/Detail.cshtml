@@ -411,7 +411,7 @@
                 Payment Amount
             </td>
             <td>
-                <input type="number" id="payAmount" value=0/>
+                <input type="number" id="payAmount" value=0.0 />
             </td>
             <td>
                 Payment Code
@@ -446,6 +446,7 @@
         var PaymentTypeId;
         var paymentType;
         var InvoiceId;
+        var tableIndex;
 
         // sumbit payment data to database
         function Payment() {
@@ -605,7 +606,7 @@
             Amount = Item.Quantity * Item.Product.DefaultSellingPrice;
             $("#CostAmount").text(Amount);
             $("#DiscAmount").val();
-            $("#TaxPer").val();
+            $("#tableIndex").val(Item.tableIndex);
         }
         function NewAmount(x) {
             amount = x * parseInt($("#Cost").val());
@@ -622,28 +623,28 @@
             TaxPercentage = $("#TaxPer").val();
             Quantity = $("#Quantity").val();
             if (DiscountPercentage == "") {
-                DiscountPercentage = "0";
+                DiscountPercentage = "0.0";
             }
             if (TaxPercentage == "") {
-                TaxPercentage = "0";
+                TaxPercentage = "0.0";
             }
             if (Quantity == "") {
-                Quantity = "0";
+                Quantity = "0.0";
             }
             if (Price == "") {
-                Price = "0";
+                Price = "0.0";
             }
             var data = {
                 "SalesOrderId": @Model.SalesOrderId,
                 "Total": 0,
                 "TaxAmount":0 ,
-                "TaxPercentage": parseInt(TaxPercentage),
+                "TaxPercentage": parseFloat(TaxPercentage),
                 "SubTotal": 0,
                 "DiscountAmount": 0,
-                "DiscountPercentage": parseInt(DiscountPercentage),
+                "DiscountPercentage": parseFloat(DiscountPercentage),
                 "Amount": 0,
                 "Price": Item.Product.DefaultSellingPrice,
-                "Quantity": parseInt(Quantity),
+                "Quantity": parseFloat(Quantity),
                 "ProductId": Item.Product.ProductId,
             }
 
@@ -667,15 +668,17 @@
                         item = data.Items;
                         d = 0;
                         for (let i = 0; i < item.length; i++) {
+                            item[i].tableIndex = i+1;
                             var row = table.insertRow(-1)
                             row.insertCell(0).innerHTML = i+1;
                             row.insertCell(1).innerHTML = item[i].Product.ProductName;
                             row.insertCell(2).innerHTML = item[i].Product.UnitOfMeasure.UnitOfMeasureName;
                             row.insertCell(3).innerHTML = item[i].Quantity;
                             row.insertCell(4).innerHTML = item[i].Product.DefaultSellingPrice;
-                            row.insertCell(5).innerHTML = "<Input onclick='myFunction(item["+i+"])' type='button' value = 'Add'>";
-
+                            row.insertCell(5).innerHTML = "<Input onclick='myFunction(item[" + i + "],)' type='button' value = 'Add'>";
+                            
                         }
+
                     }
                 }
             });
@@ -716,7 +719,7 @@
             $('#dialog').ejDialog({
                 title: "Sale Record",
                 showOnInit: false,
-                height: 500,
+                height: 400,
                 width: 600,
 
             });
@@ -756,22 +759,23 @@
                 url: "/api/SalesOrder",
                 adaptor: new ej.WebApiAdaptor()
             });
-            var dataManagerStock = ej.DataManager({
-                url: "/api/Branch",
-                adaptor: new ej.WebApiAdaptor()
-            });
             var dataManagerCustomer = ej.DataManager({
                 url: "/api/Customer",
                 adaptor: new ej.WebApiAdaptor()
             });
-            var dataManagerCurrency = ej.DataManager({
-                url: "/api/Currency",
-                adaptor: new ej.WebApiAdaptor()
-            });
-            var dataManagerSalesType = ej.DataManager({
-                url: "/api/SalesType",
-                adaptor: new ej.WebApiAdaptor()
-            });
+            //var dataManagerStock = ej.DataManager({
+            //    url: "/api/Branch",
+            //    adaptor: new ej.WebApiAdaptor()
+            //});
+
+            //var dataManagerCurrency = ej.DataManager({
+            //    url: "/api/Currency",
+            //    adaptor: new ej.WebApiAdaptor()
+            //});
+            //var dataManagerSalesType = ej.DataManager({
+            //    url: "/api/SalesType",
+            //    adaptor: new ej.WebApiAdaptor()
+            //});
             $('#CustomerId').ejDropDownList({
                 dataSource: dataManagerCustomer,
                 fields: { id: 'CustomerId', text: 'CustomerName', value: 'CustomerId' },
@@ -804,7 +808,7 @@
                     { field: "ProductId", headerText: 'Product', foreignKeyField: "ProductId", foreignKeyValue: "ProductName", dataSource: dataManagerProduct, validationRules: { required: true }  },
                     { field: "GoodsRecievedNoteLineId", headerText: 'BatchID', foreignKeyField: "GoodsRecievedNoteLineId", foreignKeyValue: "BatchID", dataSource: dataManagerGoodsRecievedNoteLines, allowEditing: false },
                     { field: "Description", headerText: 'Description', visible: false },
-                    { field: "Quantity", headerText: 'Qty', defaultValue: 1, editType: "numericedit", format: "{0:n2}"},
+                    { field: "Quantity", headerText: 'Qty', defaultValue: 1, editType: "numericedit", format: "{0:n2}", editParams: { decimalPlaces: 2 }},
                     { field: "Price", headerText: 'Cost per unit', defaultValue: 0, editType: "numericedit", format: "{0:n2}" },
                     { field: "Amount", headerText: 'Amount', defaultValue: 0, allowEditing: false, editType: "numericedit", format: "{0:n2}" },
                     { field: "DiscountPercentage", headerText: 'Disc %', defaultValue: 0, editType: "numericedit", format: "{0:n2}" },
@@ -834,6 +838,9 @@
                 $("#" + this._id + "_dialogEdit").ejDialog({ title: "Edit Record" });
             }
             if (args.requestType == 'save') {
+                //$("#dialog").ejDialog("close");
+                //console.log(tableIndex);
+                //document.getElementById("Prescription").deleteRow(tableIndex);
                 UpdateGrid();
             }
             if (args.requestType == 'save' || args.requestType == 'delete') {
