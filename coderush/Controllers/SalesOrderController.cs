@@ -30,6 +30,7 @@ namespace coderush.Controllers
             SalesOrder salesOrder = await _context.SalesOrder
                 .Where(x => x.SalesOrderId.Equals(id))
                 .Include(x =>x.Prescription)
+                .Include(x => x.Customer)
                 .Include(x => x.Invoice)
                 .FirstAsync();
                 

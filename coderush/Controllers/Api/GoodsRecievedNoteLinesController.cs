@@ -9,7 +9,7 @@ using coderush.Data;
 using coderush.Models;
 using coderush.Models.SyncfusionViewModels;
 using Newtonsoft.Json;
-
+using coderush.Models.Eici_models;
 
 namespace coderush.Controllers.Api
 {
@@ -90,7 +90,7 @@ namespace coderush.Controllers.Api
                 return Ok(new { Items, Count });
             }
         }
-        private void UpdateStock(GoodsRecievedNoteLine goodsRecievedNoteLine)
+        private void UpdateStock(GoodRecieveNotelineMarkUp goodsRecievedNoteLine)
         {
             try
             {
@@ -108,7 +108,7 @@ namespace coderush.Controllers.Api
 
                     List<SalesOrderLine> line = _context.SalesOrderLine.Where(x => x.ProductId.Equals(goodsRecievedNoteLine.ProductId)).ToList();
                     stock.TotalSales = line.Sum(x => x.Quantity);
-                   
+
                     if (stock.TotalRecieved < stock.TotalSales)
                     {
                         stock.Deficit = stock.TotalSales - stock.TotalRecieved;
@@ -119,8 +119,14 @@ namespace coderush.Controllers.Api
                         stock.InStock = stock.TotalRecieved - stock.TotalSales - stock.ExpiredStock;
                         stock.Deficit = 0;
                     }
-
-
+                    if (goodsRecievedNoteLine.MarkUp != 0)
+                    {
+                        if(goodsRecievedNoteLine.Price != 0)
+                        {
+                            stock.DefaultSellingPrice = goodsRecievedNoteLine.MarkUp * goodsRecievedNoteLine.Price; 
+                        }
+                    }
+                  
                     _context.Update(stock);
 
                     _context.SaveChanges();
@@ -165,9 +171,9 @@ namespace coderush.Controllers.Api
 
         // POST: api/GoodsRecievedNoteLines/5
         [HttpPost("[action]")]
-        public IActionResult Insert([FromBody] CrudViewModel<GoodsRecievedNoteLine> payload)
+        public IActionResult Insert([FromBody] CrudViewModel<GoodRecieveNotelineMarkUp> payload)
         {
-            GoodsRecievedNoteLine goodsRecievedNoteLine = payload.value;
+            GoodRecieveNotelineMarkUp goodsRecievedNoteLine = payload.value;
 
             if(goodsRecievedNoteLine.GoodsReceivedNoteId != null)
             {
@@ -224,19 +230,37 @@ namespace coderush.Controllers.Api
                 }
 
             }
+            
 
-
-            goodsRecievedNoteLine.InStock = goodsRecievedNoteLine.Quantity;
-            _context.GoodsRecievedNoteLine.Add(goodsRecievedNoteLine);
+            GoodsRecievedNoteLine recievedNoteLine = new GoodsRecievedNoteLine
+            {
+                GoodsRecievedNoteLineId = goodsRecievedNoteLine.GoodsRecievedNoteLineId,
+                BatchID = goodsRecievedNoteLine.BatchID,
+                changestock = goodsRecievedNoteLine.changestock,
+                Description = goodsRecievedNoteLine.Description,
+                Dispose = goodsRecievedNoteLine.Dispose,
+                Expired = goodsRecievedNoteLine.Expired,
+                ExpiryDate = goodsRecievedNoteLine.ExpiryDate,
+                GoodsReceivedNoteId = goodsRecievedNoteLine.GoodsReceivedNoteId,
+                InStock = goodsRecievedNoteLine.Quantity,
+                ManufareDate = goodsRecievedNoteLine.ManufareDate,
+                ProductId = goodsRecievedNoteLine.ProductId,
+                Quantity = goodsRecievedNoteLine.Quantity,
+                RFPDrugRecieveId = goodsRecievedNoteLine.RFPDrugRecieveId,
+                Sold = goodsRecievedNoteLine.Sold,
+                GoodsReceivedNote = goodsRecievedNoteLine.GoodsReceivedNote,
+                Product = goodsRecievedNoteLine.Product
+            };   
+            _context.GoodsRecievedNoteLine.Add(recievedNoteLine);
             _context.SaveChanges();
             this.UpdateStock(goodsRecievedNoteLine);
 
             return Ok(goodsRecievedNoteLine);
         }
         [HttpPost("[action]")]
-        public IActionResult Add([FromBody] GoodsRecievedNoteLine payload)
+        public IActionResult Add([FromBody] GoodRecieveNotelineMarkUp payload)
         {
-            GoodsRecievedNoteLine goodsRecievedNoteLine = payload;
+            GoodRecieveNotelineMarkUp goodsRecievedNoteLine = payload;
             DateTime current = DateTime.Now;
             double totaldays = (goodsRecievedNoteLine.ExpiryDate - current).TotalDays;
 
@@ -276,9 +300,26 @@ namespace coderush.Controllers.Api
                 }
 
             }
-
-            goodsRecievedNoteLine.InStock = goodsRecievedNoteLine.Quantity;
-            _context.GoodsRecievedNoteLine.Add(goodsRecievedNoteLine);
+            GoodsRecievedNoteLine recievedNoteLine = new GoodsRecievedNoteLine
+            {
+                GoodsRecievedNoteLineId = goodsRecievedNoteLine.GoodsRecievedNoteLineId,
+                BatchID = goodsRecievedNoteLine.BatchID,
+                changestock = goodsRecievedNoteLine.changestock,
+                Description = goodsRecievedNoteLine.Description,
+                Dispose = goodsRecievedNoteLine.Dispose,
+                Expired = goodsRecievedNoteLine.Expired,
+                ExpiryDate = goodsRecievedNoteLine.ExpiryDate,
+                GoodsReceivedNoteId = goodsRecievedNoteLine.GoodsReceivedNoteId,
+                InStock = goodsRecievedNoteLine.Quantity,
+                ManufareDate = goodsRecievedNoteLine.ManufareDate,
+                ProductId = goodsRecievedNoteLine.ProductId,
+                Quantity = goodsRecievedNoteLine.Quantity,
+                RFPDrugRecieveId = goodsRecievedNoteLine.RFPDrugRecieveId,
+                Sold = goodsRecievedNoteLine.Sold,
+                GoodsReceivedNote = goodsRecievedNoteLine.GoodsReceivedNote,
+                Product = goodsRecievedNoteLine.Product
+            };
+            _context.GoodsRecievedNoteLine.Add(recievedNoteLine);
             _context.SaveChanges();
             this.UpdateStock(goodsRecievedNoteLine);
 
@@ -286,9 +327,9 @@ namespace coderush.Controllers.Api
         }
         // PUT: api/GoodsRecievedNoteLines
         [HttpPost("[action]")]
-        public IActionResult Update([FromBody] CrudViewModel<GoodsRecievedNoteLine> payload)
+        public IActionResult Update([FromBody] CrudViewModel<GoodRecieveNotelineMarkUp> payload)
         {
-            GoodsRecievedNoteLine goodsRecievedNoteLine = payload.value;
+            GoodRecieveNotelineMarkUp goodsRecievedNoteLine = payload.value;
 
             DateTime current = DateTime.Now;
             double totaldays = (goodsRecievedNoteLine.ExpiryDate - current).TotalDays;
@@ -318,7 +359,6 @@ namespace coderush.Controllers.Api
                 {
                     Err err = new Err
                     {
-
                         message = "This user cannot add drugs with expiry within 1 year."
                     };
                     string errMsg = JsonConvert.SerializeObject(err);
@@ -327,9 +367,26 @@ namespace coderush.Controllers.Api
                 }
 
             }
-
-            goodsRecievedNoteLine.InStock = goodsRecievedNoteLine.Quantity;
-            _context.GoodsRecievedNoteLine.Update(goodsRecievedNoteLine);
+            GoodsRecievedNoteLine recievedNoteLine = new GoodsRecievedNoteLine
+            {
+                GoodsRecievedNoteLineId = goodsRecievedNoteLine.GoodsRecievedNoteLineId,
+                BatchID = goodsRecievedNoteLine.BatchID,
+                changestock = goodsRecievedNoteLine.changestock,
+                Description = goodsRecievedNoteLine.Description,
+                Dispose = goodsRecievedNoteLine.Dispose,
+                Expired = goodsRecievedNoteLine.Expired,
+                ExpiryDate = goodsRecievedNoteLine.ExpiryDate,
+                GoodsReceivedNoteId = goodsRecievedNoteLine.GoodsReceivedNoteId,
+                InStock = goodsRecievedNoteLine.Quantity,
+                ManufareDate = goodsRecievedNoteLine.ManufareDate,
+                ProductId = goodsRecievedNoteLine.ProductId,
+                Quantity = goodsRecievedNoteLine.Quantity,
+                RFPDrugRecieveId = goodsRecievedNoteLine.RFPDrugRecieveId,
+                Sold = goodsRecievedNoteLine.Sold,
+                GoodsReceivedNote = goodsRecievedNoteLine.GoodsReceivedNote,
+                Product = goodsRecievedNoteLine.Product
+            };
+            _context.GoodsRecievedNoteLine.Update(recievedNoteLine);
             _context.SaveChanges();
             this.UpdateStock(goodsRecievedNoteLine);
             this.UpdateBatch(goodsRecievedNoteLine.GoodsRecievedNoteLineId);
@@ -337,9 +394,9 @@ namespace coderush.Controllers.Api
             return Ok(goodsRecievedNoteLine);
         }
         [HttpPost("[action]")]
-        public IActionResult Expired([FromBody] CrudViewModel<GoodsRecievedNoteLine> payload)
+        public IActionResult Expired([FromBody] CrudViewModel<GoodRecieveNotelineMarkUp> payload)
         {
-            GoodsRecievedNoteLine goodsRecievedNoteLine = payload.value;
+            GoodRecieveNotelineMarkUp goodsRecievedNoteLine = payload.value;
          
             if (goodsRecievedNoteLine.InStock < goodsRecievedNoteLine.Expired)
             {
@@ -356,8 +413,26 @@ namespace coderush.Controllers.Api
                 goodsRecievedNoteLine.Expired = goodsRecievedNoteLine.InStock;
                 goodsRecievedNoteLine.InStock = 0;
             }
-        
-            _context.GoodsRecievedNoteLine.Update(goodsRecievedNoteLine);
+            GoodsRecievedNoteLine recievedNoteLine = new GoodsRecievedNoteLine
+            {
+                GoodsRecievedNoteLineId = goodsRecievedNoteLine.GoodsRecievedNoteLineId,
+                BatchID = goodsRecievedNoteLine.BatchID,
+                changestock = goodsRecievedNoteLine.changestock,
+                Description = goodsRecievedNoteLine.Description,
+                Dispose = goodsRecievedNoteLine.Dispose,
+                Expired = goodsRecievedNoteLine.Expired,
+                ExpiryDate = goodsRecievedNoteLine.ExpiryDate,
+                GoodsReceivedNoteId = goodsRecievedNoteLine.GoodsReceivedNoteId,
+                InStock = goodsRecievedNoteLine.Quantity,
+                ManufareDate = goodsRecievedNoteLine.ManufareDate,
+                ProductId = goodsRecievedNoteLine.ProductId,
+                Quantity = goodsRecievedNoteLine.Quantity,
+                RFPDrugRecieveId = goodsRecievedNoteLine.RFPDrugRecieveId,
+                Sold = goodsRecievedNoteLine.Sold,
+                GoodsReceivedNote = goodsRecievedNoteLine.GoodsReceivedNote,
+                Product = goodsRecievedNoteLine.Product
+            };
+            _context.GoodsRecievedNoteLine.Update(recievedNoteLine);
             _context.SaveChanges();
             this.UpdateStock(goodsRecievedNoteLine);
             this.UpdateBatch(goodsRecievedNoteLine.GoodsRecievedNoteLineId);
@@ -368,14 +443,15 @@ namespace coderush.Controllers.Api
 
         // DELETE: api/GoodsRecievedNoteLines/5
         [HttpPost("[action]")]
-        public IActionResult Remove([FromBody] CrudViewModel<GoodsRecievedNoteLine> payload)
+        public IActionResult Remove([FromBody] CrudViewModel<GoodRecieveNotelineMarkUp> payload)
         {
+            GoodRecieveNotelineMarkUp goodRecieveNotelineMarkUp = payload.value;
             GoodsRecievedNoteLine goodsRecievedNoteLine = _context.GoodsRecievedNoteLine
                 .Where(x => x.GoodsRecievedNoteLineId == (int)payload.key)
                 .FirstOrDefault();
             _context.GoodsRecievedNoteLine.Remove(goodsRecievedNoteLine);
             _context.SaveChanges();
-            this.UpdateStock(goodsRecievedNoteLine);
+            this.UpdateStock(goodRecieveNotelineMarkUp);
             return Ok(goodsRecievedNoteLine);
 
         }

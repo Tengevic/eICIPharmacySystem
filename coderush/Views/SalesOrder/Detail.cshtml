@@ -48,7 +48,7 @@
                                         @Html.DisplayNameFor(model => model.CustomerId)
                                     </dt>
                                     <dd>
-                                        <input type="text" id="CustomerId" />
+                                        @Html.DisplayFor(model => model.Customer.CustomerName)
                                     </dd>
                                     <dt>
                                         @Html.DisplayNameFor(model => model.PrescriptionId)
@@ -446,7 +446,7 @@
         var PaymentTypeId;
         var paymentType;
         var InvoiceId;
-        var tableIndex;
+        var rowId;
 
         // sumbit payment data to database
         function Payment() {
@@ -593,8 +593,9 @@
 
         }
         // opens saleorderline data to databse
-        function myFunction(item) {
+        function myFunction(item, x) {
             Item = item;
+            rowId = "tr" + x.rowIndex;
             $("#dialog").ejDialog("open");
             $("#sendp").hide();
             $("#DrugName").text(Item.Product.ProductName);
@@ -668,15 +669,15 @@
                         item = data.Items;
                         d = 0;
                         for (let i = 0; i < item.length; i++) {
-                            item[i].tableIndex = i+1;
                             var row = table.insertRow(-1)
+                            var rowId = "tr" + row.rowIndex + "";
                             row.insertCell(0).innerHTML = i+1;
                             row.insertCell(1).innerHTML = item[i].Product.ProductName;
                             row.insertCell(2).innerHTML = item[i].Product.UnitOfMeasure.UnitOfMeasureName;
                             row.insertCell(3).innerHTML = item[i].Quantity;
                             row.insertCell(4).innerHTML = item[i].Product.DefaultSellingPrice;
-                            row.insertCell(5).innerHTML = "<Input onclick='myFunction(item[" + i + "],)' type='button' value = 'Add'>";
-                            
+                            row.insertCell(5).innerHTML = "<Input onclick='myFunction(item[" + i + "], "+rowId+")' type='button' value = 'Add'>";
+                            row.setAttribute("id",rowId);
                         }
 
                     }
@@ -838,9 +839,9 @@
                 $("#" + this._id + "_dialogEdit").ejDialog({ title: "Edit Record" });
             }
             if (args.requestType == 'save') {
-                //$("#dialog").ejDialog("close");
-                //console.log(tableIndex);
-                //document.getElementById("Prescription").deleteRow(tableIndex);
+                $("#dialog").ejDialog("close");
+                let element = document.getElementById(rowId);
+                element.setAttribute("hidden", "hidden");
                 UpdateGrid();
             }
             if (args.requestType == 'save' || args.requestType == 'delete') {

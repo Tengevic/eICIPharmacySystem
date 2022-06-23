@@ -253,7 +253,15 @@
                 Units in Batch
             </td>
             <td>
-                <input id="BatchQuanity" />
+                <input id="BatchQuanity" type="number"/>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Mark up
+            </td>
+            <td>
+                <input id="MarkUp" type="number" />
             </td>
         </tr>
         <tr>
@@ -397,6 +405,7 @@
         var Paymentdate;
         var PaymentTypeId;
         var paymentType;
+        var rowId;
 
         function Payment() {
             var amount = $("#payAmount").val();
@@ -414,7 +423,6 @@
             } else if (data.PaymentDate == null) {
                 toastr.warning("Select a date");
             } else {
-                console.log(data);
                 $.ajax({
                     type: "POST",
                     contentType: "application/json;charset=utf-8",
@@ -516,15 +524,16 @@
             });
         }
 
-        function myFunction(Item) {
-
+        function myFunction(Item, x) {
+            rowId = "tr" + x.rowIndex;
             Drug = Item;
+            console.log(Drug);
             $("#dialog").ejDialog("open");
             $("#sendp").hide();
             $("#DrugName").text(Item.Product.ProductName);
             $("#UnitsofMeasure").text(Item.Product.UnitOfMeasure.UnitOfMeasureName);
             $("#Quantity").text(Item.Quantity);
-            $("#Cost").text(Item.Product.DefaultBuyingPrice);
+            $("#Cost").text(Item.Price);
             $("#ManufareDate").ejDatePicker({
                 width: "100%",
                 change: function (args) {
@@ -540,8 +549,12 @@
         }
         function Submit() {
             BatchQuanity = $("#BatchQuanity").val();
+            MarkUp = $("#MarkUp").val();
             if (BatchQuanity == "") {
                 BatchQuanity = "0";
+            }
+            if (MarkUp == "") {
+                MarkUp = "0";
             }
             BatchId = $("#BatchId").val();
             data = {
@@ -555,7 +568,9 @@
                 ExpiryDate: ExpiryDate,
                 Sold: 0,
                 InStock: 0,
-                Expired: 0
+                Expired: 0,
+                Price: Drug.Price,
+                MarkUp: parseFloat(MarkUp)
             }
             if (data.BatchID == "") {
                 toastr.warning("Enter batch Number");
@@ -583,12 +598,13 @@
                         item = data.Items;
                         for (let i = 0; i < item.length; i++) {
                             var row = table.insertRow(-1);
+                            var rowId = "tr" + row.rowIndex + "";
                             row.insertCell(0).innerHTML = i+1;
                             row.insertCell(1).innerHTML = item[i].Product.ProductName;
                             row.insertCell(2).innerHTML = item[i].Product.UnitOfMeasure.UnitOfMeasureName;
                             row.insertCell(3).innerHTML = item[i].Quantity;
-                            row.insertCell(4).innerHTML = "<Input onclick='myFunction(item[" + i + "])' type='button' value = 'Add'>";
-
+                            row.insertCell(4).innerHTML = "<Input onclick='myFunction(item[" + i + "], " + rowId +")' type='button' value = 'Add'>";
+                            row.setAttribute("id", rowId);
                         }
                     }
                 }
@@ -657,7 +673,6 @@
                 close: function (args) {
                     location.reload();
                 }
-
             });
             var dataManager = ej.DataManager({
                 url: "/api/GoodsRecievedNoteLines",
@@ -675,10 +690,6 @@
                 url: "/api/GoodsReceivedNote",
                 adaptor: new ej.WebApiAdaptor()
             });
-
-
-
-
             dataManager.ready.done(function (e) {
             $("#Grid").ejGrid({
                 dataSource: ej.DataManager({
@@ -725,12 +736,17 @@
                     }
                 },
                 actionComplete: function (args) {
-
+                    if (args.requestType == 'beginedit') {
+                        $("#" + this._id + "_dialogEdit").ejDialog({ title: "Edit Record" });
+                    }
+                    if (args.requestType == 'save') {
+                        $("#dialog").ejDialog("close");
+                        let element = document.getElementById(rowId);
+                        element.setAttribute("hidden", "hidden");
+                    }
                 }
             });
             });
-
-
         });
 
 
