@@ -722,6 +722,9 @@
                 showOnInit: false,
                 height: 400,
                 width: 600,
+                close: function (args) {
+                    rowId = "";
+                }
 
             });
             $('#dialogInvoice').ejDialog({
@@ -802,6 +805,8 @@
                     allowDeleting: true,
                     showDeleteConfirmDialog: true,
                 },
+                allowResizeToFit:true,
+                allowResizing: true,
                 allowPaging: true,
                 columns: [
                     { field: "SalesOrderLineId", headerText: 'Line Id', isPrimaryKey: true, isIdentity: true, visible: false },
@@ -839,9 +844,10 @@
                 $("#" + this._id + "_dialogEdit").ejDialog({ title: "Edit Record" });
             }
             if (args.requestType == 'save') {
-                $("#dialog").ejDialog("close");
                 let element = document.getElementById(rowId);
                 element.setAttribute("hidden", "hidden");
+                $("#dialog").ejDialog("close");
+                
                 UpdateGrid();
             }
             if (args.requestType == 'save' || args.requestType == 'delete') {

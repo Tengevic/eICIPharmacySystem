@@ -775,6 +775,8 @@
                     showDeleteConfirmDialog: true,
                 },
                 allowPaging: true,
+                allowResizeToFit: true,
+                allowResizing: true,
                 columns: [
                     { field: "SalesOrderLineId", headerText: 'Line Id', isPrimaryKey: true, isIdentity: true, visible: false },
                     { field: "RFPSaleorderId", headerText: 'SO#', defaultValue: @Model.RFPSaleorderId, foreignKeyField: "RFPSaleorderId", foreignKeyValue: "RFPSaleorderName", dataSource: dataManagerSalesOrder, visible: false },

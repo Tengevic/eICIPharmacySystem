@@ -546,6 +546,8 @@
 
                 },
                 allowPaging: true,
+                allowResizeToFit: true,
+                allowResizing: true,
                 columns: [
                     { field: "PurchaseOrderLineId", headerText: 'Line Id', isPrimaryKey: true, isIdentity: true, visible: false },
                     { field: "PurchaseOrderId", headerText: 'PO#', defaultValue: @Model.PurchaseOrderId, foreignKeyField: "PurchaseOrderId", foreignKeyValue: "PurchaseOrderName", dataSource: dataManagerPurchaseOrder, visible: false },

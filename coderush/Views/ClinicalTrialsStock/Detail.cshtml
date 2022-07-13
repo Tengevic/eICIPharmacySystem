@@ -129,6 +129,8 @@
                 },
                 
                 allowPaging: true,
+                allowResizeToFit:true,
+                allowResizing: true,
                 columns: [
                     { field: "ClinicalTrialsDonationLineId", headerText: 'Line Id', isPrimaryKey: true, isIdentity: true, visible: false },
                     { field: "ClinicalTrialsDonationId", headerText: 'CTD#', foreignKeyField: "ClinicalTrialsDonationId", foreignKeyValue: "dataManagerClinicalTrialsDonations", dataSource: dataManagerClinicalTrialsDonations, visible: false },

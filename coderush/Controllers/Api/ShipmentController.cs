@@ -32,7 +32,7 @@ namespace coderush.Controllers.Api
         [HttpGet]
         public async Task<IActionResult> GetShipment()
         {
-            List<Shipment> Items = await _context.Shipment.ToListAsync();
+            List<Shipment> Items = await _context.Shipment.OrderBy(x => x.ShipmentName).ToListAsync();
             int Count = Items.Count();
             return Ok(new { Items, Count });
         }

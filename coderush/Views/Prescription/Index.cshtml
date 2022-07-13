@@ -11,6 +11,8 @@
         <div class="box">
             <div class="box-header with-border">
                 <h3 class="box-title text-primary"><i class="fa fa-ambulance"></i> @ViewData["Title"]</h3>
+                <button class="btn" style="background:inherit; border:none;padding-left:10px; color:blue" onclick="pendingGrid()">Pending</button>
+                <button class="btn" style="background:inherit; border:none;padding-left:10px; color:green" onclick="approvedGrid()">Approved</button>
                 <div class="box-tools pull-right">
                     <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
                             title="Collapse">
@@ -43,11 +45,48 @@
 @section Scripts{
 
     <script type="text/javascript">
+        function pendingGrid() {
+             var dataManager = ej.DataManager({
+                url: "/api/Prescription",
+                adaptor: new ej.WebApiAdaptor(),
+                 headers: [{ "Notapproved": true}],
+                offline: true
+            });
+            dataManager.ready.done(function (e) {
+                $("#Grid").ejGrid("dataSource", ej.DataManager({
+                    json: e.result,
+                    adaptor: new ej.remoteSaveAdaptor(),
+                    insertUrl: "/api/Prescription/Insert",
+                    updateUrl: "/api/Prescription/Update",
+                    removeUrl: "/api/Prescription/Remove",
+                }));
+            });
+
+        }
+        function approvedGrid() {
+            var dataManager = ej.DataManager({
+                url: "/api/Prescription",
+                adaptor: new ej.WebApiAdaptor(),
+                headers: [{ "Notapproved": false }],
+                offline: true
+            });
+            dataManager.ready.done(function (e) {
+                $("#Grid").ejGrid("dataSource", ej.DataManager({
+                    json: e.result,
+                    adaptor: new ej.remoteSaveAdaptor(),
+                    insertUrl: "/api/Prescription/Insert",
+                    updateUrl: "/api/Prescription/Update",
+                    removeUrl: "/api/Prescription/Remove",
+                }));
+            });
+        }
+
         $(function () {
 
             var dataManager = ej.DataManager({
                 url: "/api/Prescription",
                 adaptor: new ej.WebApiAdaptor(),
+                headers: [{ "Notapproved": true}],
                 offline: true
             });
             var dataManagerCustomer = ej.DataManager({
@@ -87,11 +126,13 @@
                         enableCaseSensitivity: false
                     },
                     allowPaging: true,
+                    allowResizeToFit: true,
+                    allowResizing: true,
                     pageSettings: { pageSize: 10, printMode: ej.Grid.PrintMode.CurrentPage },
                     columns: [
                         { headerText: 'Detail', template: "<a href='/Prescription/Detail/{{:PrescriptionId}}'>Detail</a>" },
                         { field: "PrescriptionId", headerText: 'PS Id', isPrimaryKey: true, isIdentity: true, visible: false },
-                        { field: "PrescriptionName", headerText: 'Prescription number', allowEditing: false },                    
+                        { field: "PrescriptionName", headerText: 'Prescription number', allowEditing: false },
                         { field: "CustomerId", headerText: 'Customer', foreignKeyField: "CustomerId", foreignKeyValue: "CustomerName", dataSource: dataManagerCustomer, validationRules: { required: true } },
                         { field: "presciptionDate", headerText: 'Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
                         { field: "Approved", headerText: 'Approved', type: "boolean", editType: "booleanedit", defaultValue: false, allowEditing: false},
@@ -117,10 +158,10 @@
             if (args.requestType == 'beginedit') {
                 $("#" + this._id + "_dialogEdit").ejDialog({ title: "Edit Record" });
             }
-           
+
         }
 
-        
+
 
 
     </script>

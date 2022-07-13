@@ -527,7 +527,6 @@
         function myFunction(Item, x) {
             rowId = "tr" + x.rowIndex;
             Drug = Item;
-            console.log(Drug);
             $("#dialog").ejDialog("open");
             $("#sendp").hide();
             $("#DrugName").text(Item.Product.ProductName);
@@ -647,6 +646,7 @@
                 height: 400,
                 width: 600,
                 close: function (args) {
+                    rowId = "";
                 }
             });
             $('#dialogBill').ejDialog({
@@ -710,6 +710,8 @@
                     showDeleteConfirmDialog: true,
                 },
                 allowPaging: true,
+                allowResizeToFit: true,
+                allowResizing: true,
                 actionFailure: "onFailure",
                 columns: [
                     { field: "GoodsRecievedNoteLineId", headerText: 'Line Id', isPrimaryKey: true, isIdentity: true, visible: false },
@@ -740,9 +742,10 @@
                         $("#" + this._id + "_dialogEdit").ejDialog({ title: "Edit Record" });
                     }
                     if (args.requestType == 'save') {
-                        $("#dialog").ejDialog("close");
                         let element = document.getElementById(rowId);
                         element.setAttribute("hidden", "hidden");
+                        $("#dialog").ejDialog("close");
+                        
                     }
                 }
             });

@@ -202,6 +202,8 @@
                     showDeleteConfirmDialog: true,
                 },
                 allowPaging: true,
+                allowResizeToFit: true,
+                allowResizing: true,
                 columns: [
                     { field: "SalesOrderLineId", headerText: 'Line Id', isPrimaryKey: true, isIdentity: true, visible: false },
                     { field: "SalesOrderId", headerText: 'SO#', defaultValue: @Model.SalesOrderId, foreignKeyField: "SalesOrderId", foreignKeyValue: "SalesOrderName", dataSource: dataManagerSalesOrder, visible: false },

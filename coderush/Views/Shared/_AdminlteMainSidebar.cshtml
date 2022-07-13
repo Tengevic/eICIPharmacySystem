@@ -27,13 +27,17 @@
           </a>
         </li>*@
 
-            <li class="header"><p style="color:snow;"><b>SALES</b></p> </li>
-            <li class="@Html.IsSelected(controller: MainMenu.CustomerType.ControllerName)">
+            <li class="header">
+                <button onclick="showSales()" style="background:inherit; border: none">
+                    <p style="color:snow;"><b>SALES </b>   <i class="fa fa-arrow-circle-down"></i> </p>
+                </button>
+            </li>
+            <li id="saleDropdown" hidden class="@Html.IsSelected(controller: MainMenu.CustomerType.ControllerName)">
                 <a href="@MainMenu.CustomerType.Path">
                     <i class="fa fa-gear"></i> <span>@MainMenu.CustomerType.PageName</span>
                 </a>
             </li>
-            <li class="@Html.IsSelected(controller: MainMenu.Customer.ControllerName)">
+            <li id="saleDropdown" hidden class="@Html.IsSelected(controller: MainMenu.Customer.ControllerName)">
                 <a href="@MainMenu.Customer.Path">
                     <i class="fa fa-building-o"></i> <span>@MainMenu.Customer.PageName</span>
                 </a>
@@ -43,182 +47,203 @@
                 <i class="fa fa-gear"></i> <span>@MainMenu.SalesType.PageName</span>
             </a>
         </li>*@
-            <li class="@Html.IsSelected(controller: MainMenu.Prescription.ControllerName)">
+            <li id="saleDropdown" hidden class="@Html.IsSelected(controller: MainMenu.Prescription.ControllerName)">
                 <a href="@MainMenu.Prescription.Path">
                     <i class="fa fa-ambulance"></i> <span>@MainMenu.Prescription.PageName</span>
                 </a>
             </li>
-            <li class="@Html.IsSelected(controller: MainMenu.SalesOrder.ControllerName)">
+            <li id="saleDropdown" hidden class="@Html.IsSelected(controller: MainMenu.SalesOrder.ControllerName)">
                 <a href="@MainMenu.SalesOrder.Path">
                     <i class="fa fa-ambulance"></i> <span>@MainMenu.SalesOrder.PageName</span>
                 </a>
             </li>
-            @*<li class="@Html.IsSelected(controller: MainMenu.Shipment.ControllerName)">
+            @*<li id="saleDropdown" hidden class="@Html.IsSelected(controller: MainMenu.Shipment.ControllerName)">
             <a href="@MainMenu.Shipment.Path">
                 <i class="fa fa-truck"></i> <span>@MainMenu.Shipment.PageName</span>
             </a>
         </li>*@
-            <li class="@Html.IsSelected(controller: MainMenu.Invoice.ControllerName)">
+            <li id="saleDropdown" hidden class="@Html.IsSelected(controller: MainMenu.Invoice.ControllerName)">
                 <a href="@MainMenu.Invoice.Path">
                     <i class="fa fa-credit-card"></i> <span>@MainMenu.Invoice.PageName</span>
                 </a>
             </li>
-            <li class="@Html.IsSelected(controller: MainMenu.PaymentReceive.ControllerName)">
+            <li id="saleDropdown" hidden class="@Html.IsSelected(controller: MainMenu.PaymentReceive.ControllerName)">
                 <a href="@MainMenu.PaymentReceive.Path">
                     <i class="fa fa-check"></i> <span>@MainMenu.PaymentReceive.PageName</span>
                 </a>
             </li>
-            <li class="header"><p style="color:snow;"><b>RFP</b></p></li>
-            @*<li class="@Html.IsSelected(controller: MainMenu.VendorType.ControllerName)">
+            <li class="header">
+                <button onclick="showRFP()" style="background:inherit; border: none">
+                <p style="color:snow;"><b>RFP</b> <i class="fa fa-arrow-circle-down"></i> </p>
+                </button>
+            </li>
+            @*<li id="RFPDropdown" hidden class="@Html.IsSelected(controller: MainMenu.VendorType.ControllerName)">
             <a href="@MainMenu.VendorType.Path">
                 <i class="fa fa-gear"></i> <span>@MainMenu.VendorType.PageName</span>
             </a>
-        </li*@>
-            <li class="@Html.IsSelected(controller: MainMenu.RFPCustomer.ControllerName)">
+        </li*@
+            <li id="RFPDropdown" hidden class="@Html.IsSelected(controller: MainMenu.RFPCustomer.ControllerName)">
                 <a href="@MainMenu.RFPCustomer.Path">
                     <i class="fa fa-building-o"></i> <span>@MainMenu.RFPCustomer.PageName</span>
                 </a>
             </li>
-            <li class="@Html.IsSelected(controller: MainMenu.RFPSaleorder.ControllerName)">
+            <li id="RFPDropdown" hidden class="@Html.IsSelected(controller: MainMenu.RFPSaleorder.ControllerName)">
                 <a href="@MainMenu.RFPSaleorder.Path">
                     <i class="fa fa-bookmark"></i> <span>@MainMenu.RFPSaleorder.PageName</span>
                 </a>
             </li>
-            <li class="@Html.IsSelected(controller: MainMenu.RFPinvoice.ControllerName)">
+            <li id="RFPDropdown" hidden class="@Html.IsSelected(controller: MainMenu.RFPinvoice.ControllerName)">
                 <a href="@MainMenu.RFPinvoice.Path">
                     <i class="fa fa-briefcase"></i> <span>@MainMenu.RFPinvoice.PageName</span>
                 </a>
             </li>
-            <li class="@Html.IsSelected(controller: MainMenu.RFPpaymentRecieved.ControllerName)">
+            <li id="RFPDropdown" hidden class="@Html.IsSelected(controller: MainMenu.RFPpaymentRecieved.ControllerName)">
                 <a href="@MainMenu.RFPpaymentRecieved.Path">
                     <i class="fa fa-credit-card-alt"></i> <span>@MainMenu.RFPpaymentRecieved.PageName</span>
                 </a>
             </li>
-            <li class="@Html.IsSelected(controller: MainMenu.RFPDrugRecieve.ControllerName)">
+            <li id="RFPDropdown" hidden class="@Html.IsSelected(controller: MainMenu.RFPDrugRecieve.ControllerName)">
                 <a href="@MainMenu.RFPDrugRecieve.Path">
                     <i class="fa fa-check"></i> <span>@MainMenu.RFPDrugRecieve.PageName</span>
                 </a>
             </li>
-            <li class="header"><p style="color:snow;"><b>PURCHASE</b></p></li>
+            <li class="header">
+                <button onclick="showPurchase()" style="background:inherit; border: none">
+                <p style="color:snow;"><b>PURCHASE</b> <i class="fa fa-arrow-circle-down"></i> </p>
+                </button>
+            </li>
             @*<li class="@Html.IsSelected(controller: MainMenu.VendorType.ControllerName)">
             <a href="@MainMenu.VendorType.Path">
                 <i class="fa fa-gear"></i> <span>@MainMenu.VendorType.PageName</span>
             </a>
-        </li*@>
-            <li class="@Html.IsSelected(controller: MainMenu.Vendor.ControllerName)">
+        </li*@
+            <li id="purchaseDropdown" hidden class="@Html.IsSelected(controller: MainMenu.Vendor.ControllerName)">
                 <a href="@MainMenu.Vendor.Path">
                     <i class="fa fa-building-o"></i> <span>@MainMenu.Vendor.PageName</span>
                 </a>
             </li>
-            @*<li class="@Html.IsSelected(controller: MainMenu.PurchaseType.ControllerName)">
+            @*<li id="purchaseDropdown" hidden class="@Html.IsSelected(controller: MainMenu.PurchaseType.ControllerName)">
             <a href="@MainMenu.PurchaseType.Path">
                 <i class="fa fa-gear"></i> <span>@MainMenu.PurchaseType.PageName</span>
             </a>
         </li>*@
-            <li class="@Html.IsSelected(controller: MainMenu.PurchaseOrder.ControllerName)">
+            <li id="purchaseDropdown" hidden class="@Html.IsSelected(controller: MainMenu.PurchaseOrder.ControllerName)">
                 <a href="@MainMenu.PurchaseOrder.Path">
                     <i class="fa fa-bookmark"></i> <span>@MainMenu.PurchaseOrder.PageName</span>
                 </a>
             </li>
-            <li class="@Html.IsSelected(controller: MainMenu.GoodsReceivedNote.ControllerName)">
+            <li id="purchaseDropdown" hidden class="@Html.IsSelected(controller: MainMenu.GoodsReceivedNote.ControllerName)">
                 <a href="@MainMenu.GoodsReceivedNote.Path">
                     <i class="fa fa-briefcase"></i> <span>@MainMenu.GoodsReceivedNote.PageName</span>
                 </a>
             </li>
-            <li class="@Html.IsSelected(controller: MainMenu.Bill.ControllerName)">
+            <li id="purchaseDropdown" hidden class="@Html.IsSelected(controller: MainMenu.Bill.ControllerName)">
                 <a href="@MainMenu.Bill.Path">
                     <i class="fa fa-credit-card-alt"></i> <span>@MainMenu.Bill.PageName</span>
                 </a>
             </li>
-            <li class="@Html.IsSelected(controller: MainMenu.PaymentVoucher.ControllerName)">
+            <li id="purchaseDropdown" hidden class="@Html.IsSelected(controller: MainMenu.PaymentVoucher.ControllerName)">
                 <a href="@MainMenu.PaymentVoucher.Path">
                     <i class="fa fa-check"></i> <span>@MainMenu.PaymentVoucher.PageName</span>
                 </a>
             </li>
-            <li class="header"><p style="color:snow;"><b>INVENTORY</b></p></li>
-            <li class="@Html.IsSelected(controller: MainMenu.Notifications.ControllerName)">
+            <li class="header">
+                <p style="color:snow;">
+                    <button onclick="showInventory()" style="background:inherit; border: none">
+                    <p style="color:snow;"><b>INVENTORY</b> <i class="fa fa-arrow-circle-down"></i> </p>
+                    </button>
+            </li>
+            <li id="inventoryDropdown" hidden class="@Html.IsSelected(controller: MainMenu.Notifications.ControllerName)">
                 <a href="@MainMenu.Notifications.Path">
                     <i class="fa fa-pie-chart"></i> <span>@MainMenu.Notifications.PageName</span>
                 </a>
             </li>
-            <li class="@Html.IsSelected(controller: MainMenu.Product.ControllerName)">
+            <li id="inventoryDropdown" hidden class="@Html.IsSelected(controller: MainMenu.Product.ControllerName)">
                 <a href="@MainMenu.Product.Path">
                     <i class="fa fa-apple"></i> <span>@MainMenu.Product.PageName</span>
                 </a>
             </li>
-            <li class="@Html.IsSelected(controller: MainMenu.ProductType.ControllerName)">
+            <li id="inventoryDropdown" hidden class="@Html.IsSelected(controller: MainMenu.ProductType.ControllerName)">
                 <a href="@MainMenu.ProductType.Path">
                     <i class="fa fa-gear"></i> <span>@MainMenu.ProductType.PageName</span>
                 </a>
             </li>
-            <li class="@Html.IsSelected(controller: MainMenu.Stock.ControllerName)">
+            <li id="inventoryDropdown" hidden class="@Html.IsSelected(controller: MainMenu.Stock.ControllerName)">
                 <a href="@MainMenu.Stock.Path">
                     <i class="fa fa-database"></i> <span>@MainMenu.Stock.PageName</span>
                 </a>
             </li>
-            <li class="@Html.IsSelected(controller: MainMenu.UnitOfMeasure.ControllerName)">
+            <li id="inventoryDropdown" hidden class="@Html.IsSelected(controller: MainMenu.UnitOfMeasure.ControllerName)">
                 <a href="@MainMenu.UnitOfMeasure.Path">
                     <i class="fa fa-gear"></i> <span>@MainMenu.UnitOfMeasure.PageName</span>
                 </a>
             </li>
-            <li class="header"><p style="color:snow;"><b>CONFIG</b></p></li>
-            @*<li class="@Html.IsSelected(controller: MainMenu.Currency.ControllerName)">
+            <li class="header">
+                <button onclick="showConfig()" style="background:inherit; border: none">
+                <p style="color:snow;"><b>CONFIG</b> <i class="fa fa-arrow-circle-down"></i> </p>
+                </button>
+            </li>
+            @*<li id="configDropdown" hidden class="@Html.IsSelected(controller: MainMenu.Currency.ControllerName)">
             <a href="@MainMenu.Currency.Path">
                 <i class="fa fa-dollar"></i> <span>@MainMenu.Currency.PageName</span>
             </a>
         </li>*@
-            @*<li class="@Html.IsSelected(controller: MainMenu.Branch.ControllerName)">
+            @*<li id="configDropdown" hidden class="@Html.IsSelected(controller: MainMenu.Branch.ControllerName)">
             <a href="@MainMenu.Branch.Path">
                 <i class="fa fa-building"></i> <span>@MainMenu.Branch.PageName</span>
             </a>
         </li>*@
-            @*<li class="@Html.IsSelected(controller: MainMenu.Warehouse.ControllerName)">
+            @*<li id="configDropdown" hidden class="@Html.IsSelected(controller: MainMenu.Warehouse.ControllerName)">
             <a href="@MainMenu.Warehouse.Path">
                 <i class="fa fa-cubes"></i> <span>@MainMenu.Warehouse.PageName</span>
             </a>
         </li>*@
-            @*<li class="@Html.IsSelected(controller: MainMenu.CashBank.ControllerName)">
+            @*<li id="configDropdown" hidden class="@Html.IsSelected(controller: MainMenu.CashBank.ControllerName)">
             <a href="@MainMenu.CashBank.Path">
                 <i class="fa fa-money"></i> <span>@MainMenu.CashBank.PageName</span>
             </a>
         </li>*@
-            <li class="@Html.IsSelected(controller: MainMenu.PaymentType.ControllerName)">
+            <li id="configDropdown" hidden class="@Html.IsSelected(controller: MainMenu.PaymentType.ControllerName)">
                 <a href="@MainMenu.PaymentType.Path">
                     <i class="fa fa-bitcoin"></i> <span>@MainMenu.PaymentType.PageName</span>
                 </a>
             </li>
-            @*<li class="@Html.IsSelected(controller: MainMenu.ShipmentType.ControllerName)">
+            @*<li id="configDropdown" hidden class="@Html.IsSelected(controller: MainMenu.ShipmentType.ControllerName)">
             <a href="@MainMenu.ShipmentType.Path">
                 <i class="fa fa-gear"></i> <span>@MainMenu.ShipmentType.PageName</span>
             </a>
         </li>*@
-            @*<li class="@Html.IsSelected(controller: MainMenu.InvoiceType.ControllerName)">
+            @*<li id="configDropdown" hidden class="@Html.IsSelected(controller: MainMenu.InvoiceType.ControllerName)">
             <a href="@MainMenu.InvoiceType.Path">
                 <i class="fa fa-gear"></i> <span>@MainMenu.InvoiceType.PageName</span>
             </a>
         </li>*@
-            <li class="@Html.IsSelected(controller: MainMenu.BillType.ControllerName)">
+            <li  id="configDropdown" hidden class="@Html.IsSelected(controller: MainMenu.BillType.ControllerName)">
                 <a href="@MainMenu.BillType.Path">
                     <i class="fa fa-calculator"></i> <span>@MainMenu.BillType.PageName</span>
                 </a>
             </li>
-            <li class="header"><p style="color:snow;"><b>USER & ROLE</b></p></li>
-            <li class="@Html.IsSelected(controller: MainMenu.User.ControllerName, action: MainMenu.User.ActionName)">
+            <li class="header">
+                <button onclick="showUser()" style="background:inherit; border: none">
+                <p style="color:snow;"><b>USER & ROLE</b> <i class="fa fa-arrow-circle-down"></i> </p>
+                </button>
+            </li>
+            <li id="userDropdown" hidden class="@Html.IsSelected(controller: MainMenu.User.ControllerName, action: MainMenu.User.ActionName)">
                 <a href="@MainMenu.User.Path">
                     <i class="fa fa-users"></i> <span>@MainMenu.User.PageName</span>
                 </a>
             </li>
-            <li class="@Html.IsSelected(controller: MainMenu.ChangePassword.ControllerName, action: MainMenu.ChangePassword.ActionName)">
+            <li id="userDropdown" hidden class="@Html.IsSelected(controller: MainMenu.ChangePassword.ControllerName, action: MainMenu.ChangePassword.ActionName)">
                 <a href="@MainMenu.ChangePassword.Path">
                     <i class="fa fa-key"></i> <span>@MainMenu.ChangePassword.PageName</span>
                 </a>
             </li>
-            <li class="@Html.IsSelected(controller: MainMenu.Role.ControllerName, action: MainMenu.Role.ActionName)">
+            <li id="userDropdown" hidden class="@Html.IsSelected(controller: MainMenu.Role.ControllerName, action: MainMenu.Role.ActionName)">
                 <a href="@MainMenu.Role.Path">
                     <i class="fa fa-user-secret"></i> <span>@MainMenu.Role.PageName</span>
                 </a>
             </li>
-            <li class="@Html.IsSelected(controller: MainMenu.ChangeRole.ControllerName, action: MainMenu.ChangeRole.ActionName)">
+            <li id="userDropdown" hidden class="@Html.IsSelected(controller: MainMenu.ChangeRole.ControllerName, action: MainMenu.ChangeRole.ActionName)">
                 <a href="@MainMenu.ChangeRole.Path">
                     <i class="fa fa-user"></i> <span>@MainMenu.ChangeRole.PageName</span>
                 </a>
@@ -227,3 +252,102 @@
     </section>
     <!-- /.sidebar -->
 </aside>
+<script>
+    function showSales() {
+        let element = document.getElementById("saleDropdown");
+        let hidden = element.getAttribute("hidden");
+        const boxes = document.querySelectorAll('#saleDropdown');
+
+        if (hidden) {
+            boxes.forEach((box) => {
+                box.removeAttribute("hidden");
+            });
+            
+        } else {
+            boxes.forEach((box) => {
+                box.setAttribute("hidden", "hidden");
+            });
+        }
+    }
+    function showRFP() {
+        let element = document.getElementById("RFPDropdown");
+        let hidden = element.getAttribute("hidden");
+        const boxes = document.querySelectorAll('#RFPDropdown');
+
+        if (hidden) {
+            boxes.forEach((box) => {
+                box.removeAttribute("hidden");
+            });
+
+        } else {
+            boxes.forEach((box) => {
+                box.setAttribute("hidden", "hidden");
+            });
+        }
+    } 
+    function showPurchase() {
+        let element = document.getElementById("purchaseDropdown");
+        let hidden = element.getAttribute("hidden");
+        const boxes = document.querySelectorAll('#purchaseDropdown');
+
+        if (hidden) {
+            boxes.forEach((box) => {
+                box.removeAttribute("hidden");
+            });
+
+        } else {
+            boxes.forEach((box) => {
+                box.setAttribute("hidden", "hidden");
+            });
+        }
+    }
+    function showInventory() {
+        let element = document.getElementById("inventoryDropdown");
+        let hidden = element.getAttribute("hidden");
+        const boxes = document.querySelectorAll('#inventoryDropdown');
+
+        if (hidden) {
+            boxes.forEach((box) => {
+                box.removeAttribute("hidden");
+            });
+
+        } else {
+            boxes.forEach((box) => {
+                box.setAttribute("hidden", "hidden");
+            });
+        }
+    }
+    function showConfig() {
+        let element = document.getElementById("configDropdown");
+        let hidden = element.getAttribute("hidden");
+        const boxes = document.querySelectorAll('#configDropdown');
+
+        if (hidden) {
+            boxes.forEach((box) => {
+                box.removeAttribute("hidden");
+            });
+
+        } else {
+            boxes.forEach((box) => {
+                box.setAttribute("hidden", "hidden");
+            });
+        }
+    }
+    function showUser() {
+        let element = document.getElementById("userDropdown");
+        let hidden = element.getAttribute("hidden");
+        const boxes = document.querySelectorAll('#userDropdown');
+
+        if (hidden) {
+            boxes.forEach((box) => {
+                box.removeAttribute("hidden");
+            });
+
+        } else {
+            boxes.forEach((box) => {
+                box.setAttribute("hidden", "hidden");
+            });
+        }
+    }
+    
+</script>

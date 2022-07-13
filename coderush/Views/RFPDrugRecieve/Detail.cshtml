@@ -316,6 +316,8 @@
 
                 },
                 allowPaging: true,
+                allowResizeToFit: true,
+                allowResizing: true,
                 columns: [
                     { field: "GoodsRecievedNoteLineId", headerText: 'Line Id', isPrimaryKey: true, isIdentity: true, visible: false },
                     { field: "RFPDrugRecieveId", headerText: 'GNR#', defaultValue: @Model.RFPDrugRecieveId, foreignKeyField: "RFPDrugRecieveId", foreignKeyValue: "RFPDrugRecieveName", dataSource: dataManagerGoodsReceivedNote, visible: false },

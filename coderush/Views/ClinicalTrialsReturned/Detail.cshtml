@@ -141,6 +141,8 @@
 
                 },
                 allowPaging: true,
+                allowResizeToFit: true,
+                allowResizing: true,
                 columns: [
                     { field: "ClinicalTrialsReturnedLineId", headerText: 'Line Id', isPrimaryKey: true, isIdentity: true, visible: false },
                     { field: "ClinicalTrialsReturnedId", headerText: 'SO#', defaultValue: @Model.ClinicalTrialsReturnedId, foreignKeyField: "ClinicalTrialsSalesId", foreignKeyValue: "ClinicalTrialsSalesName", dataSource: dataManagerClinicalTrialsSales, visible: false },

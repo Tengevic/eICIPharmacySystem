@@ -10,7 +10,12 @@
         <!-- Default box -->
         <div class="box">
             <div class="box-header with-border">
-                <h3 class="box-title text-primary"><i class="fa fa-ambulance"></i> @ViewData["Title"]</h3>
+                <h3 class="box-title text-primary">
+                    <i class="fa fa-ambulance"></i>
+                    @ViewData["Title"]
+                    <button class="btn" style="background:inherit; border:none;padding-left:10px; color:blue" onclick="pendingGrid()">Pending</button>
+                    <button class="btn" style="background:inherit; border:none;padding-left:10px; color:green" onclick="approvedGrid()">Invoiced</button>
+                </h3>  
                 <div class="box-tools pull-right">
                     <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
                             title="Collapse">
@@ -43,11 +48,47 @@
 @section Scripts{
 
     <script type="text/javascript">
+        function pendingGrid() {
+            var dataManager = ej.DataManager({
+                url: "/api/SalesOrder",
+                adaptor: new ej.WebApiAdaptor(),
+                headers: [{ "Invoiced": false }],
+                offline: true
+            });
+            dataManager.ready.done(function (e) {
+                $("#Grid").ejGrid("dataSource", ej.DataManager({
+                    json: e.result,
+                    adaptor: new ej.remoteSaveAdaptor(),
+                    insertUrl: "/api/SalesOrder/Insert",
+                    updateUrl: "/api/SalesOrder/Update",
+                    removeUrl: "/api/SalesOrder/Remove",
+                }));
+            });
+
+        }
+        function approvedGrid() {
+            var dataManager = ej.DataManager({
+                url: "/api/SalesOrder",
+                adaptor: new ej.WebApiAdaptor(),
+                headers: [{ "Invoiced": true }],
+                offline: true
+            });
+            dataManager.ready.done(function (e) {
+                $("#Grid").ejGrid("dataSource", ej.DataManager({
+                    json: e.result,
+                    adaptor: new ej.remoteSaveAdaptor(),
+                    insertUrl: "/api/SalesOrder/Insert",
+                    updateUrl: "/api/SalesOrder/Update",
+                    removeUrl: "/api/SalesOrder/Remove",
+                }));
+            });
+        }
         $(function () {
 
             var dataManager = ej.DataManager({
                 url: "/api/SalesOrder",
                 adaptor: new ej.WebApiAdaptor(),
+                headers: [{ "Invoiced": false }],
                 offline: true
             });
 
@@ -106,6 +147,8 @@
                         enableCaseSensitivity: false
                     },
                     allowPaging: true,
+                    allowResizeToFit: true,
+                    allowResizing: true,
                     pageSettings: { pageSize: 10, printMode: ej.Grid.PrintMode.CurrentPage },
                     columns: [
                         { headerText: 'Detail', template: "<a href='/SalesOrder/Detail/{{:SalesOrderId}}'>Detail</a>" },

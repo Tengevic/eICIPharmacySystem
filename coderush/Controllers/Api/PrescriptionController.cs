@@ -35,9 +35,28 @@ namespace coderush.Controllers.Api
         [HttpGet]
         public async Task<IActionResult> GetPrescription()
         {
-            List<Prescription> Items = await _context.Prescription.OrderByDescending(x => x.PrescriptionId).ToListAsync();
-            int Count = Items.Count();
-            return Ok(new { Items, Count });
+            var headers = Request.Headers["Notapproved"];
+            bool aprroved = Convert.ToBoolean(headers);
+
+          
+            if(aprroved == false)
+            {
+                List<Prescription> Items = await _context.Prescription
+                    .Where(x => x.Approved == true)
+                    .OrderByDescending(x => x.PrescriptionId)
+                    .ToListAsync();
+                int Count = Items.Count();
+                return Ok(new { Items, Count });
+            }
+            else
+            {
+                List<Prescription> Items = await _context.Prescription
+                    .Where(x => x.Approved == false)
+                    .OrderByDescending(x => x.PrescriptionId).ToListAsync();
+                int Count = Items.Count();
+                return Ok(new { Items, Count });
+            }
+            
         }
         //api/Prescription/GetNotSoldYet
         [HttpGet("[action]")]

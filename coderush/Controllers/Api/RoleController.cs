@@ -42,7 +42,7 @@ namespace coderush.Controllers.Api
             await _roles.GenerateRolesFromPagesAsync();
 
             List<IdentityRole> Items = new List<IdentityRole>();
-            Items = _roleManager.Roles.ToList();
+            Items = _roleManager.Roles.OrderBy(x => x.Name).ToList();
             int Count = Items.Count();
             return Ok(new { Items, Count });
         }
@@ -53,7 +53,7 @@ namespace coderush.Controllers.Api
         {
             await _roles.GenerateRolesFromPagesAsync();
             var user = await _userManager.FindByIdAsync(id);
-            var roles = _roleManager.Roles.ToList();
+            var roles = _roleManager.Roles.OrderBy(x => x.Name).ToList();
             List<UserRoleViewModel> Items = new List<UserRoleViewModel>();
             int count = 1;
             foreach (var item in roles)
