@@ -1,7 +1,5 @@
 ﻿@model coderush.Models.Prescription
-@{
-    ViewData["Title"] = "Prescription Drugs";
-}
+@{ ViewData["Title"] = "Prescription Drugs"; }
 <!-- Content Wrapper. Contains page content -->
 <div class="content-wrapper">
     <!-- Main content -->
@@ -63,16 +61,14 @@
                                     <dd>
                                         @if (Model.SalesOrder != null)
                                         {
-                                        <a href="/SalesOrder/Detail/@Model.SalesOrder.SalesOrderId" >@Html.DisplayFor(model => model.SalesOrder.SalesOrderName)</a> 
-                                        }
+                            <a href="/SalesOrder/Detail/@Model.SalesOrder.SalesOrderId">@Html.DisplayFor(model => model.SalesOrder.SalesOrderName)</a> }
                                         else
                                         {
-                                            <button id="btnSale" type="button" onclick="MakeSale()"> Make sale</button>
-                                        }
+                            <button id="btnSale" type="button" onclick="MakeSale()"> Make sale</button>}
                                     </dd>
                                 </dl>
                             </div>
-                           
+
                         </div>
 
                     </div>
@@ -233,7 +229,7 @@
                 change: function (args) {
                     var check = args.isChecked;
                     console.log(args);
-                    
+
                     data = {
                         PrescriptionId: @Model.PrescriptionId,
                         PrescriptionName: "@Model.PrescriptionName",
@@ -280,7 +276,7 @@
             });
 
             var dataManagerPrescription = ej.DataManager({
-                url: "/api/Prescription",
+                url: "/api/Prescription/GetPrescriptionData",
                 adaptor: new ej.WebApiAdaptor()
             });
             dataManager.ready.done(function (e) {
@@ -303,15 +299,13 @@
                     showDeleteConfirmDialog: true,
                 },
                 allowPaging: true,
-                allowResizeToFit: true,
-                allowResizing: true,
                 columns: [
                     { field: "PrescriptionLinesId", headerText: 'Line Id', isPrimaryKey: true, isIdentity: true, visible: false },
                     { field: "PrescriptionId", headerText: 'PS#', defaultValue: @Model.PrescriptionId, foreignKeyField: "PrescriptionId", foreignKeyValue: "PrescriptionName", dataSource: dataManagerPrescription, visible: false },
                     { field: "ProductId", headerText: 'Drug', foreignKeyField: "ProductId", foreignKeyValue: "ProductName", dataSource: dataManagerProduct },
                     { field: "prescription", headerText: 'Prescription' },
-                    { field: "Quantity", headerText: 'Quantity', defaultValue: 1, editType: "numericedit", format: "{0:n2}", editParams: { decimalPlaces: 2 }},
-                    { field: "remainder", headerText: 'Units sold', defaultValue: 0, editType: "numericedit", allowEditing: false, visible: false  },
+                    { field: "Quantity", headerText: 'Quantity', defaultValue: 1, editType: "numericedit", format: "{0:n2}"},
+              
 
                 ],
                 actionFailure: function (args) {
@@ -325,8 +319,6 @@
                     }
                 },
                 actionComplete: "complete",
-
-
             });
             });
 

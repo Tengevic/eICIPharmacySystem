@@ -176,7 +176,8 @@ namespace coderush.Controllers.Api
                 .Include(x => x.Vendor)
                 .FirstOrDefaultAsync();
 
-            string path = this._environment.ContentRootPath + @"\Views\EmailViewModels\PurchaseRequest.html";
+            string path = "./Views/EmailViewModels/PurchaseRequest.html";
+
 
             string body = string.Empty;
             using (StreamReader reader = new StreamReader(path))

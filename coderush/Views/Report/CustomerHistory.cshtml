@@ -1,0 +1,236 @@
+﻿
+@{
+    ViewData["Title"] = "Patient History";
+}
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Main content -->
+    <section class="content">
+        <!-- Default box -->
+        <div class="box">
+            <div class="box-header with-border">
+                <div class="row"></div>
+                <input id="CustomerId" />
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
+                            title="Collapse">
+                        <i class="fa fa-minus"></i>
+                    </button>
+                    <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
+                        <i class="fa fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="box-body">
+                <table class=" table table-condensed">
+                    <tr>
+                        <td>
+                            Patient Name:
+                        </td>
+                        <td>
+                            <label id="CustomerName"></label>
+                        </td>
+                        <td>
+                            Patient Type:
+                        </td>
+                        <td>
+                            <label id="CustomerType"></label>
+                        </td>
+                          
+                    </tr>
+                </table>
+            </div>
+            <!-- /.box-body -->
+        </div>
+        <!-- /.box -->
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="box">
+                    <div class="box-header with-border">
+                        <h3 class="box-title text-primary"><i class="fa fa-pie-chart"></i> Drug usage</h3>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
+                                    title="Collapse">
+                                <i class="fa fa-minus"></i>
+                            </button>
+                            <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
+                                <i class="fa fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="box-body">
+                        <div id="DrugUsage"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="box">
+                    <div class="box-header with-border">
+                        <h3 class="box-title text-primary"><i class="fa fa-pie-chart"></i> Chart</h3>
+                        <div class="box-tools pull-right">
+                            <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
+                                    title="Collapse">
+                                <i class="fa fa-minus"></i>
+                            </button>
+                            <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
+                                <i class="fa fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="box-body">
+                        <div id="chartCustomers"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="box">
+            <div class="box-header with-border">
+                <h3 class="box-title text-primary"><i class="fa fa-pie-chart"></i> sale History</h3>
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
+                            title="Collapse">
+                        <i class="fa fa-minus"></i>
+                    </button>
+                    <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
+                        <i class="fa fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="box-body">
+                <div id="Grid"></div>
+            </div>
+        </div>
+
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+
+
+@section Styles{
+}
+@section Scripts{
+    <script type="text/javascript">
+        var data;
+        $(function ()
+        {
+            var dataManagerCustomer = ej.DataManager({
+                url: "/api/Customer",
+                adaptor: new ej.WebApiAdaptor()
+            });
+
+             $('#CustomerId').ejDropDownList({
+                dataSource: dataManagerCustomer,
+                 fields: { id: 'CustomerId', text: 'CustomerName', value: 'CustomerId' },
+                 change: function (args) {
+                     GetCustomerHistory(args.value);
+                 }
+            });
+
+
+        });
+        function GetCustomerHistory(id) {
+             $.ajax({
+                type: 'GET',
+                 url: '/api/Report/GetbyCustomerId/' +id ,
+                success: function (data) {             
+                    console.log(data);
+                    saleorderLine(data.salesOrderLines)
+                    DrugUsage(data.productUsage);
+                    $("#CustomerName").text(data.CustomerName);
+                    $("#CustomerType").text(data.Customer.customerType.CustomerTypeName);
+                }
+             });
+        }
+        function saleorderLine(data) {
+            $("#Grid").ejGrid({
+                dataSource: data,
+                toolbarSettings: {
+                    showToolbar: true,
+                    toolbarItems: ["search", "printGrid"]
+                },
+                isResponsive: true,
+                enableResponsiveRow: true,
+                allowSorting: true,
+                allowSearching: true,
+                allowFiltering: true,
+                filterSettings: {
+                    filterType: "excel",
+                    maxFilterChoices: 100,
+                    enableCaseSensitivity: false
+                },
+                allowPaging: true,
+                allowSorting: true,
+                allowResizeToFit: true,
+                allowResizing: true,
+                pageSettings: { pageSize: 10, printMode: ej.Grid.PrintMode.AllPages },
+                columns: [
+                    { field: "ProductName", headerText: 'Product Name', validationRules: { required: true } },
+                    { field: "BatchNo", headerText: 'Batch' },
+                    { field: "Quantity", headerText: 'Recieved', defaultValue: 1, editType: "numericedit", format: "{0:n2}" },
+                    { field: "SalesOrderName", headerText: 'Purchased' },
+                    { field: "Total", headerText: 'total', defaultValue: 1, editType: "numericedit", format: "{0:n2}" },
+                    { field: "saledate", headerText: 'Sell Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
+                    { field: "PaymentType", headerText: 'pay Type', allowEditing: false },
+                ],
+                actionComplete: "complete",
+                beforePrint: function (args) {
+                    console.log(args)
+                },
+                actionFailure: function (args) {
+                    if (args.requestType == "save") {
+                        var s = ej.parseJSON(args.error.responseText)
+                        toastr.warning(s.message, "Cannot make sale");
+                    }
+                    if (args.requestType == 'delete') {
+                        var s = ej.parseJSON(args.error.error.responseText)
+                        toastr.warning(s.message, "Cannot delete");
+                    }
+                }
+            });
+        }
+        function DrugUsage(data) {
+            $("#DrugUsage").ejGrid({
+                dataSource: data,
+                toolbarSettings: {
+                    showToolbar: true,
+                    toolbarItems: ["search", "printGrid"]
+                },
+                isResponsive: true,
+                enableResponsiveRow: true,
+                allowSorting: true,
+                allowSearching: true,
+                allowFiltering: true,
+                filterSettings: {
+                    filterType: "excel",
+                    maxFilterChoices: 100,
+                    enableCaseSensitivity: false
+                },
+                allowPaging: true,
+                allowSorting: true,
+                allowResizeToFit: true,
+                allowResizing: true,
+                pageSettings: { pageSize: 5, printMode: ej.Grid.PrintMode.AllPages },
+                columns: [
+                    { field: "ProductName", headerText: 'Product Name', validationRules: { required: true } },
+                    { field: "Quantity", headerText: 'Quantity', defaultValue: 1, editType: "numericedit", format: "{0:n2}" },
+                ],
+                actionComplete: "complete",
+                beforePrint: function (args) {
+                    console.log(args)
+                },
+                actionFailure: function (args) {
+                    if (args.requestType == "save") {
+                        var s = ej.parseJSON(args.error.responseText)
+                        toastr.warning(s.message, "Cannot make sale");
+                    }
+                    if (args.requestType == 'delete') {
+                        var s = ej.parseJSON(args.error.error.responseText)
+                        toastr.warning(s.message, "Cannot delete");
+                    }
+                }
+            });
+        }
+
+    </script>
+}

@@ -4,9 +4,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace coderush.Models
+namespace coderush.Models.Eici_models
 {
-    public class SalesOrderLine
+    public class saleOrderlineVM
     {
         public int SalesOrderLineId { get; set; }
         [Display(Name = "Sales Order")]
@@ -19,7 +19,6 @@ namespace coderush.Models
         public int ProductId { get; set; }
         public Product Product { get; set; }
         public int GoodsRecievedNoteLineId { get; set; }
-        public GoodsRecievedNoteLine GoodsRecievedNoteLine { get; set; }
         public string Description { get; set; }
         public double Quantity { get; set; }
         public double Price { get; set; }
@@ -32,5 +31,6 @@ namespace coderush.Models
         public double TaxPercentage { get; set; }
         public double TaxAmount { get; set; }
         public double Total { get; set; }
+        public int? PrescriptionLinesId { get; set; }
     }
 }

@@ -482,6 +482,7 @@
                         $("#sendpay").hide();
                         $("#submitPay").prop('disabled', false);
                         toastr.success("Success");
+                        $("#dialogPayment").ejDialog("close");
                         //for (let i = 0; i < paymentType.length; i++) {
                         //    if (paymentType[i].PaymentTypeId == result.PaymentTypeId) {
                         //        if (paymentType[i].RequireUpload) {
@@ -580,7 +581,7 @@
                         $("#btnInvoiceSubmit").prop('disabled', false);
                         toastr.success("Success");
                         InvoiceId = result.InvoiceId;
-
+                        $("#dialogInvoice").ejDialog("close");
                     },
                     error: function (result) {
                         $("#sendInvoice").hide();
@@ -647,6 +648,7 @@
                 "Price": Item.Product.DefaultSellingPrice,
                 "Quantity": parseFloat(Quantity),
                 "ProductId": Item.Product.ProductId,
+                "PrescriptionLinesId": Item.PrescriptionLinesId
             }
 
             if (data.Quantity < 1) {
@@ -726,7 +728,7 @@
                     rowId = "";
                 }
 
-            });
+            }); 
             $('#dialogInvoice').ejDialog({
                 title: "Invoice",
                 showOnInit: false,
@@ -734,7 +736,7 @@
                     location.reload();
                 }
 
-            });
+            }); 
             $('#dialogPayment').ejDialog({
                 title: "Payment",
                 width: 500,
@@ -823,8 +825,12 @@
                     { field: "TaxPercentage", headerText: 'Tax %', defaultValue: 0, editType: "numericedit", format: "{0:n2}" },
                     { field: "TaxAmount", headerText: 'Tax Amt', defaultValue: 0, visible: false, editType: "numericedit", format: "{0:n2}" },
                     { field: "Total", headerText: 'Total', defaultValue: 0, allowEditing: false, editType: "numericedit", format: "{0:n2}" },
+                    { field: "PrescriptionLinesId", visible: false },
                 ],
-                actionComplete: "complete",
+                actionBegin: function (args) {
+                    console.log(args)
+                },
+                actionComplete: "complete", 
                 actionFailure: function (args) {
                     if (args.requestType == "save") {
                         var s = ej.parseJSON(args.error.responseText)
@@ -871,7 +877,7 @@
                 }));
             });
             
-           
+            $("#dialog").ejDialog("close");
         }
         function RewriteTotal(salesOrderId) {
             $.ajax({

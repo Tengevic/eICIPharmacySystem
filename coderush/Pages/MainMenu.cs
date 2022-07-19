@@ -15,7 +15,21 @@ namespace coderush.Pages
             public const string ControllerName = "Notifications";
             public const string ActionName = "Index";
         }
-         public static class RFPDrugRecieve
+        public static class DrugHistory
+        {
+            public const string PageName = "DrugHistory";
+            public const string Path = "/Report/DrugHistory";
+            public const string ControllerName = "Report";
+            public const string ActionName = "DrugHistory";
+        }
+        public static class CustomerHistory
+        {
+            public const string PageName = "CustomerHistory";
+            public const string Path = "/Report/CustomerHistory";
+            public const string ControllerName = "Report";
+            public const string ActionName = "CustomerHistory";
+        }
+        public static class RFPDrugRecieve
         {
             public const string PageName = "RFPDrugRecieve";
             public const string RoleName = "RFPDrugRecieve";

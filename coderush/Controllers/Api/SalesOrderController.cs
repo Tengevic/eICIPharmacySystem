@@ -59,12 +59,14 @@ namespace coderush.Controllers.Api
                 {
                     Items = await _context.SalesOrder
                     .Where(x => ids.Contains(x.SalesOrderId))
+                    .OrderByDescending(x => x.SalesOrderId)
                     .ToListAsync();
                 }
                 else
                 {
                     Items = await _context.SalesOrder
                     .Where(x => !ids.Contains(x.SalesOrderId))
+                    .OrderByDescending(x => x.SalesOrderId)
                     .ToListAsync();
                 }
                 

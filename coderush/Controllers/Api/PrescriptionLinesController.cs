@@ -56,6 +56,7 @@ namespace coderush.Controllers.Api
                     .Include(x => x.Product.UnitOfMeasure)
                     .Include(x => x.Product.ProductType)
                     .Where(x => x.PrescriptionId == id)
+                    .Where(x => !x.sold)
                     .ToListAsync();
             int Count = Items.Count();
             return Ok(new { Items, Count });

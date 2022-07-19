@@ -35,10 +35,9 @@ namespace coderush.Controllers.Api
         [HttpGet]
         public async Task<IActionResult> GetPrescription()
         {
-            var headers = Request.Headers["Notapproved"];
+            var headers = Request.Headers["Notapproved"];          
             bool aprroved = Convert.ToBoolean(headers);
 
-          
             if(aprroved == false)
             {
                 List<Prescription> Items = await _context.Prescription
@@ -57,6 +56,15 @@ namespace coderush.Controllers.Api
                 return Ok(new { Items, Count });
             }
             
+        }
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetPrescriptionData()
+        {
+            List<Prescription> Items = await _context.Prescription
+                   .Where(x => x.Approved == false)
+                   .OrderByDescending(x => x.PrescriptionId).ToListAsync();
+            int Count = Items.Count();
+            return Ok(new { Items, Count });
         }
         //api/Prescription/GetNotSoldYet
         [HttpGet("[action]")]

@@ -10,6 +10,7 @@
         public int OderId { get; set; }
         public string prescription { get; set; }
         public Product Product { get; set; }
+        public bool sold { get; set; } = false;
 
     }
 }

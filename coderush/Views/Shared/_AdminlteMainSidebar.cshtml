@@ -20,7 +20,21 @@
 
         <!-- sidebar menu: : style can be found in sidebar.less -->
         <ul class="sidebar-menu" data-widget="tree">
-            @*<li class="header">DASHBOARD</li>*@
+            <li class="header">
+                <button onclick="showReport()" style="background:inherit; border: none">
+                    <p style="color:snow;"><b>Reports </b>   <i class="fa fa-arrow-circle-down"></i> </p>
+                </button>
+            </li>
+            <li id="reportDropdown" hidden class="@Html.IsSelected(controller: MainMenu.DrugHistory.ControllerName)">
+                <a href="@MainMenu.DrugHistory.Path">
+                    <i class="fa fa-pie-chart"></i> <span>@MainMenu.DrugHistory.PageName</span>
+                </a>
+            </li>
+            <li id="reportDropdown" hidden class="@Html.IsSelected(controller: MainMenu.CustomerHistory.ControllerName)">
+                <a href="@MainMenu.CustomerHistory.Path">
+                    <i class="fa fa-pie-chart"></i> <span>@MainMenu.CustomerHistory.PageName</span>
+                </a>
+            </li>
             @*<li class="@Html.IsSelected(controller: MainMenu.Dashboard.ControllerName)">
           <a href="@MainMenu.Dashboard.Path">
               <i class="fa fa-pie-chart"></i> <span>@MainMenu.Dashboard.PageName</span>
@@ -74,7 +88,7 @@
             </li>
             <li class="header">
                 <button onclick="showRFP()" style="background:inherit; border: none">
-                <p style="color:snow;"><b>RFP</b> <i class="fa fa-arrow-circle-down"></i> </p>
+                    <p style="color:snow;"><b>RFP</b> <i class="fa fa-arrow-circle-down"></i> </p>
                 </button>
             </li>
             @*<li id="RFPDropdown" hidden class="@Html.IsSelected(controller: MainMenu.VendorType.ControllerName)">
@@ -109,7 +123,7 @@
             </li>
             <li class="header">
                 <button onclick="showPurchase()" style="background:inherit; border: none">
-                <p style="color:snow;"><b>PURCHASE</b> <i class="fa fa-arrow-circle-down"></i> </p>
+                    <p style="color:snow;"><b>PURCHASE</b> <i class="fa fa-arrow-circle-down"></i> </p>
                 </button>
             </li>
             @*<li class="@Html.IsSelected(controller: MainMenu.VendorType.ControllerName)">
@@ -150,7 +164,7 @@
             <li class="header">
                 <p style="color:snow;">
                     <button onclick="showInventory()" style="background:inherit; border: none">
-                    <p style="color:snow;"><b>INVENTORY</b> <i class="fa fa-arrow-circle-down"></i> </p>
+                        <p style="color:snow;"><b>INVENTORY</b> <i class="fa fa-arrow-circle-down"></i> </p>
                     </button>
             </li>
             <li id="inventoryDropdown" hidden class="@Html.IsSelected(controller: MainMenu.Notifications.ControllerName)">
@@ -180,7 +194,7 @@
             </li>
             <li class="header">
                 <button onclick="showConfig()" style="background:inherit; border: none">
-                <p style="color:snow;"><b>CONFIG</b> <i class="fa fa-arrow-circle-down"></i> </p>
+                    <p style="color:snow;"><b>CONFIG</b> <i class="fa fa-arrow-circle-down"></i> </p>
                 </button>
             </li>
             @*<li id="configDropdown" hidden class="@Html.IsSelected(controller: MainMenu.Currency.ControllerName)">
@@ -218,14 +232,14 @@
                 <i class="fa fa-gear"></i> <span>@MainMenu.InvoiceType.PageName</span>
             </a>
         </li>*@
-            <li  id="configDropdown" hidden class="@Html.IsSelected(controller: MainMenu.BillType.ControllerName)">
+            <li id="configDropdown" hidden class="@Html.IsSelected(controller: MainMenu.BillType.ControllerName)">
                 <a href="@MainMenu.BillType.Path">
                     <i class="fa fa-calculator"></i> <span>@MainMenu.BillType.PageName</span>
                 </a>
             </li>
             <li class="header">
                 <button onclick="showUser()" style="background:inherit; border: none">
-                <p style="color:snow;"><b>USER & ROLE</b> <i class="fa fa-arrow-circle-down"></i> </p>
+                    <p style="color:snow;"><b>USER & ROLE</b> <i class="fa fa-arrow-circle-down"></i> </p>
                 </button>
             </li>
             <li id="userDropdown" hidden class="@Html.IsSelected(controller: MainMenu.User.ControllerName, action: MainMenu.User.ActionName)">
@@ -337,6 +351,22 @@
         let element = document.getElementById("userDropdown");
         let hidden = element.getAttribute("hidden");
         const boxes = document.querySelectorAll('#userDropdown');
+
+        if (hidden) {
+            boxes.forEach((box) => {
+                box.removeAttribute("hidden");
+            });
+
+        } else {
+            boxes.forEach((box) => {
+                box.setAttribute("hidden", "hidden");
+            });
+        }
+    }
+    function showReport() {
+        let element = document.getElementById("reportDropdown");
+        let hidden = element.getAttribute("hidden");
+        const boxes = document.querySelectorAll('#reportDropdown');
 
         if (hidden) {
             boxes.forEach((box) => {

@@ -70,16 +70,20 @@ namespace coderush.Controllers.Api
                             .Where(x => x.ProductId == id)
                             .Include(x => x.Product)
                             .Include(x => x.SalesOrder.Customer)
+                            .Include(x => x.SalesOrder.Invoice.PaymentReceive.PaymentType)
                             .Include(x => x.RFPSaleorder.RFPCustomer)
                             .ToListAsync();
 
+            Product drug = await _context.Product
+                .Where(x => x.ProductId == id)
+                .FirstOrDefaultAsync();
             List<SaleHistory> Items = new List<SaleHistory>();
 
             foreach (SalesOrderLine salesOrderLines in SalesOrderLine)
             {
                 SaleHistory sales = new SaleHistory
                 {
-                    ProductName = salesOrderLines.Product.ProductName,
+                    ProductName = drug.ProductName,
                     Quanity = salesOrderLines.Quantity,
                     Total =salesOrderLines.Total
                 };
@@ -88,6 +92,11 @@ namespace coderush.Controllers.Api
                     sales.CustomerName = salesOrderLines.SalesOrder.Customer.CustomerName;
                     sales.saledate = salesOrderLines.SalesOrder.SaleDate;
                     sales.SaleOrderName = salesOrderLines.SalesOrder.SalesOrderName;
+                    if(salesOrderLines.SalesOrder.Invoice.PaymentReceive != null)
+                    {
+                          sales.PaymentMode = salesOrderLines.SalesOrder.Invoice.PaymentReceive.PaymentType.PaymentTypeName;
+                    }
+                  
 
                 }
                 if (salesOrderLines.RFPSaleorder != null)
@@ -198,7 +207,7 @@ namespace coderush.Controllers.Api
             catch (Exception)
             {
 
-                throw;
+
             }
 
         }
@@ -318,14 +327,29 @@ namespace coderush.Controllers.Api
             catch (Exception)
             {
 
-                throw;
+
             }
         }
 
         [HttpPost("[action]")]
-        public IActionResult Insert([FromBody]CrudViewModel<SalesOrderLine> payload)
+        public IActionResult Insert([FromBody]CrudViewModel<saleOrderlineVM> payload)
         {
-            SalesOrderLine salesOrderLine = payload.value;
+            saleOrderlineVM salesOrderLinevm = payload.value;
+
+            SalesOrderLine salesOrderLine = new SalesOrderLine
+            {
+                SalesOrderId = salesOrderLinevm.SalesOrderId,
+                SalesOrderLineId = salesOrderLinevm.SalesOrderLineId,
+                RFPSaleorderId = salesOrderLinevm.RFPSaleorderId,
+                ProductId = salesOrderLinevm.ProductId,
+                GoodsRecievedNoteLineId = salesOrderLinevm.GoodsRecievedNoteLineId,
+                Description = salesOrderLinevm.Description,
+                Quantity = salesOrderLinevm.Quantity,
+                Price = salesOrderLinevm.Price,
+                Amount = salesOrderLinevm.Amount,
+                DiscountPercentage = salesOrderLinevm.DiscountPercentage,
+                TaxPercentage = salesOrderLinevm.TaxPercentage
+            };
 
             // Checks if saleOrder/rfpsaleorder has been invoices
             if (salesOrderLine.SalesOrderId != null)
@@ -418,6 +442,13 @@ namespace coderush.Controllers.Api
                 orderLine = this.Recalculate(orderLine);
                 _context.SalesOrderLine.Add(orderLine);
                 _context.SaveChanges();
+                if (salesOrderLinevm.PrescriptionLinesId != null)
+                {
+                    PrescriptionLines prescription = _context.PrescriptionLines.Find(salesOrderLinevm.PrescriptionLinesId);
+                    prescription.sold = true;
+                    _context.PrescriptionLines.Update(prescription);
+                    _context.SaveChanges();
+                }
                 salesOrderLine = orderLine;
                 this.UpdateSalesOrder(salesOrderLine);
                 this.UpdateStock(salesOrderLine.ProductId);
@@ -428,9 +459,24 @@ namespace coderush.Controllers.Api
 
         }
         [HttpPost("[action]")]
-        public IActionResult Update([FromBody]CrudViewModel<SalesOrderLine> payload)
+        public IActionResult Update([FromBody]CrudViewModel<saleOrderlineVM> payload)
         {
-            SalesOrderLine salesOrderLine = payload.value;
+            saleOrderlineVM salesOrderLinevm = payload.value;
+
+            SalesOrderLine salesOrderLine = new SalesOrderLine
+            {
+                SalesOrderId = salesOrderLinevm.SalesOrderId,
+                SalesOrderLineId = salesOrderLinevm.SalesOrderLineId,
+                RFPSaleorderId = salesOrderLinevm.RFPSaleorderId,
+                ProductId = salesOrderLinevm.ProductId,
+                GoodsRecievedNoteLineId = salesOrderLinevm.GoodsRecievedNoteLineId,
+                Description = salesOrderLinevm.Description,
+                Quantity = salesOrderLinevm.Quantity,
+                Price = salesOrderLinevm.Price,
+                Amount = salesOrderLinevm.Amount,
+                DiscountPercentage = salesOrderLinevm.DiscountPercentage,
+                TaxPercentage = salesOrderLinevm.TaxPercentage
+            };
             SalesOrderLine OrderLine = _context.SalesOrderLine
                 .Where(x => x.SalesOrderLineId == (int)payload.key)
                 .Include(x => x.SalesOrder.Invoice)
@@ -492,8 +538,9 @@ namespace coderush.Controllers.Api
         }
 
         [HttpPost("[action]")]
-        public IActionResult Remove([FromBody]CrudViewModel<SalesOrderLine> payload)
+        public IActionResult Remove([FromBody]CrudViewModel<saleOrderlineVM> payload)
         {
+            saleOrderlineVM salesOrderLinevm = payload.value;
             SalesOrderLine salesOrderLine = _context.SalesOrderLine
                 .Where(x => x.SalesOrderLineId == (int)payload.key)
                 .FirstOrDefault();
@@ -533,6 +580,13 @@ namespace coderush.Controllers.Api
             }
             _context.SalesOrderLine.Remove(salesOrderLine);
             _context.SaveChanges();
+            if (salesOrderLinevm.PrescriptionLinesId != null)
+            {
+                PrescriptionLines prescription = _context.PrescriptionLines.Find(salesOrderLinevm.PrescriptionLinesId);
+                prescription.sold = false;
+                _context.PrescriptionLines.Update(prescription);
+                _context.SaveChanges();
+            }
             this.UpdateSalesOrder(salesOrderLine);
             this.UpdateStock(salesOrderLine.ProductId);
             this.UpdateBatch(salesOrderLine.GoodsRecievedNoteLineId);

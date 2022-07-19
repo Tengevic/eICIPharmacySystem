@@ -4,7 +4,7 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <UserSecretsId>aspnet-coderush-10F86EC1-A7B9-40B3-A943-2C9C114B0BDE</UserSecretsId>
     <TypeScriptToolsVersion>2.8</TypeScriptToolsVersion>
-    <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
   <ItemGroup>

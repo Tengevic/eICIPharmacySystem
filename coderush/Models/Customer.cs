@@ -13,6 +13,7 @@ namespace coderush.Models
         public string CustomerName { get; set; }
         [Display(Name = "Customer Type")]
         public int CustomerTypeId { get; set; }
+        public CustomerType customerType { get; set; }
         [Display(Name = "Street Address")]
         public string Address { get; set; }
         public string City { get; set; }
