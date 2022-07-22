@@ -11,6 +11,7 @@ using coderush.Services;
 using coderush.Models.SyncfusionViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Newtonsoft.Json;
+using System.IO;
 
 namespace coderush.Controllers.Api
 {
@@ -162,6 +163,50 @@ namespace coderush.Controllers.Api
             _context.SaveChanges();
             return Ok(invoice);
 
+        }
+        [HttpGet("[action]/{id}")]
+        public async Task<IActionResult> Print([FromRoute] int id)
+        {
+            Invoice invoice = await _context.Invoice
+                .Where(x => x.InvoiceId.Equals(id))
+                .Include(x => x.SalesOrder.SalesOrderLines)
+                    .ThenInclude(x => x.Product)
+                .Include(x => x.SalesOrder.Customer)
+                .FirstOrDefaultAsync();
+
+            string path = "./Views/EmailViewModels/Invoice.html";
+
+
+            string body = string.Empty;
+            using (StreamReader reader = new StreamReader(path))
+            {
+                body = reader.ReadToEnd();
+            }
+            string drugrow = "";
+            int num = 1;
+            foreach (var batch in invoice.SalesOrder.SalesOrderLines)
+            {
+                string drug = "<tr>" +
+                                   "<td>" + num + " </td>" +
+                                   "<td>" + batch.Product.ProductName + "</td>" +
+                                   "<td>" + batch.Quantity + "</td>" +
+                                   "<td class='text-95'>" + batch.Price + "</td>" +
+                                   "<td class='text-secondary-d3'>" + batch.Amount + "</td>" +
+                               "</tr>";
+                drugrow = drugrow + drug;
+                num++;
+            }
+            body = body.Replace("{InvoiceName}", invoice.InvoiceName);
+            body = body.Replace("{CustomerName}", invoice.SalesOrder.Customer.CustomerName);
+            body = body.Replace("{InvoiceDate}", invoice.InvoiceDate.ToString("dd MMMM yyyy"));
+            body = body.Replace("{InvoiceDueDate}", invoice.InvoiceDueDate.ToString("dd MMMM yyyy"));
+            body = body.Replace("{subTotal}", invoice.SalesOrder.SubTotal.ToString());
+            body = body.Replace("{Discount}", invoice.SalesOrder.Discount.ToString());
+            body = body.Replace("{Tax}", invoice.SalesOrder.Tax.ToString());
+            body = body.Replace("{Total}", invoice.SalesOrder.Total.ToString());
+            body = body.Replace("{List}", drugrow);
+
+            return Ok(body);
         }
     }
 }

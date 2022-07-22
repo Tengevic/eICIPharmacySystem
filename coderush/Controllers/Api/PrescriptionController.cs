@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 using coderush.Models.Eici_models;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Identity;
+using System.IO;
 
 namespace coderush.Controllers.Api
 {
@@ -327,6 +328,43 @@ namespace coderush.Controllers.Api
             _context.SaveChanges();
             return Ok(prescription);
 
+        }
+        [HttpGet("[action]/{id}")]
+        public async Task<IActionResult> Print([FromRoute] int id)
+        {
+            Prescription prescription = await _context.Prescription
+                .Where(x => x.PrescriptionId.Equals(id))
+                .Include(x => x.prescriptionLines)
+                    .ThenInclude(x => x.Product)
+                .Include(x => x.Customer)
+                .FirstOrDefaultAsync();
+
+            string path = "./Views/EmailViewModels/Prescription.html";
+
+
+            string body = string.Empty;
+            using (StreamReader reader = new StreamReader(path))
+            {
+                body = reader.ReadToEnd();
+            }
+            string drugrow = "";
+            int num = 1;
+            foreach (var batch in prescription.prescriptionLines)
+            {
+                string drug = "<tr>" +
+                                   "<td>" + num + " </td>" +
+                                   "<td>" + batch.Product.ProductName + "</td>" +
+                                   "<td>" + batch.Quantity + "</td>" +
+                               "</tr>";
+                drugrow = drugrow + drug;
+                num++;
+            }
+            body = body.Replace("{Name}", prescription.PrescriptionName);
+            body = body.Replace("{CustomerName}", prescription.Customer.CustomerName);
+            body = body.Replace("{Date}", prescription.presciptionDate.ToString("dd MMMM yyyy"));
+            body = body.Replace("{List}", drugrow);
+
+            return Ok(body);
         }
     }
 }

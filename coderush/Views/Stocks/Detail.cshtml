@@ -150,6 +150,7 @@
                 allowResizeToFit: true,
                 allowResizing: true,
                 columns: [
+                    { headerText: 'Change Stock', template: "<a href='/Stocks/changeStock/{{:GoodsRecievedNoteLineId}}'>Change</a>" },
                     { field: "GoodsRecievedNoteLineId", headerText: 'Line Id', isPrimaryKey: true, isIdentity: true, visible: false },
                     { field: "GoodsReceivedNoteId", headerText: 'GNR#', foreignKeyField: "GoodsReceivedNoteId", foreignKeyValue: "GoodsReceivedNoteName", dataSource: dataManagerGoodsReceivedNote, visible: false },
                     { field: "Dispose", headerText: 'Dispose', allowEditing: false, type: "boolean", editType: "booleanedit", defaultValue: false, visible: false },
@@ -162,7 +163,8 @@
                     { field: "Sold", headerText: 'Units sold', defaultValue: 0, editType: "numericedit", allowEditing: false },
                     { field: "InStock", headerText: ' stock', defaultValue: 0, editType: "numericedit", allowEditing: false },
                     { field: "Expired", headerText: ' Expired ', defaultValue: 0, editType: "numericedit", allowEditing: false },
-                ],
+                    { field: "changestock", headerText: ' change ', defaultValue: 0, editType: "numericedit", allowEditing: false },
+                ], 
             });
             });
 

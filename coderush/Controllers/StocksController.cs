@@ -35,7 +35,6 @@ namespace coderush.Controllers
 
             return View(product);
         }
-
         public async Task<IActionResult> saleHistory(int id)
         {
             Product product = await _context.Product.SingleOrDefaultAsync(x => x.ProductId.Equals(id));
@@ -46,6 +45,21 @@ namespace coderush.Controllers
             }
 
             return View(product);
+        }
+
+        public async Task<IActionResult> changeStock(int id)
+        {
+            GoodsRecievedNoteLine goodsRecievedNoteLine = await _context.GoodsRecievedNoteLine
+                            .Include(x => x.Product)
+                            .Where(x => x.GoodsRecievedNoteLineId == id)
+                            .FirstOrDefaultAsync();
+            
+            if (goodsRecievedNoteLine == null)
+            {
+                return NotFound();
+            }
+
+            return View(goodsRecievedNoteLine);
         }
         public IActionResult LowStock()
         {

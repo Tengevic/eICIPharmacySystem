@@ -10,6 +10,9 @@
                 <div class="box" style="height:250px">
                     <div class="box-header with-border">
                         <h3 class="box-title"><i class="fa fa-building"></i> @ViewData["Title"]</h3>
+                        <button onclick="PrintPanel()">
+                            <i class="fa fa-print"></i>
+                        </button>
                         <div class="box-tools pull-right">
                             <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
                                     title="Collapse">
@@ -177,6 +180,24 @@
 }
 @section Scripts{
     <script type="text/javascript">
+        function PrintPanel() {
+            var message;
+            $.ajax({
+                type: 'GET',
+                url: '/api/Prescription/Print/' +  @Model.PrescriptionId,
+                success: function (data) {
+                    message = data;
+                    var printWindow = window.open('', '', 'height=400,width=800');
+                    printWindow.document.write(message);
+                    printWindow.document.close();
+                    setTimeout(function () {
+                        printWindow.print();
+                    }, 500);
+                    return false;
+                }
+            });
+
+        }
 
         // Make sale order
         function MakeSale() {
@@ -305,7 +326,7 @@
                     { field: "ProductId", headerText: 'Drug', foreignKeyField: "ProductId", foreignKeyValue: "ProductName", dataSource: dataManagerProduct },
                     { field: "prescription", headerText: 'Prescription' },
                     { field: "Quantity", headerText: 'Quantity', defaultValue: 1, editType: "numericedit", format: "{0:n2}"},
-              
+
 
                 ],
                 actionFailure: function (args) {

@@ -124,9 +124,22 @@ namespace coderush.Controllers.Api
 
                 var product = from p in _context.Product
                               select p;
-                product = product.Where(x => x.SalesOrderLine.SalesOrder.CustomerId == customerReport.Customer.CustomerId);
-
-                List<Product> Drugs = await product.ToListAsync();
+                List<SalesOrder> salesOrders = await _context.SalesOrder
+                                .Where(x => x.CustomerId == customerReport.Customer.CustomerId)
+                                .Include(x => x.SalesOrderLines)
+                                .ToListAsync();
+                List<int> Productid = new List<int>();
+                foreach(SalesOrder salesOrder in salesOrders)
+                {
+                    foreach(SalesOrderLine sales in salesOrder.SalesOrderLines)
+                    {
+                        Productid.Add(sales.ProductId);
+                    }
+                }
+                Productid = Productid.Distinct().ToList();
+                List<Product> Drugs = await product
+                            .Where(x => Productid.Contains(x.ProductId))
+                            .ToListAsync();
                 List<Product> products = Drugs.Distinct().ToList();
 
                 var salesOrderLine = from p in _context.SalesOrderLine

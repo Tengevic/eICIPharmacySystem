@@ -105,20 +105,9 @@ namespace coderush.Controllers.Api
                     batch = _context.GoodsRecievedNoteLine.Where(x => x.ProductId.Equals(goodsRecievedNoteLine.ProductId)).ToList();
                     stock.TotalRecieved = batch.Sum(x => x.Quantity);
                     stock.ExpiredStock = batch.Sum(x => x.Expired);
+                    stock.TotalSales = batch.Sum(x => x.Sold);
 
-                    List<SalesOrderLine> line = _context.SalesOrderLine.Where(x => x.ProductId.Equals(goodsRecievedNoteLine.ProductId)).ToList();
-                    stock.TotalSales = line.Sum(x => x.Quantity);
-
-                    if (stock.TotalRecieved < stock.TotalSales)
-                    {
-                        stock.Deficit = stock.TotalSales - stock.TotalRecieved;
-                        stock.InStock = 0;
-                    }
-                    else
-                    {
-                        stock.InStock = stock.TotalRecieved - stock.TotalSales - stock.ExpiredStock;
-                        stock.Deficit = 0;
-                    }
+                    stock.InStock = batch.Sum(x => x.InStock);
                     if (goodsRecievedNoteLine.MarkUp != 0)
                     {
                         if(goodsRecievedNoteLine.Price != 0)
@@ -445,10 +434,25 @@ namespace coderush.Controllers.Api
         [HttpPost("[action]")]
         public IActionResult Remove([FromBody] CrudViewModel<GoodRecieveNotelineMarkUp> payload)
         {
-            GoodRecieveNotelineMarkUp goodRecieveNotelineMarkUp = payload.value;
+            GoodRecieveNotelineMarkUp goodRecieveNotelineMarkUp = new GoodRecieveNotelineMarkUp();
             GoodsRecievedNoteLine goodsRecievedNoteLine = _context.GoodsRecievedNoteLine
                 .Where(x => x.GoodsRecievedNoteLineId == (int)payload.key)
                 .FirstOrDefault();
+            List<SalesOrderLine> salesOrderLines = _context.SalesOrderLine
+                .Where(x => x.GoodsRecievedNoteLineId == goodsRecievedNoteLine.GoodsRecievedNoteLineId)
+                .ToList();
+            if (salesOrderLines.Count != 0)
+            {
+                Err err = new Err
+                {
+                    message = "Batch already sold"
+                };
+                string errMsg = JsonConvert.SerializeObject(err);
+
+                return BadRequest(err);
+            }
+            goodRecieveNotelineMarkUp.GoodsReceivedNoteId = goodsRecievedNoteLine.GoodsReceivedNoteId;
+            goodRecieveNotelineMarkUp.ProductId = goodsRecievedNoteLine.ProductId;
             _context.GoodsRecievedNoteLine.Remove(goodsRecievedNoteLine);
             _context.SaveChanges();
             this.UpdateStock(goodRecieveNotelineMarkUp);

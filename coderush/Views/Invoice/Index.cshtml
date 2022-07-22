@@ -56,7 +56,7 @@
             //    adaptor: new ej.WebApiAdaptor()
             //});
             var dataManagerSalesOrder = ej.DataManager({
-                url: "/api/SalesOrder",
+                url: "/api/SalesOrder/Get",
                 adaptor: new ej.WebApiAdaptor()
             });
 
@@ -65,7 +65,7 @@
                 adaptor: new ej.WebApiAdaptor()
             });
 
-            dataManager.ready.done(function (e) { 
+            dataManager.ready.done(function (e) {
                 $("#Grid").ejGrid({
                     dataSource: ej.DataManager({
                         json: e.result,
@@ -121,7 +121,7 @@
                 });
             });
 
-            
+
         });
 
         function complete(args) {

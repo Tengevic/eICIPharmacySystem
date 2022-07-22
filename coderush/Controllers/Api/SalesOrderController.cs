@@ -80,33 +80,40 @@ namespace coderush.Controllers.Api
             return Ok(new { Items, Count });
 
         }
-    //[HttpGet("[action]")]
-    //public async Task<IActionResult> GetNotShippedYet()
-    //{
-    //    List<SalesOrder> salesOrders = new List<SalesOrder>();
-    //    try
-    //    {
-    //        List<Shipment> shipments = new List<Shipment>();
-    //        shipments = await _context.Shipment.ToListAsync();
-    //        List<int> ids = new List<int>();
+        [HttpGet("[action]")]
+        public async Task<IActionResult> Get()
+        {
+            List<SalesOrder> Items = await _context.SalesOrder.OrderByDescending(x => x.SalesOrderId).ToListAsync();
+            int Count = Items.Count();
+            return Ok(new { Items, Count });
+        }
+        //[HttpGet("[action]")]
+        //public async Task<IActionResult> GetNotShippedYet()
+        //{
+        //    List<SalesOrder> salesOrders = new List<SalesOrder>();
+        //    try
+        //    {
+        //        List<Shipment> shipments = new List<Shipment>();
+        //        shipments = await _context.Shipment.ToListAsync();
+        //        List<int> ids = new List<int>();
 
-    //        foreach (var item in shipments)
-    //        {
-    //            ids.Add(item.SalesOrderId);
-    //        }
+        //        foreach (var item in shipments)
+        //        {
+        //            ids.Add(item.SalesOrderId);
+        //        }
 
-    //        salesOrders = await _context.SalesOrder
-    //            .Where(x => !ids.Contains(x.SalesOrderId))
-    //            .ToListAsync();
-    //    }
-    //    catch (Exception)
-    //    {
+        //        salesOrders = await _context.SalesOrder
+        //            .Where(x => !ids.Contains(x.SalesOrderId))
+        //            .ToListAsync();
+        //    }
+        //    catch (Exception)
+        //    {
 
-    //        throw;
-    //    }
-    //    return Ok(salesOrders);
-    //}
-    [HttpGet("[action]")]
+        //        throw;
+        //    }
+        //    return Ok(salesOrders);
+        //}
+        [HttpGet("[action]")]
         public async Task<IActionResult> GetNotInvoicedYet()
         {
             List<SalesOrder> salesOrders = new List<SalesOrder>();

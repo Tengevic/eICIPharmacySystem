@@ -157,6 +157,9 @@
                     <div class="box" style="height:250px">
                         <div class="box-header with-border ">
                             <h3 class="box-title text-primary"><i class="fa fa-pie-chart"></i> @Model.Invoice.InvoiceName</h3>
+                            <button onclick="PrintPanel()">
+                                <i class="fa fa-print"></i>
+                            </button>
                             <div class="box-tools pull-right">
                                 <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
                                         title="Collapse">
@@ -448,6 +451,26 @@
         var InvoiceId;
         var rowId;
 
+        function PrintPanel() {
+            var Id = $("#invoiceId").val();
+            var message;
+            $.ajax({
+                type: 'GET',
+                url: '/api/Invoice/Print/' + Id,
+                success: function (data) {
+                    message = data;
+                    var printWindow = window.open('', '', 'height=400,width=800');
+                    printWindow.document.write(message);
+                    printWindow.document.close();
+                    setTimeout(function () {
+                        printWindow.print();
+                    }, 500);
+                    return false;
+                }
+            });
+
+        }
+
         // sumbit payment data to database
         function Payment() {
             var amount = $("#payAmount").val();
@@ -601,7 +624,7 @@
             $("#sendp").hide();
             $("#DrugName").text(Item.Product.ProductName);
             $("#UnitsofMeasure").text(Item.Product.UnitOfMeasure.UnitOfMeasureName);
-            $("#genericType").text(Item.Product.ProductType.ProductTypeName); 
+            $("#genericType").text(Item.Product.ProductType.ProductTypeName);
             $("#instock").text(Item.Product.InStock);
             $("#Quantity").val(Item.Quantity);
             $("#Cost").text(Item.Product.DefaultSellingPrice);
@@ -728,7 +751,7 @@
                     rowId = "";
                 }
 
-            }); 
+            });
             $('#dialogInvoice').ejDialog({
                 title: "Invoice",
                 showOnInit: false,
@@ -736,7 +759,7 @@
                     location.reload();
                 }
 
-            }); 
+            });
             $('#dialogPayment').ejDialog({
                 title: "Payment",
                 width: 500,
@@ -830,7 +853,7 @@
                 actionBegin: function (args) {
                     console.log(args)
                 },
-                actionComplete: "complete", 
+                actionComplete: "complete",
                 actionFailure: function (args) {
                     if (args.requestType == "save") {
                         var s = ej.parseJSON(args.error.responseText)
@@ -853,7 +876,7 @@
                 let element = document.getElementById(rowId);
                 element.setAttribute("hidden", "hidden");
                 $("#dialog").ejDialog("close");
-                
+
                 UpdateGrid();
             }
             if (args.requestType == 'save' || args.requestType == 'delete') {
@@ -876,7 +899,7 @@
                     removeUrl: "/api/SalesOrderLine/Remove",
                 }));
             });
-            
+
             $("#dialog").ejDialog("close");
         }
         function RewriteTotal(salesOrderId) {

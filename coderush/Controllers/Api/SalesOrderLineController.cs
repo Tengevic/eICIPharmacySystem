@@ -175,27 +175,13 @@ namespace coderush.Controllers.Api
 
                 if (stock != null)
                 {
-                    List<SalesOrderLine> lines = new List<SalesOrderLine>();
-                    lines = _context.SalesOrderLine.Where(x => x.ProductId.Equals(productId)).ToList();
-                    
 
                     List<GoodsRecievedNoteLine> batch = _context.GoodsRecievedNoteLine.Where(x => x.ProductId.Equals(productId)).ToList();
 
                     stock.TotalRecieved = batch.Sum(x => x.Quantity);
 
-                    stock.TotalSales = lines.Sum(x => x.Quantity);
-                    
-
-                    if (stock.TotalRecieved < stock.TotalSales)
-                    {
-                        stock.Deficit = stock.TotalSales - stock.TotalRecieved;
-                        stock.InStock = 0;
-                    }
-                    else
-                    {
-                        stock.InStock = stock.TotalRecieved - stock.TotalSales;
-                        stock.Deficit = 0;
-                    }
+                    stock.TotalSales = batch.Sum(x => x.Sold);
+                    stock.InStock= batch.Sum(x => x.InStock);
 
                     _context.Update(stock);
 
@@ -207,7 +193,7 @@ namespace coderush.Controllers.Api
             catch (Exception)
             {
 
-
+                throw;
             }
 
         }
@@ -451,9 +437,8 @@ namespace coderush.Controllers.Api
                 }
                 salesOrderLine = orderLine;
                 this.UpdateSalesOrder(salesOrderLine);
-                this.UpdateStock(salesOrderLine.ProductId);
                 this.UpdateBatch(salesOrderLine.GoodsRecievedNoteLineId);
-                
+                this.UpdateStock(salesOrderLine.ProductId);          
             } while (Quantity > 0);
             return Ok(salesOrderLine);
 
@@ -532,8 +517,9 @@ namespace coderush.Controllers.Api
             _context.SalesOrderLine.Update(OrderLine);
             _context.SaveChanges();
             this.UpdateSalesOrder(salesOrderLine);
-            this.UpdateStock(salesOrderLine.ProductId);
             this.UpdateBatch(salesOrderLine.GoodsRecievedNoteLineId);
+            this.UpdateStock(salesOrderLine.ProductId);
+           
             return Ok(salesOrderLine);
         }
 
@@ -580,16 +566,17 @@ namespace coderush.Controllers.Api
             }
             _context.SalesOrderLine.Remove(salesOrderLine);
             _context.SaveChanges();
-            if (salesOrderLinevm.PrescriptionLinesId != null)
-            {
-                PrescriptionLines prescription = _context.PrescriptionLines.Find(salesOrderLinevm.PrescriptionLinesId);
-                prescription.sold = false;
-                _context.PrescriptionLines.Update(prescription);
-                _context.SaveChanges();
-            }
+            //if (salesOrderLinevm.PrescriptionLinesId != null)
+            //{
+            //    PrescriptionLines prescription = _context.PrescriptionLines.Find(salesOrderLinevm.PrescriptionLinesId);
+            //    prescription.sold = false;
+            //    _context.PrescriptionLines.Update(prescription);
+            //    _context.SaveChanges();
+            //}
             this.UpdateSalesOrder(salesOrderLine);
-            this.UpdateStock(salesOrderLine.ProductId);
             this.UpdateBatch(salesOrderLine.GoodsRecievedNoteLineId);
+            this.UpdateStock(salesOrderLine.ProductId);
+           
             return Ok(salesOrderLine);
 
         }
