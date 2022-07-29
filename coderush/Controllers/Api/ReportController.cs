@@ -52,15 +52,18 @@ namespace coderush.Controllers.Api
                                                   .Where(x => x.ProductId == product.ProductId)
                                                 .ToListAsync();
                 salesVsPurchaseVm.TotalUnitsRecieved = goodsRecievedNoteLines.Sum(x => x.Quantity);
+                salesVsPurchaseVm.RemainderStock = salesVsPurchaseVm.TotalUnitsRecieved - salesVsPurchaseVm.TotalUnitsSold;
+                salesVsPurchaseVm.Profit = salesVsPurchaseVm.TotalSales - salesVsPurchaseVm.TotalPurchase;
 
                 Items.Add(salesVsPurchaseVm);
             }
             int Count = Items.Count();
             return Ok(new { Items, Count });
         }
-        [HttpGet("[action]")]
-        public async Task<IActionResult> SalesVSPurchaseMonth()
+        [HttpPost("[action]")]
+        public async Task<IActionResult> SalesVSPurchaseMonth([FromBody] DateRange payload)
         {
+            DateRange date = payload;
             List<SalesVsPurchaseVm> Items = new List<SalesVsPurchaseVm>();
 
             List<Product> products = await _context.Product.ToListAsync();
@@ -71,12 +74,18 @@ namespace coderush.Controllers.Api
                                     select p;
             var goodsRecievedNoteLine = from p in _context.GoodsRecievedNoteLine 
                                     select p;
-            salesOrderLine = salesOrderLine.Where(x => x.SalesOrder.SaleDate.Month == 6);
-            salesOrderLine = salesOrderLine.Where(x => x.SalesOrder.SaleDate.Year == 2020);
-            purchaseOrderLine = purchaseOrderLine.Where(x => x.PurchaseOrder.OrderDate.Month == 6);
-            purchaseOrderLine = purchaseOrderLine.Where(x => x.PurchaseOrder.OrderDate.Year == 2020);
-            goodsRecievedNoteLine = goodsRecievedNoteLine.Where(x => x.GoodsReceivedNote.GRNDate.Month == 6);
-            goodsRecievedNoteLine = goodsRecievedNoteLine.Where(x => x.GoodsReceivedNote.GRNDate.Year == 2020);
+            salesOrderLine = salesOrderLine.Where(x => x.SalesOrder.SaleDate >= date.Start);
+            purchaseOrderLine = purchaseOrderLine.Where(x => x.PurchaseOrder.OrderDate >= date.Start);
+            goodsRecievedNoteLine = goodsRecievedNoteLine.Where(x => x.GoodsReceivedNote.GRNDate >= date.Start);
+            salesOrderLine = salesOrderLine.Where(x => x.SalesOrder.SaleDate <= date.End);
+            purchaseOrderLine = purchaseOrderLine.Where(x => x.PurchaseOrder.OrderDate <= date.End);
+            goodsRecievedNoteLine = goodsRecievedNoteLine.Where(x => x.GoodsReceivedNote.GRNDate <= date.End);
+            //salesOrderLine = salesOrderLine.Where(x => x.SalesOrder.SaleDate.Month == 6);
+            //salesOrderLine = salesOrderLine.Where(x => x.SalesOrder.SaleDate.Year == 2020);
+            //purchaseOrderLine = purchaseOrderLine.Where(x => x.PurchaseOrder.OrderDate.Month == 6);
+            //purchaseOrderLine = purchaseOrderLine.Where(x => x.PurchaseOrder.OrderDate.Year == 2020);
+            //goodsRecievedNoteLine = goodsRecievedNoteLine.Where(x => x.GoodsReceivedNote.GRNDate.Month == 6);
+            //goodsRecievedNoteLine = goodsRecievedNoteLine.Where(x => x.GoodsReceivedNote.GRNDate.Year == 2020);
 
 
             foreach (Product product in products)
@@ -87,7 +96,7 @@ namespace coderush.Controllers.Api
 
                 List<SalesOrderLine> salesOrderLines = await salesOrderLine
                                                 .Where(x => x.ProductId == product.ProductId)
-                                                .ToListAsync();
+                                                .ToListAsync();;
                 salesVsPurchaseVm.TotalUnitsSold = salesOrderLines.Sum(x => x.Quantity);
                 salesVsPurchaseVm.TotalSales = salesOrderLines.Sum(x => x.Total);
 
@@ -101,6 +110,9 @@ namespace coderush.Controllers.Api
                                                   .Where(x => x.ProductId == product.ProductId)
                                                 .ToListAsync();
                 salesVsPurchaseVm.TotalUnitsRecieved = goodsRecievedNoteLines.Sum(x => x.Quantity);
+
+                salesVsPurchaseVm.RemainderStock = salesVsPurchaseVm.TotalUnitsRecieved - salesVsPurchaseVm.TotalUnitsSold;
+                salesVsPurchaseVm.Profit = salesVsPurchaseVm.TotalSales - salesVsPurchaseVm.TotalPurchase;
 
                 Items.Add(salesVsPurchaseVm);
             }
@@ -173,7 +185,7 @@ namespace coderush.Controllers.Api
                         {
                             ProductName = drug.ProductName,
                             Quantity = line.Quantity,
-                            saledate = line.SalesOrder.SaleDate.Date,
+                            saledate = line.SalesOrder.SaleDate.Date.ToString("dd MMMM yyyy"),
                             SalesOrderName = line.SalesOrder.SalesOrderName,
                             Total = line.Total,
                             BatchNo = line.GoodsRecievedNoteLine.BatchID
@@ -196,10 +208,135 @@ namespace coderush.Controllers.Api
                     }
                 }
                 customerReport.productUsage = productUsages;
-                customerReport.salesOrderLines = customerSaleOrderLineVM;
+                customerReport.salesOrderLines = customerSaleOrderLineVM.Distinct().ToList();
             }
 
             return Ok(customerReport);
+        }
+        [HttpGet("[action]/{id}")]
+        public async Task<IActionResult> GetbyProductId([FromRoute] int id)
+        {
+            Product drug = await _context.Product
+                    .Include(x => x.UnitOfMeasure)
+                    .Include(x => x.ProductType)
+                    .Where(x => x.ProductId == id)
+                    .FirstOrDefaultAsync();
+            DrugHistoryVM drugHistoryVM = new DrugHistoryVM();
+            drugHistoryVM.ProductName = drug.ProductName;
+
+            var salesOrderLine = from p in _context.SalesOrderLine
+                                 select p;
+            var purchaseOrderLine = from p in _context.PurchaseOrderLine
+                                    select p;
+            var goodsRecievedNoteLine = from p in _context.GoodsRecievedNoteLine
+                                        select p;
+            salesOrderLine = salesOrderLine.Where(x => x.ProductId == drug.ProductId);
+            purchaseOrderLine = purchaseOrderLine.Where(x => x.ProductId == drug.ProductId);
+            goodsRecievedNoteLine = goodsRecievedNoteLine.Where(x => x.ProductId == drug.ProductId);
+
+            List<SalesOrderLine> SalesOrderLine = await salesOrderLine
+                            .Include(x => x.SalesOrder.Customer)
+                            .Include(x => x.SalesOrder.Invoice.PaymentReceive.PaymentType)
+                            .Include(x => x.RFPSaleorder.RFPCustomer)
+                            .ToListAsync();
+            List<PurchaseOrderLine> PurchaseOrderLine = await purchaseOrderLine
+                .Include(x => x.PurchaseOrder.Vendor)
+                .ToListAsync();
+            List<GoodsRecievedNoteLine> GoodsRecievedNoteLine = await goodsRecievedNoteLine
+                .Include(x => x.RFPDrugRecieve)
+                .Include(x => x.GoodsReceivedNote.purchaseOrder)
+                .ToListAsync();
+            SalesOrderLine = SalesOrderLine.Distinct().ToList();
+            PurchaseOrderLine = PurchaseOrderLine.Distinct().ToList();
+            GoodsRecievedNoteLine = GoodsRecievedNoteLine.Distinct().ToList();
+            List<SaleHistory> Items = new List<SaleHistory>();
+            foreach (SalesOrderLine salesOrderLines in SalesOrderLine)
+            {
+                SaleHistory sales = new SaleHistory
+                {
+                    ProductName = drug.ProductName,
+                    Quanity = salesOrderLines.Quantity,
+                    Total = salesOrderLines.Total
+                };
+                if (salesOrderLines.SalesOrder != null)
+                {
+                    sales.CustomerName = salesOrderLines.SalesOrder.Customer.CustomerName;
+                    sales.saledate = salesOrderLines.SalesOrder.SaleDate.ToString("dd MMMM yyyy");
+                    sales.SaleOrderName = salesOrderLines.SalesOrder.SalesOrderName;
+                    if (salesOrderLines.SalesOrder.Invoice != null)
+                    {
+                        if (salesOrderLines.SalesOrder.Invoice.PaymentReceive != null)
+                        {
+                            sales.PaymentMode = salesOrderLines.SalesOrder.Invoice.PaymentReceive.PaymentType.PaymentTypeName;
+                        }
+                    }
+
+
+                }
+                if (salesOrderLines.RFPSaleorder != null)
+                {
+                    sales.CustomerName = salesOrderLines.RFPSaleorder.RFPCustomer.RFPCustomerName;
+                    sales.saledate = salesOrderLines.RFPSaleorder.SaleDate.ToString("dd MMMM yyyy");
+                    sales.SaleOrderName = salesOrderLines.RFPSaleorder.RFPSaleorderName;
+                }
+
+                Items.Add(sales);
+            }
+            List<PurchaseOrderLineVM> purchaseOrderLineVMs = new List<PurchaseOrderLineVM>();
+            foreach(PurchaseOrderLine purchaseLine in PurchaseOrderLine)
+            {
+                PurchaseOrderLineVM purchaseOrder = new PurchaseOrderLineVM
+                {
+                    Quantity = purchaseLine.Quantity,
+                    Total = purchaseLine.Total,
+                    
+                };
+                if(purchaseLine.PurchaseOrder != null)
+                {
+                    purchaseOrder.DeliveryDate = purchaseLine.PurchaseOrder.DeliveryDate.ToString("dd MMMM yyyy");
+                    purchaseOrder.OrderDate = purchaseLine.PurchaseOrder.OrderDate.ToString("dd MMMM yyyy");
+                    purchaseOrder.PurchaseOrderName = purchaseLine.PurchaseOrder.PurchaseOrderName;
+                    if(purchaseLine.PurchaseOrder.Vendor != null)
+                    {
+                        purchaseOrder.VendorName = purchaseLine.PurchaseOrder.Vendor.VendorName;
+                    }
+                }
+
+                purchaseOrderLineVMs.Add(purchaseOrder);
+            }
+            List<GoodsRecievedNoteLineVM> goodsRecievedNoteLineVMs = new List<GoodsRecievedNoteLineVM>();
+
+            foreach(GoodsRecievedNoteLine good in GoodsRecievedNoteLine)
+            {
+                GoodsRecievedNoteLineVM goods = new GoodsRecievedNoteLineVM
+                {
+                    BatchID = good.BatchID,
+                    ExpiryDate = good.ExpiryDate.ToString("dd MMMM yyyy"),
+                    Expired = good.Expired,
+                    InStock = good.InStock,
+                    Quantity = good.Quantity,
+                    Sold =good.Sold
+                };
+                if(good.GoodsReceivedNote != null)
+                {
+                    goods.GRNDate = good.GoodsReceivedNote.GRNDate.ToString("dd MMMM yyyy");
+                    goods.GoodsReceivedNoteName = good.GoodsReceivedNote.GoodsReceivedNoteName;
+                    if(good.GoodsReceivedNote.purchaseOrder != null)
+                    {
+                        goods.PurchaseOrdername = good.GoodsReceivedNote.purchaseOrder.PurchaseOrderName;
+                    } 
+                }
+                if(good.RFPDrugRecieve != null)
+                {
+                    goods.GRNDate = good.RFPDrugRecieve.GRNDate.ToString("dd MMMM yyyy");
+                    goods.GoodsReceivedNoteName = good.RFPDrugRecieve.RFPDrugRecieveName;
+                }
+                goodsRecievedNoteLineVMs.Add(goods);
+            }
+            drugHistoryVM.goodsRecievedNoteLineVMs = goodsRecievedNoteLineVMs.Distinct().ToList();
+            drugHistoryVM.purchaseOrderLineVMs = purchaseOrderLineVMs.Distinct().ToList();
+            drugHistoryVM.saleHistories = Items.Distinct().ToList();
+             return Ok(drugHistoryVM);
         }
     }
 }

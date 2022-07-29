@@ -13,6 +13,7 @@ namespace coderush.Models
         public string GoodsReceivedNoteName { get; set; }
         [Display(Name = "Purchase Order")]
         public int PurchaseOrderId { get; set; }
+        public PurchaseOrder purchaseOrder { get; set; }
         [Display(Name = "GRN Date")]
         public DateTimeOffset GRNDate { get; set; }
         [Display(Name = "Vendor Delivery Order #")]

@@ -130,7 +130,30 @@ namespace coderush.Controllers.Api
 
             return Ok(new { Items, Count });
         }
+        [HttpPost("[action]/{id}")]
+        public IActionResult UpdateStock([FromRoute] int id)
+        {
+            Product stock = new Product();
+            stock = _context.Product
+                .Where(x => x.ProductId.Equals(id))
+                .FirstOrDefault();
 
+            if (stock != null)
+            {
+                List<GoodsRecievedNoteLine> batch = new List<GoodsRecievedNoteLine>();
+                batch = _context.GoodsRecievedNoteLine.Where(x => x.ProductId.Equals(id)).ToList();
+                stock.TotalRecieved = batch.Sum(x => x.Quantity);
+                stock.ExpiredStock = batch.Sum(x => x.Expired);
+                stock.TotalSales = batch.Sum(x => x.Sold);
+                stock.InStock = batch.Sum(x => x.InStock);
+                stock.Deficit = batch.Sum(x => x.changestock);
+
+                _context.Update(stock);
+
+                _context.SaveChanges();
+            }
+            return Ok(stock);
+        }
     }
 
 }

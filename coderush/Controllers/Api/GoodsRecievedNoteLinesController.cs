@@ -90,6 +90,15 @@ namespace coderush.Controllers.Api
                 return Ok(new { Items, Count });
             }
         }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> Get()
+        {
+            List<GoodsRecievedNoteLine> Items = await _context.GoodsRecievedNoteLine
+                  .ToListAsync();
+            int Count = Items.Count();
+            return Ok(new { Items, Count });
+        }
         private void UpdateStock(GoodRecieveNotelineMarkUp goodsRecievedNoteLine)
         {
             try
@@ -106,6 +115,7 @@ namespace coderush.Controllers.Api
                     stock.TotalRecieved = batch.Sum(x => x.Quantity);
                     stock.ExpiredStock = batch.Sum(x => x.Expired);
                     stock.TotalSales = batch.Sum(x => x.Sold);
+                    stock.Deficit = batch.Sum(x => x.changestock);
 
                     stock.InStock = batch.Sum(x => x.InStock);
                     if (goodsRecievedNoteLine.MarkUp != 0)
@@ -143,7 +153,7 @@ namespace coderush.Controllers.Api
 
                     batch.changestock = stockNumber.Sum(x => x.Add) - stockNumber.Sum(x => x.subtract);
                     batch.Sold = lines.Sum(x => x.Quantity);
-                    batch.InStock = batch.Quantity - batch.Sold - batch.Expired - batch.changestock;
+                    batch.InStock = batch.Quantity - batch.Sold - batch.Expired + batch.changestock;
 
                     _context.Update(batch);
 
@@ -523,6 +533,26 @@ namespace coderush.Controllers.Api
 
             return Ok(result);
 
+        }
+        [HttpPost("[action]/{id}")]
+        public IActionResult UpdateBatchs([FromRoute] int id)
+        {
+            GoodsRecievedNoteLine batch = _context.GoodsRecievedNoteLine.Find(id);
+            if (batch != null)
+            {
+                List<SalesOrderLine> lines = new List<SalesOrderLine>();
+                lines = _context.SalesOrderLine.Where(x => x.GoodsRecievedNoteLineId.Equals(batch.GoodsRecievedNoteLineId)).ToList();
+                List<stockNumber> stockNumber = _context.stockNumber.Where(x => x.GoodsRecievedNoteLineId.Equals(batch.GoodsRecievedNoteLineId)).ToList();
+
+                batch.changestock = stockNumber.Sum(x => x.Add) - stockNumber.Sum(x => x.subtract);
+                batch.Sold = lines.Sum(x => x.Quantity);
+                batch.InStock = batch.Quantity - batch.Sold - batch.Expired + batch.changestock;
+
+                _context.Update(batch);
+
+                _context.SaveChanges();
+            }
+            return Ok(batch);
         }
     }
 }

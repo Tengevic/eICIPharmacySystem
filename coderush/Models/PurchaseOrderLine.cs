@@ -28,6 +28,7 @@ namespace coderush.Models
         public double TaxPercentage { get; set; }
         public double TaxAmount { get; set; }
         public double Total { get; set; }
+        
 
     }
 }

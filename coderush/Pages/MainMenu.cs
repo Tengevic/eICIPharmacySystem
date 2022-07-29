@@ -29,6 +29,13 @@ namespace coderush.Pages
             public const string ControllerName = "Report";
             public const string ActionName = "CustomerHistory";
         }
+        public static class SalesVSPurchases
+        {
+            public const string PageName = "SalesVSPurchases";
+            public const string Path = "/Report/SalesVSPurchase";
+            public const string ControllerName = "Report";
+            public const string ActionName = "SalesVSPurchases";
+        }
         public static class RFPDrugRecieve
         {
             public const string PageName = "RFPDrugRecieve";

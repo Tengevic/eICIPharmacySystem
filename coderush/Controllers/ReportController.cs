@@ -16,5 +16,9 @@ namespace coderush.Controllers
         {
             return View();
         }
+        public IActionResult SalesVSPurchase()
+        {
+            return View();
+        }
     }
 }

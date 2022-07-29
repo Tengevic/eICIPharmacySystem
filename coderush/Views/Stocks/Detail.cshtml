@@ -10,6 +10,7 @@
         <div class="box">
             <div class="box-header with-border">
                 <h3 class="box-title"><i class="fa fa-building"></i> @ViewData["Title"]</h3>
+                <button onclick="myFunction()">Update Stock</button>
                 <div class="box-tools pull-right">
                     <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
                             title="Collapse">
@@ -50,7 +51,7 @@
                             </dd>
                         </dl>
                     </div>
-                    @*<button onclick="myFunction()">test</button>*@
+               
                 </div>
             </div>
             <!-- /.box-body -->
@@ -85,23 +86,12 @@
     <script type="text/javascript">
 
         function myFunction() {
-            data = {
-                ProductId: @Model.ProductId,
-                Start: "2022-05-09T21:00:00+00:00",
-                End: "2022-06-13T21:00:00+00:00"
-
-            }
             $.ajax({
-                url: "/api/SalesOrderLine/GetSalesOrderLineByShipmentId",
-                type: "GET",
-                beforeSend: function (xhr) {
-                     xhr.setRequestHeader("ProductId", @Model.ProductId);
-                     xhr.setRequestHeader("Start", data.Start);
-                     xhr.setRequestHeader("End", data.End);
-                 },
-                processData: false, // avoid the data being parsed to query string params
+                url: "/api/Product/UpdateStock/" +@Model.ProductId,
+                type: "POST",
                 success: function (result) {
                     console.log(result);
+                    location.reload();
                 },
 
             });
@@ -164,7 +154,7 @@
                     { field: "InStock", headerText: ' stock', defaultValue: 0, editType: "numericedit", allowEditing: false },
                     { field: "Expired", headerText: ' Expired ', defaultValue: 0, editType: "numericedit", allowEditing: false },
                     { field: "changestock", headerText: ' change ', defaultValue: 0, editType: "numericedit", allowEditing: false },
-                ], 
+                ],
             });
             });
 

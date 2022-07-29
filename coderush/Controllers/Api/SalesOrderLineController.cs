@@ -74,6 +74,8 @@ namespace coderush.Controllers.Api
                             .Include(x => x.RFPSaleorder.RFPCustomer)
                             .ToListAsync();
 
+            SalesOrderLine = SalesOrderLine.Distinct().ToList();
+
             Product drug = await _context.Product
                 .Where(x => x.ProductId == id)
                 .FirstOrDefaultAsync();
@@ -90,19 +92,22 @@ namespace coderush.Controllers.Api
                 if (salesOrderLines.SalesOrder != null)
                 {
                     sales.CustomerName = salesOrderLines.SalesOrder.Customer.CustomerName;
-                    sales.saledate = salesOrderLines.SalesOrder.SaleDate;
+                    sales.saledate = salesOrderLines.SalesOrder.SaleDate.ToString("dd MMMM yyyy");
                     sales.SaleOrderName = salesOrderLines.SalesOrder.SalesOrderName;
-                    if(salesOrderLines.SalesOrder.Invoice.PaymentReceive != null)
+                    if (salesOrderLines.SalesOrder.Invoice != null)
                     {
-                          sales.PaymentMode = salesOrderLines.SalesOrder.Invoice.PaymentReceive.PaymentType.PaymentTypeName;
+                        if (salesOrderLines.SalesOrder.Invoice.PaymentReceive != null)
+                        {
+                            sales.PaymentMode = salesOrderLines.SalesOrder.Invoice.PaymentReceive.PaymentType.PaymentTypeName;
+                        }
                     }
-                  
+
 
                 }
                 if (salesOrderLines.RFPSaleorder != null)
                 {
                     sales.CustomerName = salesOrderLines.RFPSaleorder.RFPCustomer.RFPCustomerName;
-                    sales.saledate = salesOrderLines.RFPSaleorder.SaleDate;
+                    sales.saledate = salesOrderLines.RFPSaleorder.SaleDate.ToString("dd MMMM yyyy");
                     sales.SaleOrderName = salesOrderLines.RFPSaleorder.RFPSaleorderName;
                 }
 
@@ -182,6 +187,7 @@ namespace coderush.Controllers.Api
 
                     stock.TotalSales = batch.Sum(x => x.Sold);
                     stock.InStock= batch.Sum(x => x.InStock);
+                    stock.Deficit = batch.Sum(x => x.changestock);
 
                     _context.Update(stock);
 
@@ -303,7 +309,7 @@ namespace coderush.Controllers.Api
 
                     batch.changestock = stockNumber.Sum(x => x.Add) - stockNumber.Sum(x => x.subtract);
                     batch.Sold = lines.Sum(x => x.Quantity);
-                    batch.InStock = batch.Quantity - batch.Sold - batch.Expired - batch.changestock;
+                    batch.InStock = batch.Quantity - batch.Sold - batch.Expired + batch.changestock;
 
                     _context.Update(batch);
 

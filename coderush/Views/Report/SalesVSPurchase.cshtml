@@ -1,0 +1,145 @@
+﻿@model coderush.Models.Product
+@{
+    ViewData["Title"] = "Drug stock";
+}
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Main content -->
+    <section class="content">
+        <!-- Default box -->
+        <div class="box">
+            <div class="box-header with-border">
+                <h3 class="box-title"><i class="fa fa-building"></i> @ViewData["Title"]</h3>
+                <input type="text" id="datepicker" />
+                <button id="submit" onclick="SalesVSPurchaseRange()"><i class="fa fa-search"></i></button>
+                <button onclick="FindAll()">Final</button>
+                <p id="sendp" style="color: green">Submiting... </p>
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
+                            title="Collapse">
+                        <i class="fa fa-minus"></i>
+                    </button>
+                    <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
+                        <i class="fa fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <!-- /.box-body -->
+            <div class="box-body">
+                <div id="Grid"></div>
+            </div>
+        </div>
+        <!-- /.box -->
+
+    </section>
+    <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+
+
+@section Styles{
+}
+@section Scripts{
+    <script type="text/javascript">
+        var startDate;
+        var endDate;
+        var range;
+        function FindAll() {
+            $.ajax({
+                type: 'GET',
+                url: '/api/Report/SalesVSPurchase/',
+                success: function (data) {
+                    SalesVSPurchase(data.Items)
+                },
+            });
+
+        }
+        $(function () {
+            $("#sendp").hide();
+            $("#datepicker").ejDateRangePicker({
+                width: "25%",
+                dateFormat: "dd/MM/yyyy",
+                change: function (args) {
+                    startDate = args.startDate;
+                    endDate = args.endDate;
+                }
+            });
+
+        });
+        function SalesVSPurchaseRange() {
+            data = {
+                Start: startDate.toJSON(),
+                End: endDate.toJSON()
+            }
+            console.log(data);
+            $.ajax({
+                type: "POST",
+                contentType: "application/json;charset=utf-8",
+                data: JSON.stringify(data),
+                url: "/api/Report/SalesVSPurchaseMonth",
+                beforeSend: function () {
+                    $("#sendp").show();
+                    $("#submit").prop('disabled', true);
+                },
+                success: function (result) {
+                    SalesVSPurchase(result.Items)
+                    toastr.success("Succes");
+                    console.log(result.Items)
+                    $("#sendp").hide();
+                    $("#submit").prop('disabled', false);
+                },
+                error: function (result) {
+                    var s = ej.parseJSON(result.responseText)
+                    toastr.warning(s.message, "Cannot make sale");
+                }
+            });
+        }
+        function SalesVSPurchase(data) {
+
+            $("#Grid").ejGrid({
+                dataSource: data,
+                toolbarSettings: {
+                    showToolbar: true,
+                    toolbarItems: ["search", "printGrid"]
+                },
+                isResponsive: true,
+                enableResponsiveRow: true,
+                allowSorting: true,
+                allowSearching: true,
+                allowFiltering: true,
+                filterSettings: {
+                    filterType: "excel",
+                    maxFilterChoices: 100,
+                    enableCaseSensitivity: false
+                },
+                allowPaging: true,
+                allowSorting: true,
+                allowResizeToFit: true,
+                allowResizing: true,
+                pageSettings: { pageSize: 10, printMode: ej.Grid.PrintMode.AllPages },
+                summaryRows: [
+                    { title: "Units Sold", summaryColumns: [{ summaryType: ej.Grid.SummaryType.Sum, displayColumn: "TotalUnitsSold", dataMember: "TotalUnitsSold", format: "{0:C2}" }] },
+                    { title: "Units Recieved", summaryColumns: [{ summaryType: ej.Grid.SummaryType.Sum, displayColumn: "TotalUnitsRecieved", dataMember: "TotalUnitsRecieved", format: "{0:C2}" }] },
+                    { title: "Units Purchased", summaryColumns: [{ summaryType: ej.Grid.SummaryType.Sum, displayColumn: "TotalUnitsPurchased", dataMember: "TotalUnitsPurchased", format: "{0:C2}" }] },
+                    { title: "Units Remain", summaryColumns: [{ summaryType: ej.Grid.SummaryType.Sum, displayColumn: "RemainderStock", dataMember: "RemainderStock", format: "{0:C2}" }] },
+                    { title: "Sales", summaryColumns: [{ summaryType: ej.Grid.SummaryType.Sum, displayColumn: "TotalSales", dataMember: "TotalSales", format: "{0:C2}" }] },
+                    { title: "Purchases", summaryColumns: [{ summaryType: ej.Grid.SummaryType.Sum, displayColumn: "TotalPurchase", dataMember: "TotalPurchase", format: "{0:C2}" }] },
+                    { title: "Profit", summaryColumns: [{ summaryType: ej.Grid.SummaryType.Sum, displayColumn: "Profit", dataMember: "Profit", format: "{0:C2}" }] },
+
+                ],
+                columns: [
+                    { field: "ProductName", headerText: 'Product Name', validationRules: { required: true } },
+                    { field: "TotalUnitsSold", headerText: 'Sold', defaultValue: 1, editType: "numericedit", format: "{0:n2}" },
+                    { field: "TotalUnitsRecieved", headerText: 'Recieved', defaultValue: 1, editType: "numericedit", format: "{0:n2}" },
+                    { field: "TotalUnitsPurchased", headerText: 'Purchased', defaultValue: 1, editType: "numericedit", format: "{0:n2}" },
+                    { field: "RemainderStock", headerText: 'stock', defaultValue: 1, editType: "numericedit", format: "{0:n2}" },
+                    { field: "TotalSales", headerText: 'total sales', defaultValue: 1, editType: "numericedit", format: "{0:n2}" },
+                    { field: "TotalPurchase", headerText: 'Total Purchase', defaultValue: 1, editType: "numericedit", format: "{0:n2}" },
+                    { field: "Profit", headerText: 'Profit', defaultValue: 1, editType: "numericedit", format: "{0:n2}" },
+                ],
+               
+            });
+        }
+
+    </script>
+}

@@ -10,6 +10,7 @@
         <div class="box">
             <div class="box-header with-border">
                 <h3 class="box-title"><i class="fa fa-building"></i> @ViewData["Title"]</h3>
+                <button onclick="myFunction()">Update</button>
                 <div class="box-tools pull-right">
                     <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
                             title="Collapse">
@@ -71,6 +72,17 @@
 }
 @section Scripts{
     <script type="text/javascript">
+          function myFunction() {
+            $.ajax({
+                url: "/api/GoodsRecievedNoteLines/UpdateBatchs/" + @Model.GoodsRecievedNoteLineId,
+                type: "POST",
+                success: function (result) {
+                    console.log(result);
+                    location.reload();
+                }
+             });
+             }
+
 
         $(function () {
 
@@ -81,13 +93,8 @@
                 offline: true,
             });
 
-            var dataManagerUser = ej.DataManager({
-                url: "/api/User",
-                adaptor: new ej.WebApiAdaptor()
-            });
-
             var dataManagerGoodsReceivedNote = ej.DataManager({
-                url: "/api/GoodsRecievedNoteLines",
+                url: "/api/GoodsRecievedNoteLines/Get",
                 adaptor: new ej.WebApiAdaptor()
             });
 
@@ -126,17 +133,24 @@
                 allowResizing: true,
                 columns: [
                     { field: "stockNumberId", headerText: 'Line Id', isPrimaryKey: true, isIdentity: true, visible: false },
-                    { field: "GoodsReceivedNoteId", headerText: 'GNR#', defaultValue: @Model.GoodsRecievedNoteLineId, foreignKeyField: "GoodsReceivedNoteId", foreignKeyValue: "GoodsReceivedNoteName", dataSource: dataManagerGoodsReceivedNote, visible: false },
-                    { field: "UserId", headerText: 'User', foreignKeyField: "UserId", foreignKeyValue: "FirstName", dataSource: dataManagerUser, allowEditing: false },
+                    { field: "GoodsRecievedNoteLineId", headerText: 'GNR#', defaultValue: @Model.GoodsRecievedNoteLineId, foreignKeyField: "GoodsRecievedNoteLineId", foreignKeyValue: "GoodsRecievedNoteLineName", dataSource: dataManagerGoodsReceivedNote, visible: false },
+                    { field: "UserId", headerText: 'User',allowEditing: false },
                     { field: "Description", headerText: 'Reason', validationRules: { required: true }},
                     { field: "date", headerText: 'Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
                     { field: "Add", headerText: 'add', defaultValue: 0, editType: "numericedit"},
                     { field: "subtract", headerText: 'subtract', defaultValue: 0, editType: "numericedit"},
 
                 ],
-                actionBegin: function (args) {
-                    console.log(args)
-                },
+                actionFailure: function (args) {
+                    if (args.requestType == "save") {
+                        var s = ej.parseJSON(args.error.responseText)
+                        toastr.warning(s.message, "Cannot Complete");
+                    }
+                    if (args.requestType == 'delete') {
+                        var s = ej.parseJSON(args.error.error.responseText)
+                        toastr.warning(s.message, "Cannot delete");
+                    }
+                }
             });
             });
 

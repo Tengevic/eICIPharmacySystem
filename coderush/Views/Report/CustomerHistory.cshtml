@@ -22,7 +22,7 @@
                 </div>
             </div>
             <div class="box-body">
-                <table class=" table table-condensed">
+                <table class="table table-condensed">
                     <tr>
                         <td>
                             Patient Name:
@@ -64,7 +64,7 @@
                 </div>
             </div>
             <div class="col-lg-6">
-                <div class="box">
+                @*<div class="box">
                     <div class="box-header with-border">
                         <h3 class="box-title text-primary"><i class="fa fa-pie-chart"></i> Chart</h3>
                         <div class="box-tools pull-right">
@@ -80,7 +80,7 @@
                     <div class="box-body">
                         <div id="chartCustomers"></div>
                     </div>
-                </div>
+                </div>*@
             </div>
         </div>
         <div class="box">
@@ -164,13 +164,17 @@
                 allowResizeToFit: true,
                 allowResizing: true,
                 pageSettings: { pageSize: 10, printMode: ej.Grid.PrintMode.AllPages },
+                summaryRows: [
+                    { title: "Total", summaryColumns: [{ summaryType: ej.Grid.SummaryType.Sum, displayColumn: "Total", dataMember: "Total", format: "{0:C2}" }] },
+                    { title: "Quantity", summaryColumns: [{ summaryType: ej.Grid.SummaryType.Sum, displayColumn: "Quantity", dataMember: "Quantity", format: "{0:C2}" }] },
+                ],
                 columns: [
                     { field: "ProductName", headerText: 'Product Name', validationRules: { required: true } },
                     { field: "BatchNo", headerText: 'Batch' },
                     { field: "Quantity", headerText: 'Recieved', defaultValue: 1, editType: "numericedit", format: "{0:n2}" },
                     { field: "SalesOrderName", headerText: 'Purchased' },
                     { field: "Total", headerText: 'total', defaultValue: 1, editType: "numericedit", format: "{0:n2}" },
-                    { field: "saledate", headerText: 'Sell Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
+                    { field: "saledate", headerText: 'Sell Date',},
                     { field: "PaymentType", headerText: 'pay Type', allowEditing: false },
                 ],
                 actionComplete: "complete",

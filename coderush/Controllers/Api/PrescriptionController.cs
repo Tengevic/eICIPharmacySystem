@@ -173,9 +173,6 @@ namespace coderush.Controllers.Api
                 _context.PrescriptionLines.Add(prescriptionLines);
                 _context.SaveChanges();
             } 
-            
-            
-            
             return Ok(prescription);
         }
         [HttpPost("[action]")]

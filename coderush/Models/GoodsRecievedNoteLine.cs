@@ -14,6 +14,7 @@ namespace coderush.Models
         [Display(Name = "GoodsReceivedNote")]
         public GoodsReceivedNote GoodsReceivedNote { get; set; }
         public int? RFPDrugRecieveId { get; set; }
+        public RFPDrugRecieve RFPDrugRecieve { get; set; }
         [Display(Name = "Product Item")]
         public int ProductId { get; set; }
         public Product Product { get; set; }

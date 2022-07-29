@@ -12,7 +12,7 @@ namespace coderush.Models.Eici_models
         public double Quantity { get; set; }
         public string SalesOrderName { get; set; }
         public double Total { get; set; }
-        public DateTime saledate { get; set; }
+        public string saledate { get; set; }
         public string InvoceName { get; set; }
         public string PaymentReciveName { get; set; }
         public string PaymentType { get; set; }

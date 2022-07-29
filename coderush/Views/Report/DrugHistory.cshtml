@@ -10,6 +10,8 @@
         <div class="box">
             <div class="box-header with-border">
                 <h3 class="box-title"><i class="fa fa-building"></i> @ViewData["Title"]</h3>
+                <input id="ProductId" />
+                <p id="sendp" style="color: green">Submiting... </p>
                 <div class="box-tools pull-right">
                     <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
                             title="Collapse">
@@ -21,8 +23,56 @@
                 </div>
             </div>
             <!-- /.box-body -->
-            <div class="box-body">
-                <div id="Grid"></div>
+            <div class="box">
+                <div class="box-header with-border">
+                    <h3 class="box-title text-primary"><i class="fa fa-user"></i> SaleHistory</h3>
+                    <div class="box-tools pull-right">
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
+                                title="Collapse">
+                            <i class="fa fa-minus"></i>
+                        </button>
+                        <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="box-body">
+                    <div id="Grid"></div>
+                </div>
+            </div>
+            <div class="box">
+                <div class="box-header with-border">
+                    <h3 class="box-title text-primary"><i class="fa fa-key"></i> Recieve history </h3>
+                    <div class="box-tools pull-right">
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
+                                title="Collapse">
+                            <i class="fa fa-minus"></i>
+                        </button>
+                        <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="box-body">
+                    <div id="GridRecieve"></div>
+                </div>
+            </div>
+            <div class="box">
+                <div class="box-header with-border">
+                    <h3 class="box-title text-primary"><i class="fa fa-key"></i> Purchase history </h3>
+                    <div class="box-tools pull-right">
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
+                                title="Collapse">
+                            <i class="fa fa-minus"></i>
+                        </button>
+                        <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="box-body">
+                    <div id="GridPurchase"></div>
+                </div>
             </div>
         </div>
         <!-- /.box -->
@@ -37,21 +87,52 @@
 }
 @section Scripts{
     <script type="text/javascript">
-
-        $(function ()
-        {
-             var dataManager = ej.DataManager({
-                url: "/api/Report/SalesVSPurchase",
-                adaptor: new ej.WebApiAdaptor(),
-                offline: true
+        var startDate;
+        var endDate;
+        var range;
+        $(function () {
+            $("#sendp").hide();
+            var dataManagerProduct = ej.DataManager({
+                url: "/api/Product",
+                adaptor: new ej.WebApiAdaptor()
             });
-            dataManager.ready.done(function (e) {
-            $("#Grid").ejGrid({
-                dataSource: ej.DataManager({
-                    json: e.result,
-                    adaptor: new ej.remoteSaveAdaptor(),
 
-                }),
+            $('#ProductId').ejDropDownList({
+                dataSource: dataManagerProduct,
+                fields: { id: 'ProductId', text: 'ProductName', value: 'ProductId' },
+                change: function (args) {
+                    DrugHistory(args.value);
+                }
+            });
+
+        });
+        function DrugHistory(id) {
+            console.log(id);
+            $.ajax({
+                type: "GET",
+                url: "/api/Report/GetbyProductId/" + id,
+                beforeSend: function () {
+                    $("#sendp").show();
+                    $("#submit").prop('disabled', true);
+                },
+                success: function (result) {
+                    saleHistory(result.saleHistories)
+                    purchaseOrderLine(result.purchaseOrderLineVMs)
+                    goodsRecievedNoteLine(result.goodsRecievedNoteLineVMs)
+                    toastr.success("Succes");
+                    $("#sendp").hide();
+                    $("#submit").prop('disabled', false);
+                },
+                error: function (result) {
+                    var s = ej.parseJSON(result.responseText)
+                    toastr.warning(s.message, "Cannot make sale");
+                }
+            });
+        }
+        function saleHistory(data) {
+          
+            $("#Grid").ejGrid({
+                dataSource: data,
                 toolbarSettings: {
                     showToolbar: true,
                     toolbarItems: ["search", "printGrid"]
@@ -70,37 +151,95 @@
                 allowSorting: true,
                 allowResizeToFit: true,
                 allowResizing: true,
-                pageSettings: { pageSize: 10, printMode: ej.Grid.PrintMode.AllPages },
+                pageSettings: { pageSize: 5, printMode: ej.Grid.PrintMode.AllPages },
+                summaryRows: [
+                ],
                 columns: [
                     { field: "ProductName", headerText: 'Product Name', validationRules: { required: true } },
-                    { field: "TotalUnitsSold", headerText: 'Sold', defaultValue: 1, editType: "numericedit", format: "{0:n2}" },
-                    { field: "TotalUnitsRecieved", headerText: 'Recieved', defaultValue: 1, editType: "numericedit", format: "{0:n2}" },
-                    { field: "TotalUnitsPurchased", headerText: 'Purchased', defaultValue: 1, editType: "numericedit", format: "{0:n2}" },
-                    { field: "RemainderStock", headerText: 'Instock', defaultValue: 1, editType: "numericedit", format: "{0:n2}" },
-                    { field: "TotalSales", headerText: 'total sales', defaultValue: 1, editType: "numericedit", format: "{0:n2}" },
-                    { field: "TotalPurchase", headerText: 'Total Purchase', defaultValue: 1, editType: "numericedit", format: "{0:n2}" },  
-                    { field: "Profit", headerText: 'Profit', defaultValue: 1, editType: "numericedit", format: "{0:n2}" },       
+                    { field: "SaleOrderName", headerText: 'Drug Sale number', allowEditing: false },
+                    { field: "CustomerName", headerText: 'Customer Name', validationRules: { required: true } },
+                    { field: "Quanity", headerText: 'Qty', defaultValue: 1, editType: "numericedit", format: "{0:n2}" },
+                    { field: "saledate", headerText: 'Sell Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
+                    { field: "Total", headerText: 'Total', defaultValue: 0, editParams: { decimalPlaces: 2 }, allowEditing: false, editType: "numericedit", format: "{0:n2}" },
+                    { field: "PaymentMode", headerText: 'Payment Mode', validationRules: { required: true } },
                 ],
-                actionComplete: "complete",
-                beforePrint: function (args) {
-                    console.log(args)
+            });
+        }
+        function goodsRecievedNoteLine(data) {
+            console.log(data) 
+            $("#GridRecieve").ejGrid({
+                dataSource: data,
+                toolbarSettings: {
+                    showToolbar: true,
+                    toolbarItems: ["search", "printGrid"]
                 },
-                actionFailure: function (args) {
-                    if (args.requestType == "save") {
-                        var s = ej.parseJSON(args.error.responseText)
-                        toastr.warning(s.message, "Cannot make sale");
-                    }
-                    if (args.requestType == 'delete') {
-                        var s = ej.parseJSON(args.error.error.responseText)
-                        toastr.warning(s.message,"Cannot delete");
-                    }
+                isResponsive: true,
+                enableResponsiveRow: true,
+                allowSorting: true,
+                allowSearching: true,
+                allowFiltering: true,
+                filterSettings: {
+                    filterType: "excel",
+                    maxFilterChoices: 100,
+                    enableCaseSensitivity: false
+                },
+                allowPaging: true,
+                allowSorting: true,
+                allowResizeToFit: true,
+                allowResizing: true,
+                pageSettings: { pageSize: 5, printMode: ej.Grid.PrintMode.AllPages },
+                summaryRows: [
+                ],
+                columns: [
+                    { field: "BatchID", headerText: 'BatchID', validationRules: { required: true } },
+                    { field: "Quantity", headerText: 'units/batch', defaultValue: 1, editType: "numericedit", format: "{0:n2}", editParams: { decimalPlaces: 2 } },
+                    { field: "GoodsReceivedNoteName", headerText: 'Drug Recieve#', allowEditing: false },
+                    { field: "PurchaseOrdername", headerText: 'Purchase Order', allowEditing: false },
+                    { field: "GRNDate", headerText: 'Receiving Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
+                    { field: "ExpiryDate", headerText: 'Expiry Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
+                    { field: "Sold", headerText: 'Units sold', defaultValue: 0, editType: "numericedit", allowEditing: false, visible: false },
+                    { field: "InStock", headerText: ' stock', defaultValue: 0, editType: "numericedit", allowEditing: false, visible: false },
+                    { field: "Expired", headerText: ' Expired ', defaultValue: 0, editType: "numericedit", allowEditing: false, visible: false },
+                ],
+            });
+        }
+        function purchaseOrderLine(data) {
+            console.log(data)
+            $("#GridPurchase").ejGrid({
+                dataSource: data,
+                toolbarSettings: {
+                    showToolbar: true,
+                    toolbarItems: ["search", "printGrid"]
+                },
+                isResponsive: true,
+                enableResponsiveRow: true,
+                allowSorting: true,
+                allowSearching: true,
+                allowFiltering: true,
+                filterSettings: {
+                    filterType: "excel",
+                    maxFilterChoices: 100,
+                    enableCaseSensitivity: false
+                },
+                allowPaging: true,
+                allowSorting: true,
+                allowResizeToFit: true,
+                allowResizing: true,
+                pageSettings: { pageSize: 5, printMode: ej.Grid.PrintMode.AllPages },
+                summaryRows: [
+                ],
+                columns: [
+                    { field: "PurchaseOrderName", headerText: 'Purchase Order', allowEditing: false },
+                    { field: "VendorName", headerText: 'Vendor Name' },
+                    { field: "Quantity", headerText: 'Quantity', defaultValue: 1, editType: "numericedit", format: "{0:n2}" },
+                    { field: "Total", headerText: 'total', defaultValue: 1, editType: "numericedit", format: "{0:n2}" },
+                    { field: "OrderDate", headerText: 'Order Date', editType: "datepicker", format: "{0:MM/dd/yyyy}"},
+                    { field: "DeliveryDate", headerText: 'Delivery Date', editType: "datepicker", format: "{0:MM/dd/yyyy}"},
+                ],
+                actionComplete: function (args) {
+                    console.log(args)
                 }
             });
-            });
-
-
-        });
-
-
+        }
     </script>
 }

@@ -25,6 +25,11 @@
                     <p style="color:snow;"><b>Reports </b>   <i class="fa fa-arrow-circle-down"></i> </p>
                 </button>
             </li>
+            <li id="reportDropdown" hidden class="@Html.IsSelected(controller: MainMenu.SalesVSPurchases.ControllerName)">
+                <a href="@MainMenu.SalesVSPurchases.Path">
+                    <i class="fa fa-pie-chart"></i> <span>@MainMenu.SalesVSPurchases.PageName</span>
+                </a>
+            </li>
             <li id="reportDropdown" hidden class="@Html.IsSelected(controller: MainMenu.DrugHistory.ControllerName)">
                 <a href="@MainMenu.DrugHistory.Path">
                     <i class="fa fa-pie-chart"></i> <span>@MainMenu.DrugHistory.PageName</span>

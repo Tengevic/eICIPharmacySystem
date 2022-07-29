@@ -13,7 +13,7 @@ namespace coderush.Models.Eici_models
         public string CustomerName { get; set; }
         public double Total { get; set; }
         public string PaymentMode { get; set; }
-        public DateTimeOffset saledate { get; set; }
+        public string saledate { get; set; }
         
     }
 }
