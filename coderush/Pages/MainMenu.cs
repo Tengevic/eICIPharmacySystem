@@ -76,6 +76,23 @@ namespace coderush.Pages
             public const string ControllerName = "RFPSaleorder";
             public const string ActionName = "Index";
         }
+        public static class RFPRequest
+        {
+            public const string PageName = "AtM Request";
+            public const string RoleName = "AtM Request";
+            public const string Path = "/RFPRequest/Index";
+            public const string ControllerName = "RFPRequest";
+            public const string ActionName = "Index";
+        }
+        public static class AtMProduct
+        {
+            public const string PageName = "AtM Drugs";
+           // public const string RoleName = "Drugs";
+            public const string Path = "/Product/AtMIndex";
+            public const string ControllerName = "Product";
+            public const string ActionName = "AtMIndex";
+        }
+
         public static class Customer
         {
             public const string PageName = "Customer";

@@ -18,5 +18,9 @@ namespace coderush.Controllers
         {
             return View();
         }
+        public IActionResult AtMIndex()
+        {
+            return View();
+        }
     }
 }

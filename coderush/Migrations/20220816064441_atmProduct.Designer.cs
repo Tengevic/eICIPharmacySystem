@@ -11,9 +11,10 @@ using System;
 namespace coderush.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220816064441_atmProduct")]
+    partial class atmProduct
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -859,8 +860,6 @@ namespace coderush.Migrations
 
                     b.Property<string>("Email");
 
-                    b.Property<string>("PatientGuid");
-
                     b.Property<string>("Phone");
 
                     b.Property<string>("RFPCustomerName")
@@ -948,44 +947,6 @@ namespace coderush.Migrations
                         .IsUnique();
 
                     b.ToTable("RFPpaymentRecieved");
-                });
-
-            modelBuilder.Entity("coderush.Models.RFPRequest", b =>
-                {
-                    b.Property<int>("RFPRequestId")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("FundingApplicationGuid");
-
-                    b.Property<int>("InstitutionId");
-
-                    b.Property<string>("InstitutionName");
-
-                    b.Property<int>("RFPCustomerId");
-
-                    b.Property<string>("RFPRquestName");
-
-                    b.Property<DateTimeOffset>("RequestDate");
-
-                    b.Property<string>("userId");
-
-                    b.HasKey("RFPRequestId");
-
-                    b.ToTable("RFPRequest");
-                });
-
-            modelBuilder.Entity("coderush.Models.RFPRequestLine", b =>
-                {
-                    b.Property<int>("RFPRequestLineId")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<string>("Prescription");
-
-                    b.Property<int>("RFPRequestId");
-
-                    b.HasKey("RFPRequestLineId");
-
-                    b.ToTable("RFPRequestLine");
                 });
 
             modelBuilder.Entity("coderush.Models.RFPSaleorder", b =>

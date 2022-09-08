@@ -26,7 +26,7 @@
             </div>
             <!-- /.box-body -->
             <div class="box-footer">
-              
+
             </div>
             <!-- /.box-footer-->
         </div>
@@ -46,7 +46,7 @@
         $(function () {
 
             var dataManager = ej.DataManager({
-                url: "/api/Product",
+                url: "/api/Product/GetAtMProduct",
                 adaptor: new ej.WebApiAdaptor(),
                 offline: true
             });
@@ -71,7 +71,7 @@
                 adaptor: new ej.WebApiAdaptor()
             });
 
-            dataManager.ready.done(function (e) { 
+            dataManager.ready.done(function (e) {
                 $("#Grid").ejGrid({
                     dataSource: ej.DataManager({
                         json: e.result,
@@ -111,7 +111,7 @@
                         { field: "ProductTypeId", headerText: 'GenericType', foreignKeyField: "ProductTypeId", foreignKeyValue: "ProductTypeName", dataSource: dataManagerProductType, validationRules: { required: true } },
                         { field: "UnitOfMeasureId", headerText: 'UOM', foreignKeyField: "UnitOfMeasureId", foreignKeyValue: "UnitOfMeasureName", dataSource: dataManagerUnitOfMeasure, validationRules: { required: true } },
                         { field: "Barcode", headerText: 'Barcode', },
-                        { field: "BrandName", headerText: 'Brand name', },
+                        { field: "BrandName", headerText: 'BrandName', },
                         { field: "ProductImageUrl", headerText: 'ProductImageUrl', visible: false },
                         { field: "DefaultBuyingPrice", headerText: 'Buying Price', editType: "numericedit", format: "{0:n2}" },
                         { field: "DefaultSellingPrice", headerText: 'Selling Price', editType: "numericedit", format: "{0:n2}" },
@@ -122,7 +122,7 @@
                         { field: "InStock", headerText: ' Units in stock', defaultValue: 0, editType: "numericedit", allowEditing: false, visible: false },
                         { field: "Deficit", headerText: ' Deficit stock', defaultValue: 0, editType: "numericedit", allowEditing: false, visible: false },
                         { field: "ExpiredStock", headerText: ' Expired stock', defaultValue: 0, editType: "numericedit", allowEditing: false, visible: false },
-                        { field: "IsAtM", headerText: 'ATM Drug', type: "boolean", editType: "booleanedit", defaultValue: true },
+                        { field: "IsAtM", headerText: 'AtM', type: "boolean", editType: "booleanedit", defaultValue: true, visible: false },
                     ],
                     actionComplete: "complete",
                     actionFailure: function (args) {
@@ -138,7 +138,7 @@
                 });
             });
 
-            
+
         });
 
         function complete(args) {

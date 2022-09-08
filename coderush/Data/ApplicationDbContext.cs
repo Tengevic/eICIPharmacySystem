@@ -111,6 +111,8 @@ namespace coderush.Data
         public DbSet<coderush.Models.RFPinvoice> RFPinvoice { get; set; }
         public DbSet<coderush.Models.RFPDrugRecieve> RFPDrugRecieve { get; set; }
         public DbSet<coderush.Models.RFPSaleorder> RFPSaleorder { get; set; }
+        public DbSet<coderush.Models.RFPRequest> RFPRequest { get; set; }
+        public DbSet<coderush.Models.RFPRequestLine> RFPRequestLine { get; set; }
         public DbSet<coderush.Models.stockNumber> stockNumber { get; set; }
 
     }

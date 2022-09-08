@@ -27,6 +27,7 @@ namespace coderush.Models
         public double InStock { get; set; }
         public double Deficit { get; set; }
         public double ExpiredStock { get; set; }
-      //  public SalesOrderLine SalesOrderLine {get; set;}
+        public bool IsAtM { get; set; } = false;
+        public string BrandName { get; set; }
     }
 }

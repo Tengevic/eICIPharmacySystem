@@ -106,6 +106,16 @@
                     <i class="fa fa-building-o"></i> <span>@MainMenu.RFPCustomer.PageName</span>
                 </a>
             </li>
+            <li id="RFPDropdown" hidden class="@Html.IsSelected(controller: MainMenu.AtMProduct.ControllerName)">
+                <a href="@MainMenu.AtMProduct.Path">
+                    <i class="fa fa-building-o"></i> <span>@MainMenu.AtMProduct.PageName</span>
+                </a>
+            </li>
+            <li id="RFPDropdown" hidden class="@Html.IsSelected(controller: MainMenu.RFPRequest.ControllerName)">
+                <a href="@MainMenu.RFPRequest.Path">
+                    <i class="fa fa-building-o"></i> <span>@MainMenu.RFPRequest.PageName</span>
+                </a>
+            </li>
             <li id="RFPDropdown" hidden class="@Html.IsSelected(controller: MainMenu.RFPSaleorder.ControllerName)">
                 <a href="@MainMenu.RFPSaleorder.Path">
                     <i class="fa fa-bookmark"></i> <span>@MainMenu.RFPSaleorder.PageName</span>

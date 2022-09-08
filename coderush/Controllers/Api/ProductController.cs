@@ -9,6 +9,7 @@ using coderush.Data;
 using coderush.Models;
 using coderush.Models.SyncfusionViewModels;
 using Microsoft.AspNetCore.Authorization;
+using coderush.Models.AtMViewModels;
 
 namespace coderush.Controllers.Api
 {
@@ -31,6 +32,16 @@ namespace coderush.Controllers.Api
             int Count = Items.Count();
             return Ok(new { Items, Count });
         }
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetAtMProduct()
+        {
+            List<Product> Items = await _context.Product
+                .Where(x => x.IsAtM == true)
+                .OrderBy(x => x.ProductName)
+                .ToListAsync();
+            int Count = Items.Count();
+            return Ok(new { Items, Count });
+        }
         [HttpGet("[action]/{id}")]
         public async Task<IActionResult> GetProductbyId([FromRoute] int id)
         {
@@ -47,15 +58,42 @@ namespace coderush.Controllers.Api
         {
             var product = from p in _context.Product
                           select p;
-
+            product = product.Include(x => x.UnitOfMeasure).Where(x => x.IsAtM == true);
             if (!String.IsNullOrEmpty(name))
             {
                 product = product.Where(x => x.ProductName.Contains(name));
             }
 
-            List <Product> Items = await product.ToListAsync();
+            List<Product> items = await product.ToListAsync();
+            List<ProductAtMVM> Items = new List<ProductAtMVM>();
 
-            return Ok(new { Items});
+            foreach(Product item in items)
+            {
+                ProductAtMVM Item = new ProductAtMVM
+                {
+                    ProductName = item.ProductName,
+                    BrandName = item.BrandName,
+                    DefaultSellingPrice = item.DefaultSellingPrice,
+                    InStock = item.InStock,
+                    UnitOfMeasureName = item.UnitOfMeasure.UnitOfMeasureName
+                };
+                var GoodsRecievedNoteLine = from p in _context.GoodsRecievedNoteLine
+                                            select p;
+                int id = item.ProductId;
+                GoodsRecievedNoteLine = GoodsRecievedNoteLine.Where(x => x.ProductId.Equals(id));
+                GoodsRecievedNoteLine[] batch = GoodsRecievedNoteLine
+                         .Where(x => x.InStock > 0)
+                         .OrderBy(x => x.ExpiryDate)
+                         .ToArray();
+                if(batch.Length != 0)
+                {
+                    Item.ExpiryDate = batch[0].ExpiryDate;
+                }
+                Items.Add(Item);
+            }
+
+
+            return Ok(new {Items});
         }
 
 
