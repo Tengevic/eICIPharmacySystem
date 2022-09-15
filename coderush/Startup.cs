@@ -105,6 +105,17 @@ namespace coderush
                 options.SerializerSettings.ContractResolver = new DefaultContractResolver();
 
             });
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(
+                    builder =>
+                    {
+                        builder.WithOrigins("*")
+                                            .AllowAnyHeader()
+                                            .AllowAnyMethod();
+                    });
+            });
+
         }
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -122,6 +133,8 @@ namespace coderush
 
             app.UseStaticFiles();
 
+            app.UseCors();
+
             app.UseAuthentication();
 
             app.UseMvc(routes =>
@@ -130,6 +143,7 @@ namespace coderush
                     name: "default",
                     template: "{controller=UserRole}/{action=UserProfile}/{id?}");
             });
+
         }
     }
 }
