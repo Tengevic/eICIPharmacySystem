@@ -81,6 +81,9 @@ namespace coderush
             // Get SMTP configuration options
             services.Configure<SmtpOptions>(Configuration.GetSection("SmtpOptions"));
 
+            // Get slack configuration options
+            services.Configure<SlackOptions>(Configuration.GetSection("SlackOptions"));
+
             // Get Super Admin Default options
             services.Configure<SuperAdminDefaultOptions>(Configuration.GetSection("SuperAdminDefaultOptions"));
 
@@ -92,6 +95,8 @@ namespace coderush
             services.AddTransient<IRoles, Roles>();
 
             services.AddTransient<IFunctional, Functional>();
+
+            services.AddTransient<IFeedback, Feedback>();
 
             services.AddTransient<EmailNotifications>();
 

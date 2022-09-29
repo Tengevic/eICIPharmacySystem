@@ -54,6 +54,14 @@ namespace coderush.Controllers.Api
             return Ok(Items);
         }
         [HttpGet("[action]/{name}")]
+        public async Task<IActionResult> GetProductByName([FromRoute] string name)
+        {
+            Product product = await _context.Product
+                    .Where(x => x.ProductName == name)
+                    .FirstOrDefaultAsync();
+            return Ok(product);
+        }
+        [HttpGet("[action]/{name}")]
         public async Task<IActionResult> GetByProductName([FromRoute] string name)
         {
             var product = from p in _context.Product

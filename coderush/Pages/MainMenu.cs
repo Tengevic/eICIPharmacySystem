@@ -15,6 +15,13 @@ namespace coderush.Pages
             public const string ControllerName = "Notifications";
             public const string ActionName = "Index";
         }
+        public static class Feedback
+        {
+            public const string PageName = "Feed back";
+            public const string Path = "/Account/FeedBack";
+            public const string ControllerName = "Account";
+            public const string ActionName = "FeedBack";
+        }
         public static class DrugHistory
         {
             public const string PageName = "DrugHistory";

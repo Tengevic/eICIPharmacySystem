@@ -11,6 +11,9 @@ using coderush.Models.SyncfusionViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Newtonsoft.Json;
 using coderush.Models.Eici_models;
+using coderush.Services;
+using OfficeOpenXml;
+using System.IO;
 
 namespace coderush.Controllers.Api
 {
@@ -20,10 +23,12 @@ namespace coderush.Controllers.Api
     public class SalesOrderLineController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IFunctional _functional;
 
-        public SalesOrderLineController(ApplicationDbContext context)
+       public SalesOrderLineController(ApplicationDbContext context, IFunctional functional)
         {
             _context = context;
+            _functional = functional;
         }
 
         // GET: api/SalesOrderLine
@@ -92,6 +97,7 @@ namespace coderush.Controllers.Api
                 if (salesOrderLines.SalesOrder != null)
                 {
                     sales.CustomerName = salesOrderLines.SalesOrder.Customer.CustomerName;
+                    sales.NHIF = salesOrderLines.SalesOrder.Customer.Address;
                     sales.saledate = salesOrderLines.SalesOrder.SaleDate.ToString("dd MMMM yyyy");
                     sales.SaleOrderName = salesOrderLines.SalesOrder.SalesOrderName;
                     if (salesOrderLines.SalesOrder.Invoice != null)
@@ -115,6 +121,69 @@ namespace coderush.Controllers.Api
             }
             int Count = Items.Count();
             return Ok(new { Items, Count });
+        }
+        [HttpGet("[action]/{id}")]
+        public async Task<IActionResult> SaleHistoryExecel([FromRoute] int id)
+        {
+            List<SalesOrderLine> SalesOrderLine = await _context.SalesOrderLine
+                            .Where(x => x.ProductId == id)
+                            .Include(x => x.Product)
+                            .Include(x => x.SalesOrder.Customer)
+                            .Include(x => x.SalesOrder.Invoice.PaymentReceive.PaymentType)
+                            .Include(x => x.RFPSaleorder.RFPCustomer)
+                            .ToListAsync();
+
+            SalesOrderLine = SalesOrderLine.Distinct().ToList();
+
+            Product drug = await _context.Product
+                .Where(x => x.ProductId == id)
+                .FirstOrDefaultAsync();
+            List<SaleHistory> Items = new List<SaleHistory>();
+
+            foreach (SalesOrderLine salesOrderLines in SalesOrderLine)
+            {
+                SaleHistory sales = new SaleHistory
+                {
+                    ProductName = drug.ProductName,
+                    Quanity = salesOrderLines.Quantity,
+                    Total = salesOrderLines.Total
+                };
+                if (salesOrderLines.SalesOrder != null)
+                {
+                    sales.CustomerName = salesOrderLines.SalesOrder.Customer.CustomerName;
+                    sales.NHIF = salesOrderLines.SalesOrder.Customer.Address;
+                    sales.saledate = salesOrderLines.SalesOrder.SaleDate.ToString("dd MMMM yyyy");
+                    sales.SaleOrderName = salesOrderLines.SalesOrder.SalesOrderName;
+                    if (salesOrderLines.SalesOrder.Invoice != null)
+                    {
+                        if (salesOrderLines.SalesOrder.Invoice.PaymentReceive != null)
+                        {
+                            sales.PaymentMode = salesOrderLines.SalesOrder.Invoice.PaymentReceive.PaymentType.PaymentTypeName;
+                        }
+                    }
+
+
+                }
+                if (salesOrderLines.RFPSaleorder != null)
+                {
+                    sales.CustomerName = salesOrderLines.RFPSaleorder.RFPCustomer.RFPCustomerName;
+                    sales.saledate = salesOrderLines.RFPSaleorder.SaleDate.ToString("dd MMMM yyyy");
+                    sales.SaleOrderName = salesOrderLines.RFPSaleorder.RFPSaleorderName;
+                }
+
+                Items.Add(sales);
+            }
+            DateTime now = DateTime.Now;
+            string name = drug.ProductName + now.ToString("M") + ".xlsx";
+
+            var ExelByte = _functional.ExporttoExcel<SaleHistory>(Items);
+
+            return File(
+               fileContents: ExelByte,
+               contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+               fileDownloadName: name
+                );
+
         }
         [HttpGet("[action]/{id}")]
         public async Task<IActionResult> GetSalesOrderLineByRFPSaleOrderId([FromRoute] int id)

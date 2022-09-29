@@ -33,6 +33,7 @@ namespace coderush.Services
             bool smtpSSL);
 
         Task<string> UploadFile(List<IFormFile> files, IHostingEnvironment env, string uploadFolder);
+        byte[] ExporttoExcel<T>(List<T> table);
 
     }
 }

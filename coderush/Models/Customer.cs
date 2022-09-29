@@ -14,8 +14,8 @@ namespace coderush.Models
         [Display(Name = "Customer Type")]
         public int CustomerTypeId { get; set; }
         public CustomerType customerType { get; set; }
-        [Display(Name = "Street Address")]
-        public string Address { get; set; }
+        [Display(Name = "NHIF")]
+        public string Address { get; set; }// stores NHIF detalis not address
         public string City { get; set; }
         public string Country { get; set; }
         public string Phone { get; set; }

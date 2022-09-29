@@ -26,12 +26,14 @@ namespace coderush.Controllers
         private readonly IEmailSender _emailSender;
         private readonly ILogger _logger;
         private readonly ApplicationDbContext _context;
+        private readonly IFeedback _feedback;
 
         public AccountController(
             ApplicationDbContext context,
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             IEmailSender emailSender,
+            IFeedback feedback,
             ILogger<AccountController> logger)
         {
             _context = context;
@@ -39,6 +41,7 @@ namespace coderush.Controllers
             _signInManager = signInManager;
             _emailSender = emailSender;
             _logger = logger;
+            _feedback = feedback;
         }
 
         [TempData]
@@ -480,5 +483,48 @@ namespace coderush.Controllers
         }
 
         #endregion
+        [HttpGet]
+        [AllowAnonymous]
+        public ActionResult FeedBack()
+        {
+            return View();
+        }
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> FeedBack(UserFeedbackModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+            var user = await _userManager.GetUserAsync(HttpContext.User);
+
+            SlackFeedbackModel slackFeedbackModel = new SlackFeedbackModel
+            {
+                text = "User :" + user.Email
+            };
+            List<Attachments> attachments = new List<Attachments>();
+            Attachments attachment = new Attachments();
+            attachment.pretext = model.Title;
+            attachment.text = model.Issue;
+            attachments.Add(attachment);
+            slackFeedbackModel.attachments = attachments;
+
+
+            try
+            {
+                _feedback.SendUserFeedback(slackFeedbackModel);
+                model.IsSubmited = true;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            ViewBag.result = "Feedback recieved, Thank you for the feedback";
+            ModelState.Clear();
+            return View();
+        }
+
     }
 }

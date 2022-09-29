@@ -112,6 +112,10 @@
 @section Scripts{
     <script type="text/javascript">
         var data;
+        var customerID;
+        function SaleHistoryExcel() {
+            location.href = "/api/Report/CustomerIdToExcel/" + customerID;
+        }
         $(function ()
         {
             var dataManagerCustomer = ej.DataManager({
@@ -124,6 +128,7 @@
                  fields: { id: 'CustomerId', text: 'CustomerName', value: 'CustomerId' },
                  change: function (args) {
                      GetCustomerHistory(args.value);
+                     customerID = args.value;
                  }
             });
 

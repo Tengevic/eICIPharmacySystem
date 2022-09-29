@@ -54,6 +54,8 @@
             </div>
             <!-- /.box-body -->
         </div>
+        <button onclick="Test()">Test</button>
+        
         <!-- /.box -->
         <div class="box">
             <div class="box-body">
@@ -95,6 +97,10 @@
 
             });
         }
+        function Test() {
+            location.href = "/api/SalesOrderLine/SaleHistoryExecel/" + @Model.ProductId;
+            
+        }
         $(function ()
         {
              var dataManager = ej.DataManager({
@@ -131,11 +137,12 @@
                     { field: "ProductName", headerText: 'Product Name', validationRules: { required: true } },
                     { field: "SaleOrderName", headerText: 'Drug Sale number', allowEditing: false },
                     { field: "CustomerName", headerText: 'Customer Name', validationRules: { required: true } },
+                    { field: "NHIF", headerText: 'NHIF', validationRules: { required: true } },
                     { field: "Quanity", headerText: 'Qty', defaultValue: 1, editType: "numericedit", format: "{0:n2}"},
                     { field: "saledate", headerText: 'Sell Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
                     { field: "Total", headerText: 'Total', defaultValue: 0, editParams: { decimalPlaces: 2 }, allowEditing: false, editType: "numericedit", format: "{0:n2}" },
                     { field: "PaymentMode", headerText: 'Payment Mode', validationRules: { required: true } },
-                ], 
+                ],
                 actionComplete: "complete",
                 beforePrint: function (args) {
                     console.log(args)

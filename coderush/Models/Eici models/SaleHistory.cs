@@ -14,6 +14,7 @@ namespace coderush.Models.Eici_models
         public double Total { get; set; }
         public string PaymentMode { get; set; }
         public string saledate { get; set; }
+        public string NHIF { get; set; }
         
     }
 }

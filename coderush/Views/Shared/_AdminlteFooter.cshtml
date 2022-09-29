@@ -2,5 +2,16 @@
     <div class="pull-right hidden-xs">
         
     </div>
-    <strong>ICI &copy; @DateTime.Now.Year.</strong>
+    
+    <table class="table-condensed">
+        <tr>
+            <td><strong>Copyrights &copy; @DateTime.Now.Year. International Cancer Institute</strong></td>
+            <td class="@Html.IsSelected(controller: MainMenu.Feedback.ControllerName)">
+                <a href="@MainMenu.Feedback.Path">
+                   <span>@MainMenu.Feedback.PageName</span>
+                </a>
+            </td>
+
+        </tr>
+    </table>
 </footer>

@@ -26,6 +26,7 @@
             <div class="box">
                 <div class="box-header with-border">
                     <h3 class="box-title text-primary"><i class="fa fa-user"></i> SaleHistory</h3>
+                    <button onclick="SaleHistoryExcel()">Excel</button>
                     <div class="box-tools pull-right">
                         <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
                                 title="Collapse">
@@ -43,6 +44,7 @@
             <div class="box">
                 <div class="box-header with-border">
                     <h3 class="box-title text-primary"><i class="fa fa-key"></i> Recieve history </h3>
+                    <button onclick="RecievehistoryExcel()">Excel</button>
                     <div class="box-tools pull-right">
                         <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
                                 title="Collapse">
@@ -60,6 +62,7 @@
             <div class="box">
                 <div class="box-header with-border">
                     <h3 class="box-title text-primary"><i class="fa fa-key"></i> Purchase history </h3>
+                    <button onclick="PurchasehistoryExcel()">Excel</button>
                     <div class="box-tools pull-right">
                         <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
                                 title="Collapse">
@@ -90,6 +93,16 @@
         var startDate;
         var endDate;
         var range;
+        var drugID;
+        function SaleHistoryExcel() {
+            location.href = "/api/Report/GetbyProductIdSaleToExcel/" + drugID;
+        } 
+        function RecievehistoryExcel() {
+            location.href = "/api/Report/GetbyProductIdPurchaseToExcel/" + drugID;
+        }
+        function PurchasehistoryExcel() {
+            location.href = "/api/Report/GetbyProductIdRecieveToExcel/" + drugID;
+        }
         $(function () {
             $("#sendp").hide();
             var dataManagerProduct = ej.DataManager({
@@ -102,6 +115,7 @@
                 fields: { id: 'ProductId', text: 'ProductName', value: 'ProductId' },
                 change: function (args) {
                     DrugHistory(args.value);
+                    drugID = args.value;
                 }
             });
 
@@ -130,7 +144,7 @@
             });
         }
         function saleHistory(data) {
-          
+
             $("#Grid").ejGrid({
                 dataSource: data,
                 toolbarSettings: {
@@ -158,6 +172,7 @@
                     { field: "ProductName", headerText: 'Product Name', validationRules: { required: true } },
                     { field: "SaleOrderName", headerText: 'Drug Sale number', allowEditing: false },
                     { field: "CustomerName", headerText: 'Customer Name', validationRules: { required: true } },
+                    { field: "NHIF", headerText: 'NHIF', validationRules: { required: true } },
                     { field: "Quanity", headerText: 'Qty', defaultValue: 1, editType: "numericedit", format: "{0:n2}" },
                     { field: "saledate", headerText: 'Sell Date', editType: "datepicker", format: "{0:MM/dd/yyyy}", validationRules: { required: true } },
                     { field: "Total", headerText: 'Total', defaultValue: 0, editParams: { decimalPlaces: 2 }, allowEditing: false, editType: "numericedit", format: "{0:n2}" },
@@ -166,7 +181,7 @@
             });
         }
         function goodsRecievedNoteLine(data) {
-            console.log(data) 
+            console.log(data)
             $("#GridRecieve").ejGrid({
                 dataSource: data,
                 toolbarSettings: {

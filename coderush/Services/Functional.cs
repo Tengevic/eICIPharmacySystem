@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
+using OfficeOpenXml;
+using OfficeOpenXml.Table;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 using System;
@@ -233,6 +235,18 @@ namespace coderush.Services
 
             return result;
         }
+        public byte[] ExporttoExcel<T>(List<T> table)
+        {
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            var stream = new MemoryStream();
 
+            using (var package = new ExcelPackage(stream))
+            {
+                var workSheet = package.Workbook.Worksheets.Add("sheet1");
+                workSheet.Cells.LoadFromCollection(table, true);
+
+                return package.GetAsByteArray();
+            }
+        }
     }
 }
