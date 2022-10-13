@@ -14,6 +14,7 @@ namespace coderush.Models.Eici_models
     }
     public class PatientDetail
     {
+        public string uuid { get; set; }
         public string Name { get; set; }
         public string Address { get; set; }
         public string PhoneNumber { get; set; }
@@ -23,7 +24,7 @@ namespace coderush.Models.Eici_models
     public class PrescriptionDetail
     {
         public int OrderId { get; set; }
-        public int DrugId { get; set; }
+        public int? DrugId { get; set; }
         public string DrugName { get; set; }
         public string prescription { get; set; }
         public double Quantity { get; set; }

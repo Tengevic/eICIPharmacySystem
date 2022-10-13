@@ -311,15 +311,17 @@
                 }),
                 toolbarSettings: {
                     showToolbar: true,
-                    toolbarItems: ["add", "delete", "update", "cancel"]
+                    toolbarItems: ["add","edit","delete", "update", "cancel"]
                 },
                 editSettings: {
-                    allowEditing: false,
+                    allowEditing: true,
                     allowAdding: true,
                     allowDeleting: true,
                     showDeleteConfirmDialog: true,
                 },
                 allowPaging: true,
+                allowResizeToFit: true,
+                allowResizing: true,
                 columns: [
                     { field: "PrescriptionLinesId", headerText: 'Line Id', isPrimaryKey: true, isIdentity: true, visible: false },
                     { field: "PrescriptionId", headerText: 'PS#', defaultValue: @Model.PrescriptionId, foreignKeyField: "PrescriptionId", foreignKeyValue: "PrescriptionName", dataSource: dataManagerPrescription, visible: false },

@@ -481,6 +481,7 @@ namespace coderush.Controllers.Api
                 {
                     sales.CustomerName = salesOrderLines.SalesOrder.Customer.CustomerName;
                     sales.NHIF = salesOrderLines.SalesOrder.Customer.Address;
+                    sales.EiciRefNumber = salesOrderLines.SalesOrder.Customer.EiciRefNumber;
                     sales.saledate = salesOrderLines.SalesOrder.SaleDate.ToString("dd MMMM yyyy");
                     sales.SaleOrderName = salesOrderLines.SalesOrder.SalesOrderName;
                     if (salesOrderLines.SalesOrder.Invoice != null)
@@ -584,16 +585,23 @@ namespace coderush.Controllers.Api
             List<SaleHistory> Items = new List<SaleHistory>();
             foreach (SalesOrderLine salesOrderLines in SalesOrderLine)
             {
+                GoodsRecievedNoteLine goodsRecievedNoteLine = _context.GoodsRecievedNoteLine.Find(salesOrderLines.GoodsRecievedNoteLineId);
                 SaleHistory sales = new SaleHistory
                 {
                     ProductName = drug.ProductName,
                     Quanity = salesOrderLines.Quantity,
                     Total = salesOrderLines.Total
                 };
+                if(goodsRecievedNoteLine != null)
+                {
+                    sales.BatchNumber = goodsRecievedNoteLine.BatchID;
+                    sales.ExpiryDate = goodsRecievedNoteLine.ExpiryDate.ToString("dd MMMM yyyy");
+                }
                 if (salesOrderLines.SalesOrder != null)
                 {
                     sales.CustomerName = salesOrderLines.SalesOrder.Customer.CustomerName;
                     sales.NHIF = salesOrderLines.SalesOrder.Customer.Address;
+                    sales.EiciRefNumber = salesOrderLines.SalesOrder.Customer.EiciRefNumber;
                     sales.saledate = salesOrderLines.SalesOrder.SaleDate.ToString("dd MMMM yyyy");
                     sales.SaleOrderName = salesOrderLines.SalesOrder.SalesOrderName;
                     if (salesOrderLines.SalesOrder.Invoice != null)

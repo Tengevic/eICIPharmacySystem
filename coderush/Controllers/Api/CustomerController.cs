@@ -9,6 +9,7 @@ using coderush.Data;
 using coderush.Models;
 using coderush.Models.SyncfusionViewModels;
 using Microsoft.AspNetCore.Authorization;
+using coderush.Services;
 
 namespace coderush.Controllers.Api
 {
@@ -18,10 +19,12 @@ namespace coderush.Controllers.Api
     public class CustomerController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IFunctional _functional;
 
-        public CustomerController(ApplicationDbContext context)
+        public CustomerController(ApplicationDbContext context, IFunctional functional)
         {
             _context = context;
+            _functional = functional;
         }
 
         // GET: api/Customer
@@ -31,6 +34,22 @@ namespace coderush.Controllers.Api
             List<Customer> Items = await _context.Customer.OrderBy(x =>x.CustomerName).ToListAsync();
             int Count = Items.Count();
             return Ok(new { Items, Count });
+        }
+        [HttpGet("[action]")]
+        public async Task<IActionResult> CustomerToExcel()
+        {
+            List<Customer> Items = await _context.Customer.OrderBy(x => x.CustomerName).ToListAsync();
+            DateTime now = DateTime.Now;
+            string name = "CustomerList" + now.ToString("M") + ".xlsx";
+
+            var ExelByte = _functional.ExporttoExcel<Customer>(Items);
+
+            return File(
+               fileContents: ExelByte,
+               contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+               fileDownloadName: name
+                );
+
         }
         [HttpGet("[action]/{id}")]
         public async Task<IActionResult> GetbyId([FromRoute] int id)
